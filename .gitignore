@@ -1,3 +1,5 @@
+*.html.md
+
 # Logs
 logs
 *.log

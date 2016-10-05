@@ -1,0 +1,34 @@
+{
+  "name": "widdershins",
+  "version": "1.0.0",
+  "description": "OpenApi / Swagger definition to slate / shins compatible markdown",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Mermade/widdershins.git"
+  },
+  "keywords": [
+    "swagger",
+    "openapi",
+    "slate",
+    "shins",
+    "api",
+    "docs",
+    "documentation"
+  ],
+  "author": "Mike Ralphson",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Mermade/widdershins/issues"
+  },
+  "homepage": "https://github.com/Mermade/widdershins#readme",
+  "dependencies": {
+    "js-yaml": "^3.6.1"
+  }
+}
