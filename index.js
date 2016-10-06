@@ -1,3 +1,5 @@
+var up = require('url');
+
 var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
@@ -78,7 +80,7 @@ function doContentType(types,target){
     return false;
 }
 
-function convert(swagger) {
+function convert(swagger,loadedFrom) {
 
     var header = {};
     header.title = swagger.info.title+' '+swagger.info.version;
@@ -165,7 +167,14 @@ function convert(swagger) {
             var op = swagger.paths[method.path][method.op];
             if (method.op != 'parameters') {
 
-                var url = (swagger.schemes[0]||'http')+'://'+(swagger.host||'example.com')+swagger.basePath+method.path;
+                var host = swagger.host;
+                if (!host && loadedFrom) {
+                    var u = up.parse(loadedFrom);
+                    host = u.host;
+                }
+                if (!host) host = 'example.com';
+
+                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+(swagger.host||'example.com')+swagger.basePath+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
 
