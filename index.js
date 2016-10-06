@@ -25,7 +25,7 @@ function convertSwagger(source){
                 var ioMethod = {};
                 ioMethod.path = p;
                 ioMethod.op = m;
-                var sMethodUniqueName = sMethod.operationId ? sMethod.operationId : m+'_'+p.split('/').join('_');
+                var sMethodUniqueName = (sMethod.operationId ? sMethod.operationId : m+'_'+p).split('/').join('_');
                 sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
                 var tagName = 'Default';
                 if (sMethod.tags && sMethod.tags.length>0) {
@@ -105,6 +105,19 @@ content += '# Introduction\n';
 content += swagger.info.description+'\n\n';
 if (swagger.info.termsOfService) {
     content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
+}
+
+if (swagger.info.contact) {
+    var name = (swagger.info.contact.name||'Support');
+    if (swagger.info.contact.email) {
+        content += 'Email: <a href="mailto:'+swagger.info.contact.email+'">'+name+'</a>\n';
+    }
+    if (swagger.info.contact.url) {
+        content += 'Web: <a href="'+swagger.info.contact.url+'">'+name+'</a>\n';
+    }
+}
+if (swagger.info.license) {
+    content += 'License: <a href="'+swagger.info.license.url+'">'+swagger.info.license.name+'</a>\n';
 }
 
 if (swagger.securityDefinitions) {
