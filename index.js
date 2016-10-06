@@ -2,6 +2,7 @@ var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
 var recurseotron = require('openapi_optimise/common.js');
+var sampler = require('openapi-sampler');
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
@@ -76,6 +77,9 @@ var content = '';
 
 content += '# Introduction\n';
 content += swagger.info.description+'\n\n';
+if (swagger.info.termsOfService) {
+    content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
+}
 
 if (swagger.securityDefinitions) {
     content += '# Authentication\n';
@@ -147,14 +151,21 @@ for (var r in apiInfo.resources) {
                     }
                     if (param.schema) {
                         if (param.schema["$ref"]) param.schema = jptr.jptr(swagger,param.schema["$ref"]);
+                        var obj = sampler.sample(param.schema);
+                        if (obj.properties) obj = obj.properties;
                         content += '````json\n';
-                        content += JSON.stringify(param.schema,null,2)+'\n';
-                        content += '````\n';
-                        content += '````xml\n';
-                        content += xml.getXml(param.schema,'@','',true,'  ',false)+'\n';
+                        content += JSON.stringify(obj,null,2)+'\n';
                         content += '````\n';
                         content += '````yaml\n';
-                        content += yaml.safeDump(param.schema)+'\n';
+                        content += yaml.safeDump(obj)+'\n';
+                        content += '````\n';
+                        content += '````xml\n';
+                        if (param.schema.xml && param.schema.xml.name) {
+                            var newObj = {};
+                            newObj[param.schema.xml.name] = obj;
+                            obj = newObj;
+                        }
+                        content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
                         content += '````\n';
                     }
                 }
