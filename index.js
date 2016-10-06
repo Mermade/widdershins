@@ -104,6 +104,13 @@ function convert(swagger,loadedFrom) {
     var content = '';
 
     content += '# Introduction\n';
+    var host = swagger.host;
+    if (!host && loadedFrom) {
+        var u = up.parse(loadedFrom);
+        host = u.host;
+    }
+    if (!host) host = 'example.com';
+    content += 'Base URL = '+(swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+swagger.basePath+'\n\n';
     content += swagger.info.description+'\n\n';
     if (swagger.info.termsOfService) {
         content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
@@ -167,14 +174,7 @@ function convert(swagger,loadedFrom) {
             var op = swagger.paths[method.path][method.op];
             if (method.op != 'parameters') {
 
-                var host = swagger.host;
-                if (!host && loadedFrom) {
-                    var u = up.parse(loadedFrom);
-                    host = u.host;
-                }
-                if (!host) host = 'example.com';
-
-                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+(swagger.host||'example.com')+swagger.basePath+method.path;
+                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+swagger.basePath+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
 
@@ -201,13 +201,41 @@ function convert(swagger,loadedFrom) {
 
                 content += '````html\n';
                 content += '<script>\n';
-                content += '  $.ajax("'+url+'");\n';
+                content += '  $.ajax({\n';
+                content += "    url: '"+url+"',\n";
+                content += "    method: '"+method.op+"',\n";
+                content += '    success: function(data) {\n';
+                content += '      console.log(JSON.stringify(data));\n';
+                content += '    }\n';
+                content += '  })\n';
                 content += '</script>\n';
                 content += '````\n';
 
                 content += '````javascript\n';
                 content += "const request = require('request');\n";
                 content += "request('"+url+"');\n";
+                content += '````\n';
+
+                content += '````ruby\n';
+                content += "require 'rest-client'\n";
+                content += "require 'json'\n";
+                content += '\n';
+                content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
+                content += '  {\n';
+                content += '    # TODO\n';
+                content += '  }\n';
+                content += '\n';
+                content += 'p JSON.parse(result)\n';
+                content += '````\n';
+
+                content += '````python\n';
+                content += "import requests\n";
+                content += '\n';
+                content += 'r = requests.'+method.op+"('"+url+"', params={\n";
+                content += '  # TODO\n';
+                content += '})\n';
+                content += '\n';
+                content += 'print r.json()\n';
                 content += '````\n';
 
                 if (op.operationId) content += '**'+op.operationId+'**\n\n';
