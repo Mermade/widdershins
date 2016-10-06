@@ -49,8 +49,26 @@ function convertSwagger(source){
         }
     }
     delete apiInfo.paths; // to keep size down
-    delete apiInfo.definitions;
+    delete apiInfo.definitions; // ditto
     return apiInfo;
+}
+
+function dereference(obj,swagger){
+    if (obj["$ref"]) obj = clone(jptr.jptr(swagger,obj["$ref"]));
+    var changes = 1;
+    while (changes>0) {
+        changes = 0;
+        recurseotron.recurse(obj,{},function(obj,state) {
+            if ((state.key === '$ref') && (typeof obj === 'string')) {
+                //console.log('#Dereferencing '+obj);
+                state.parents[state.parents.length-1][state.keys[state.keys.length-1]] = jptr.jptr(swagger,obj);
+                delete state.parent["$ref"];
+                changes++;
+            }
+        });
+    }
+    //console.log(JSON.stringify(obj,null,'# '));
+    return obj;
 }
 
 var swagger = require('./specs/petstore.json');
@@ -59,7 +77,8 @@ var header = {};
 header.title = swagger.info.title+' '+swagger.info.version;
 
 // TODO build this list from consumes/produces + dynamic language templates
-header.language_tabs = ['shell','http','json','xml','yaml','html','javascript','python','ruby'];
+// we always show json
+header.language_tabs = ['shell','http','xml','yaml','html','javascript','python','ruby'];
 
 header.toc_footers = [];
 if (swagger.externalDocs) {
@@ -110,8 +129,13 @@ for (var r in apiInfo.resources) {
 
             var url = (swagger.schemes[0]||'http')+'://'+(swagger.host||'example.com')+swagger.basePath+method.path;
 
+            content += '> Code samples\n\n';
+
             // TODO load code templates dynamically
+            // TODO read from redoc extension if present
+
             content += '````shell\n';
+            content += '# you can also use wget\n';
             content += 'curl -X '+method.op+' '+url+'\n';
             content += '````\n';
 
@@ -123,6 +147,11 @@ for (var r in apiInfo.resources) {
             content += '<script>\n';
             content += '  $.ajax("'+url+'");\n';
             content += '</script>\n';
+            content += '````\n';
+
+            content += '````javascript\n';
+            content += "const request = require('request')\n";
+            content += "request('"+url+"');\n";
             content += '````\n';
 
             if (op.operationId) content += '**'+op.operationId+'**\n\n';
@@ -150,8 +179,17 @@ for (var r in apiInfo.resources) {
                         param = jptr.jptr(swagger,param["$ref"]);
                     }
                     if (param.schema) {
-                        if (param.schema["$ref"]) param.schema = jptr.jptr(swagger,param.schema["$ref"]);
-                        var obj = sampler.sample(param.schema);
+                        var xmlWrap = '';
+                        var obj = dereference(param.schema,swagger);
+                        if (obj.xml && obj.xml.name) {
+                            xmlWrap = obj.xml.name;
+                        }
+                        try {
+                            obj = sampler.sample(obj);
+                        }
+                        catch (ex) {
+                            console.log('# '+ex);
+                        }
                         if (obj.properties) obj = obj.properties;
                         content += '````json\n';
                         content += JSON.stringify(obj,null,2)+'\n';
@@ -160,9 +198,9 @@ for (var r in apiInfo.resources) {
                         content += yaml.safeDump(obj)+'\n';
                         content += '````\n';
                         content += '````xml\n';
-                        if (param.schema.xml && param.schema.xml.name) {
+                        if (xmlWrap) {
                             var newObj = {};
-                            newObj[param.schema.xml.name] = obj;
+                            newObj[xmlWrap] = obj;
                             obj = newObj;
                         }
                         content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
@@ -178,9 +216,6 @@ for (var r in apiInfo.resources) {
             for (var resp in op.responses) {
                 var response = op.responses[resp];
 
-                //if (param["$ref"]) {
-                //    param = jptr.jptr(swagger,param["$ref"]);
-                //}
                 var meaning = 'Unknown';
                 for (var s in statusCodes) {
                     if (statusCodes[s].code == resp) {
@@ -191,6 +226,23 @@ for (var r in apiInfo.resources) {
 
                 content += resp+'|'+meaning+'|'+response.description+'\n';
             }
+            content += '> Example responses\n\n';
+            for (var resp in op.responses) {
+                var response = op.responses[resp];
+                if (response.schema) {
+                    var obj = dereference(response.schema);
+                    try {
+                        obj = sampler.sample(obj);
+                    }
+                    catch (ex) {
+                        console.log('# '+ex);
+                    }
+                    content += '````json\n';
+                    content += JSON.stringify(obj,null,2)+'\n';
+                    content += '````\n';
+                }
+            }
+
             content += '\n';
 
         }
