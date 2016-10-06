@@ -71,14 +71,21 @@ function dereference(obj,swagger){
     return obj;
 }
 
+function doContentType(types,target){
+    for (var type in types) {
+        if (types[type] === target) return true;
+    }
+    return false;
+}
+
 var swagger = require('./specs/petstore.json');
 
 var header = {};
 header.title = swagger.info.title+' '+swagger.info.version;
 
-// TODO build this list from consumes/produces + dynamic language templates
-// we always show json
-header.language_tabs = ['shell','http','xml','yaml','html','javascript','python','ruby'];
+// TODO build this list from dynamic language templates
+// we always show json / yaml / xml if used in consumes/produces
+header.language_tabs = ['shell','http','html','javascript','python','ruby'];
 
 header.toc_footers = [];
 if (swagger.externalDocs) {
@@ -128,6 +135,8 @@ for (var r in apiInfo.resources) {
         if (method.op != 'parameters') {
 
             var url = (swagger.schemes[0]||'http')+'://'+(swagger.host||'example.com')+swagger.basePath+method.path;
+            var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
+            var produces = (op.produces||[]).concat(swagger.produces||[]);
 
             content += '> Code samples\n\n';
 
@@ -140,7 +149,14 @@ for (var r in apiInfo.resources) {
             content += '````\n';
 
             content += '````http\n';
-            content += 'HTTP 1.1 '+method.op.toUpperCase()+' '+url+'\n';
+            content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
+            content += 'Host: '+swagger.host+'\n';
+            if (consumes.length) {
+                content += 'Content-Type: '+consumes[0]+'\n';
+            }
+            if (produces.length) {
+                content += 'Accept: '+produces[0]+'\n';
+            }
             content += '````\n';
 
             content += '````html\n';
@@ -150,7 +166,7 @@ for (var r in apiInfo.resources) {
             content += '````\n';
 
             content += '````javascript\n';
-            content += "const request = require('request')\n";
+            content += "const request = require('request');\n";
             content += "request('"+url+"');\n";
             content += '````\n';
 
@@ -173,12 +189,17 @@ for (var r in apiInfo.resources) {
                 }
                 content += '\n';
 
+                var paramHeader = false;
                 for (var p in parameters) {
                     var param = parameters[p];
                     if (param["$ref"]) {
                         param = jptr.jptr(swagger,param["$ref"]);
                     }
                     if (param.schema) {
+                        if (!paramHeader) {
+                            content += '> Body parameter\n\n';
+                            paramHeader = true;
+                        }
                         var xmlWrap = '';
                         var obj = dereference(param.schema,swagger);
                         if (obj.xml && obj.xml.name) {
@@ -191,20 +212,26 @@ for (var r in apiInfo.resources) {
                             console.log('# '+ex);
                         }
                         if (obj.properties) obj = obj.properties;
-                        content += '````json\n';
-                        content += JSON.stringify(obj,null,2)+'\n';
-                        content += '````\n';
-                        content += '````yaml\n';
-                        content += yaml.safeDump(obj)+'\n';
-                        content += '````\n';
-                        content += '````xml\n';
-                        if (xmlWrap) {
-                            var newObj = {};
-                            newObj[xmlWrap] = obj;
-                            obj = newObj;
+                        if (doContentType(consumes,'application/json')) {
+                            content += '````json\n';
+                            content += JSON.stringify(obj,null,2)+'\n';
+                            content += '````\n';
                         }
-                        content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
-                        content += '````\n';
+                        if (doContentType(consumes,'text/x-yaml')) {
+                            content += '````yaml\n';
+                            content += yaml.safeDump(obj)+'\n';
+                            content += '````\n';
+                        }
+                        if (doContentType(consumes,'application/xml')) {
+                            content += '````xml\n';
+                            if (xmlWrap) {
+                                var newObj = {};
+                                newObj[xmlWrap] = obj;
+                                obj = newObj;
+                            }
+                            content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
+                            content += '````\n';
+                        }
                     }
                 }
 
@@ -237,9 +264,11 @@ for (var r in apiInfo.resources) {
                     catch (ex) {
                         console.log('# '+ex);
                     }
-                    content += '````json\n';
-                    content += JSON.stringify(obj,null,2)+'\n';
-                    content += '````\n';
+                    if (doContentType(consumes,'application/json')) {
+                        content += '````json\n';
+                        content += JSON.stringify(obj,null,2)+'\n';
+                        content += '````\n';
+                    }
                 }
             }
 
