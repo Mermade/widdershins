@@ -32,6 +32,7 @@
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
     "openapi-sampler": "^0.3.1",
-    "openapi_optimise": "latest"
+    "openapi_optimise": "latest",
+    "yargs": "^5.0.0"
   }
 }
