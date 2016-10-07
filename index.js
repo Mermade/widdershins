@@ -80,14 +80,42 @@ function doContentType(types,target){
     return false;
 }
 
-function convert(swagger,loadedFrom) {
+function languageCheck(language,language_tabs,mutate){
+    var lcLang = language.toLowerCase();
+    if (lcLang === 'c#') lcLang = 'csharp';
+    if (lcLang === 'c++') lcLang = 'cpp';
+    for (var l in language_tabs){
+        var target = language_tabs[l];
+        if (typeof target === 'object') {
+            if (Object.keys(target)[0] === lcLang) {
+                return lcLang;
+            }
+        }
+        else {
+            if (target === lcLang) return lcLang;
+        }
+    }
+    if (mutate) {
+        var newLang = {};
+        newLang[lcLang] = language;
+        language_tabs.push(newLang);
+        return lcLang;
+    }
+    return false;
+}
+
+function convert(swagger,options) {
+
+    var defaults = {};
+    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'html': 'JavaScript'},{'javascript': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'}];
+    defaults.codeSamples = true;
+    options = Object.assign({},defaults,options);
 
     var header = {};
-    header.title = swagger.info.title+' '+swagger.info.version;
+    header.title = swagger.info.title+' '+((swagger.info.version.toLowerCase().startsWith('v')) ? swagger.info.version : 'v'+swagger.info.version);
 
-    // TODO build this list from dynamic language templates
     // we always show json / yaml / xml if used in consumes/produces
-    header.language_tabs = ['shell','http','html','javascript','python','ruby'];
+    header.language_tabs = options.language_tabs;
 
     header.toc_footers = [];
     if (swagger.externalDocs) {
@@ -99,14 +127,12 @@ function convert(swagger,loadedFrom) {
     header.includes = [];
     header.search = true;
 
-    var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
-
     var content = '';
 
-    content += '# Introduction\n';
+    content += '# ' + header.title+'\n\n';
     var host = swagger.host;
-    if (!host && loadedFrom) {
-        var u = up.parse(loadedFrom);
+    if (!host && options.loadedFrom) {
+        var u = up.parse(options.loadedFrom);
         host = u.host;
     }
     if (!host) host = 'example.com';
@@ -178,65 +204,77 @@ function convert(swagger,loadedFrom) {
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
 
-                content += '> Code samples\n\n';
+                var codeSamples = (options.codeSamples || op["x-code-samples"]);
+                if (codeSamples) {
 
-                // TODO load code templates dynamically
-                // TODO read from redoc extension if present
+                    content += '> Code samples\n\n';
 
-                content += '````shell\n';
-                content += '# you can also use wget\n';
-                content += 'curl -X '+method.op+' '+url+'\n';
-                content += '````\n';
+                    if (op["x-code-samples"]) {
+                        for (var s in op["x-code-samples"]) {
+                            var sample = op["x-code-samples"][s];
+                            var lang = languageCheck(sample.lang,header.language_tabs,true);
+                            content += '````'+lang+'\n';
+                            content += sample.source+'\n';
+                            content += '````\n';
+                        }
+                    }
+                    else {
+                        content += '````shell\n';
+                        content += '# you can also use wget\n';
+                        content += 'curl -X '+method.op+' '+url+'\n';
+                        content += '````\n';
 
-                content += '````http\n';
-                content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
-                content += 'Host: '+swagger.host+'\n';
-                if (consumes.length) {
-                    content += 'Content-Type: '+consumes[0]+'\n';
+                        content += '````http\n';
+                        content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
+                        content += 'Host: '+swagger.host+'\n';
+                        if (consumes.length) {
+                            content += 'Content-Type: '+consumes[0]+'\n';
+                        }
+                        if (produces.length) {
+                            content += 'Accept: '+produces[0]+'\n';
+                        }
+                        content += '````\n';
+
+                        content += '````html\n';
+                        content += '<script>\n';
+                        content += '  $.ajax({\n';
+                        content += "    url: '"+url+"',\n";
+                        content += "    method: '"+method.op+"',\n";
+                        content += '    success: function(data) {\n';
+                        content += '      console.log(JSON.stringify(data));\n';
+                        content += '    }\n';
+                        content += '  })\n';
+                        content += '</script>\n';
+                        content += '````\n';
+
+                        content += '````javascript\n';
+                        content += "const request = require('request');\n";
+                        content += "request('"+url+"');\n";
+                        content += '````\n';
+
+                        content += '````ruby\n';
+                        content += "require 'rest-client'\n";
+                        content += "require 'json'\n";
+                        content += '\n';
+                        content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
+                        content += '  {\n';
+                        content += '    # TODO\n';
+                        content += '  }\n';
+                        content += '\n';
+                        content += 'p JSON.parse(result)\n';
+                        content += '````\n';
+
+                        content += '````python\n';
+                        content += "import requests\n";
+                        content += '\n';
+                        content += 'r = requests.'+method.op+"('"+url+"', params={\n";
+                        content += '  # TODO\n';
+                        content += '})\n';
+                        content += '\n';
+                        content += 'print r.json()\n';
+                        content += '````\n';
+                    }
                 }
-                if (produces.length) {
-                    content += 'Accept: '+produces[0]+'\n';
-                }
-                content += '````\n';
-
-                content += '````html\n';
-                content += '<script>\n';
-                content += '  $.ajax({\n';
-                content += "    url: '"+url+"',\n";
-                content += "    method: '"+method.op+"',\n";
-                content += '    success: function(data) {\n';
-                content += '      console.log(JSON.stringify(data));\n';
-                content += '    }\n';
-                content += '  })\n';
-                content += '</script>\n';
-                content += '````\n';
-
-                content += '````javascript\n';
-                content += "const request = require('request');\n";
-                content += "request('"+url+"');\n";
-                content += '````\n';
-
-                content += '````ruby\n';
-                content += "require 'rest-client'\n";
-                content += "require 'json'\n";
-                content += '\n';
-                content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
-                content += '  {\n';
-                content += '    # TODO\n';
-                content += '  }\n';
-                content += '\n';
-                content += 'p JSON.parse(result)\n';
-                content += '````\n';
-
-                content += '````python\n';
-                content += "import requests\n";
-                content += '\n';
-                content += 'r = requests.'+method.op+"('"+url+"', params={\n";
-                content += '  # TODO\n';
-                content += '})\n';
-                content += '\n';
-                content += 'print r.json()\n';
-                content += '````\n';
 
                 if (op.operationId) content += '**'+op.operationId+'**\n\n';
                 if (op.summary) content += '*'+op.summary+'*\n\n';
@@ -365,6 +403,7 @@ function convert(swagger,loadedFrom) {
             }
         }
     }
+    var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
     return (headerStr+'\n'+content);
 }
 

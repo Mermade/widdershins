@@ -12,6 +12,12 @@ var argv = require('yargs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Load spec in yaml format, default json')
+    .boolean('code')
+    .alias('c','code')
+    .describe('code','Turn code samples off')
+    .boolean('lang')
+    .alias('l','lang')
+    .describe('lang','Automatically generate list of languages for code samples')
     .help('h')
     .alias('h', 'help')
     .version(function() {
@@ -28,7 +34,11 @@ else {
     swagger = require(path.resolve(argv._[0]));
 }
 
-var output = converter.convert(swagger);
+var options = {};
+options.codeSamples = !argv.code;
+if (argv.lang) options.language_tabs = [];
+
+var output = converter.convert(swagger,options);
 
 if (argv._.length>1) {
     fs.writeFileSync(path.resolve(argv._[1]),output,'utf8');
