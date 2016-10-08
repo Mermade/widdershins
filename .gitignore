@@ -1,4 +1,6 @@
 *.html.md
+*.tgz
+doit
 
 # Logs
 logs

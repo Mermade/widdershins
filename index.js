@@ -119,9 +119,8 @@ function convert(swagger,options) {
 
     header.toc_footers = [];
     if (swagger.externalDocs) {
-        header.toc_footers.push(swagger.externalDocs.description);
         if (swagger.externalDocs.url) {
-            header.toc_footers.push('<a href="'+swagger.externalDocs.url+'">External Docs</a>');
+            header.toc_footers.push('<a href="'+swagger.externalDocs.url+'">'+swagger.externalDocs.description+'</a>');
         }
     }
     header.includes = [];
@@ -130,14 +129,17 @@ function convert(swagger,options) {
     var content = '';
 
     content += '# ' + header.title+'\n\n';
+    content += swagger.info.description+'\n\n';
     var host = swagger.host;
+    var protocol = swagger.schemes ? swagger.schemes[0];
     if (!host && options.loadedFrom) {
         var u = up.parse(options.loadedFrom);
         host = u.host;
+        protocol = u.protocol.replace(':','');
     }
     if (!host) host = 'example.com';
-    content += 'Base URL = '+(swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+swagger.basePath+'\n\n';
-    content += swagger.info.description+'\n\n';
+    if (!protocol) protocol = 'http';
+    content += 'Base URL = '+protocol+'://'+host+swagger.basePath+'\n\n';
     if (swagger.info.termsOfService) {
         content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
     }
@@ -173,6 +175,9 @@ function convert(swagger,options) {
                 if (secdef.authorizationUrl) {
                     content += '- Authorization URL = ['+secdef.authorizationUrl+']('+secdef.authorizationUrl+')\n';
                 }
+                if (secdef.tokenUrl) {
+                    content += '- Token URL = ['+secdef.tokenUrl+']('+secdef.tokenUrl+')\n';
+                }
                 for (var s in secdef.scopes) {
                     content += '- Scope: '+s+' = '+secdef.scopes[s]+'\n';
                 }
@@ -188,17 +193,19 @@ function convert(swagger,options) {
         if (resource.description) content += resource.description+'\n\n';
 
         if (resource.externalDocs) {
-            content += swagger.externalDocs.description+'\n';
-            if (swagger.externalDocs.url) {
-                content += '<a href="'+swagger.externalDocs.url+'">External Docs</a>\n';
+            if (resource.externalDocs.url) {
+                content += '<a href="'+resource.externalDocs.url+'">'+resource.externalDocs.description+'</a>\n';
             }
         }
 
         for (var m in resource.methods) {
             var method = resource.methods[m];
-            content += '## '+method.op.toUpperCase()+' '+method.path+'\n\n';
+            var subtitle = method.op.toUpperCase()+' '+method.path;
             var op = swagger.paths[method.path][method.op];
             if (method.op != 'parameters') {
+
+                var opName = (op.operationId ? op.operationId : subtitle);
+                content += '## '+opName+'\n\n';
 
                 var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+swagger.basePath+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
@@ -276,10 +283,12 @@ function convert(swagger,options) {
                     }
                 }
 
-                if (op.operationId) content += '**'+op.operationId+'**\n\n';
+                //if (op.operationId) content += '**'+op.operationId+'**\n\n';
+                if (subtitle != opName) content += '`'+subtitle+'`\n\n';
                 if (op.summary) content += '*'+op.summary+'*\n\n';
                 if (op.description) content += op.description+'\n\n';
                 var parameters = (swagger.paths[method.path].parameters || []).concat(swagger.paths[method.path][method.op].parameters || []);
+                // TODO dedupe overridden parameters
                 if (parameters.length>0) {
                     var longDescs = false;
                     content += '### Parameters\n\n';
@@ -364,11 +373,13 @@ function convert(swagger,options) {
                 content += '### Responses\n\n';
                 content += 'Status|Meaning|Description\n';
                 content += '---|--|---|\n';
+                var responseSchemas = false;
                 for (var resp in op.responses) {
                     var response = op.responses[resp];
+                    if (response.schema) responseSchemas = true;
 
-                    var meaning = 'Unknown';
-                    var url = '#';
+                    var meaning = (resp == 'default' ? 'Default' :'Unknown');
+                    var url = '';
                     for (var s in statusCodes) {
                         if (statusCodes[s].code == resp) {
                             meaning = statusCodes[s].phrase;
@@ -376,29 +387,58 @@ function convert(swagger,options) {
                             break;
                         }
                     }
+                    if (url) meaning = '['+meaning+']('+url+')';
 
-                    content += resp+'|['+meaning+']('+url+')|'+response.description+'\n';
+                    content += resp+'|'+meaning+'|'+response.description+'\n';
                 }
-                content += '> Example responses\n\n';
-                for (var resp in op.responses) {
-                    var response = op.responses[resp];
-                    if (response.schema) {
-                        var obj = dereference(response.schema);
-                        try {
-                            obj = sampler.sample(obj);
-                        }
-                        catch (ex) {
-                            console.log('# '+ex);
-                        }
-                        if (doContentType(consumes,'application/json')) {
-                            content += '````json\n';
-                            content += JSON.stringify(obj,null,2)+'\n';
-                            content += '````\n';
+                if (responseSchemas) {
+                    content += '> Example responses\n\n';
+                    for (var resp in op.responses) {
+                        var response = op.responses[resp];
+                        if (response.schema) {
+                            var obj = dereference(response.schema);
+                            try {
+                                obj = sampler.sample(obj);
+                            }
+                            catch (ex) {
+                                console.log('# '+ex);
+                            }
+                            if (doContentType(consumes,'application/json')) {
+                                content += '````json\n';
+                                content += JSON.stringify(obj,null,2)+'\n';
+                                content += '````\n';
+                            }
                         }
                     }
                 }
 
-                content += '\n';
+                var security = (op.security ? op.security : swagger.security);
+                if (!security) security = [];
+                if (security.length<=0) {
+                    content += '<aside class="success">\n';
+                    content += 'This operation does not require authentication\n';
+                    content += '</aside>\n';
+                }
+                else {
+                    content += '<aside class="warning">\n';
+                    content += 'To perform this operation, you must be authenticated by means of one of the following methods:\n';
+                    var list = '';
+                    for (var s in security) {
+                        var link = '#/securityDefinitions/'+Object.keys(security[s])[0];
+                        var secDef = jptr.jptr(swagger,link);
+                        list += (list ? ', ' : '')+secDef.type;
+                        var data = security[s][Object.keys(security[s])[0]];
+                        if (Array.isArray(data) && (data.length>0)) {
+                            list += ' ( Scopes: ';
+                            for (var scope in data) {
+                                list += data[scope] + ' ';
+                            }
+                            list += ')';
+                        }
+                    }
+                    content += list+'\n';
+                    content += '</aside>\n';
+                }
 
             }
         }
