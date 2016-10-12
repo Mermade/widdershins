@@ -129,9 +129,9 @@ function convert(swagger,options) {
     var content = '';
 
     content += '# ' + header.title+'\n\n';
-    content += swagger.info.description+'\n\n';
+    if (swagger.info.description) content += swagger.info.description+'\n\n';
     var host = swagger.host;
-    var protocol = swagger.schemes ? swagger.schemes[0];
+    var protocol = swagger.schemes ? swagger.schemes[0] : '';
     if (!host && options.loadedFrom) {
         var u = up.parse(options.loadedFrom);
         host = u.host;
@@ -439,6 +439,8 @@ function convert(swagger,options) {
                     content += list+'\n';
                     content += '</aside>\n';
                 }
+
+                content += '\n';
 
             }
         }
