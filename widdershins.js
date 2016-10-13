@@ -6,7 +6,7 @@ var yaml = require('js-yaml');
 var converter = require('./index.js');
 
 var argv = require('yargs')
-    .usage('widdershins [options] {input-spec} [output markdown]')
+    .usage('widdershins [options] {input-spec} [[-o] output markdown]')
     .demand(1)
     .strict()
     .boolean('yaml')
@@ -18,6 +18,9 @@ var argv = require('yargs')
     .boolean('lang')
     .alias('l','lang')
     .describe('lang','Automatically generate list of languages for code samples')
+    .string('outfile')
+    .alias('o','outfile')
+    .describe('outfile','file to write output markdown to')
     .help('h')
     .alias('h', 'help')
     .version(function() {
@@ -40,8 +43,9 @@ if (argv.lang) options.language_tabs = [];
 
 var output = converter.convert(swagger,options);
 
-if (argv._.length>1) {
-    fs.writeFileSync(path.resolve(argv._[1]),output,'utf8');
+var outfile = argv.outfile||argv._[1];
+if (outfile) {
+    fs.writeFileSync(path.resolve(outfile),output,'utf8');
 }
 else {
     console.log(output);
