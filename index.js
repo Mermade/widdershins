@@ -123,6 +123,7 @@ function convert(swagger,options) {
     }
     header.includes = [];
     header.search = true;
+    header.highlight_theme = options.theme||'darkula';
 
     var content = '';
 

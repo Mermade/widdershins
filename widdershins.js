@@ -21,6 +21,9 @@ var argv = require('yargs')
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','file to write output markdown to')
+    .string('theme')
+    .alias('t','theme')
+    .describe('theme','Syntax-highlighter theme to use')
     .help('h')
     .alias('h', 'help')
     .version(function() {
@@ -40,6 +43,7 @@ else {
 var options = {};
 options.codeSamples = !argv.code;
 if (argv.lang) options.language_tabs = [];
+options.theme = argv.theme;
 
 var output = converter.convert(swagger,options);
 

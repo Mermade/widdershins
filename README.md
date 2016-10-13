@@ -5,14 +5,17 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions).
 
 ````
-widdershins [options] {input-spec} [output markdown]
+widdershins [options] {input-spec} [[-o] output markdown]
 
 Options:
-  -h, --help  Show help                                                [boolean]
-  --version   Show version number                                      [boolean]
-  -y, --yaml  Load spec in yaml format, default json                   [boolean]
-  -c, --code  Turn generic code samples off                            [boolean]
-  -l, --lang  Automatically generate list of languages for code samples[boolean]
+  -h, --help     Show help                                             [boolean]
+  --version      Show version number                                   [boolean]
+  -y, --yaml     Load spec in yaml format, default json                [boolean]
+  -c, --code     Turn generic code samples off                         [boolean]
+  -l, --lang     Automatically generate list of languages for code samples
+                                                                       [boolean]
+  -o, --outfile  file to write output markdown to                       [string]
+  -t, --theme    Syntax-highlighter theme to use                        [string]
 ````
 
 or
