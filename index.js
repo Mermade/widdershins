@@ -62,14 +62,12 @@ function dereference(obj,swagger){
         changes = 0;
         recurseotron.recurse(obj,{},function(obj,state) {
             if ((state.key === '$ref') && (typeof obj === 'string')) {
-                //console.log('#Dereferencing '+obj);
-                state.parents[state.parents.length-1][state.keys[state.keys.length-1]] = jptr.jptr(swagger,obj);
+                state.parents[state.parents.length-2][state.keys[state.keys.length-2]] = jptr.jptr(swagger,obj);
                 delete state.parent["$ref"];
                 changes++;
             }
         });
     }
-    //console.log(JSON.stringify(obj,null,'# '));
     return obj;
 }
 
@@ -372,11 +370,13 @@ function convert(swagger,options) {
 
                 content += '### Responses\n\n';
                 content += 'Status|Meaning|Description\n';
-                content += '---|--|---|\n';
+                content += '---|---|---|\n';
                 var responseSchemas = false;
+                var responseHeaders = false;
                 for (var resp in op.responses) {
                     var response = op.responses[resp];
                     if (response.schema) responseSchemas = true;
+                    if (response.headers) responseHeaders = true;
 
                     var meaning = (resp == 'default' ? 'Default' :'Unknown');
                     var url = '';
@@ -391,22 +391,56 @@ function convert(swagger,options) {
 
                     content += resp+'|'+meaning+'|'+response.description+'\n';
                 }
+
+                if (responseHeaders) {
+                    content += '### Response Headers\n\n';
+                    content += 'Status|Header|Type|Format|Description\n';
+                    content += '---|---|---|---|---|\n';
+                    for (var resp in op.responses) {
+                        var response = op.responses[resp];
+                        for (var h in response.headers) {
+                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+response.headers[h].format+'|'+response.headers[h].description+'\n';
+                        }
+                    }
+                }
+
                 if (responseSchemas) {
                     content += '> Example responses\n\n';
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         if (response.schema) {
-                            var obj = dereference(response.schema);
-                            try {
-                                obj = sampler.sample(obj);
+                            var xmlWrap = '';
+                            var obj = dereference(response.schema,swagger);
+                            if (obj.xml && obj.xml.name) {
+                                xmlWrap = obj.xml.name;
                             }
-                            catch (ex) {
-                                console.log('# '+ex);
-                            }
-                            if (doContentType(consumes,'application/json')) {
-                                content += '````json\n';
-                                content += JSON.stringify(obj,null,2)+'\n';
-                                content += '````\n';
+                            if (Object.keys(obj).length>0) {
+                                try {
+                                    obj = sampler.sample(obj);
+                                }
+                                catch (ex) {
+                                    console.log('# '+ex);
+                                }
+                                if (doContentType(produces,'application/json')) {
+                                    content += '````json\n';
+                                    content += JSON.stringify(obj,null,2)+'\n';
+                                    content += '````\n';
+                                }
+                                if (doContentType(produces,'text/x-yaml')) {
+                                    content += '````json\n';
+                                    content += yaml.safeDump(obj)+'\n';
+                                    content += '````\n';
+                                }
+                                if (xmlWrap) {
+                                    var newObj = {};
+                                    newObj[xmlWrap] = obj;
+                                    obj = newObj;
+                                }
+                                if ((typeof obj === 'object') && doContentType(produces,'application/xml')) {
+                                    content += '````xml\n';
+                                    content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
+                                    content += '````\n';
+                                }
                             }
                         }
                     }
