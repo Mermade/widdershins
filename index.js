@@ -284,22 +284,23 @@ function convert(swagger,options) {
                         content += '\n';
                         content += 'print r.json()\n';
                         content += '````\n';
-                        
+
                         content += '````java\n';
-                        content += 'public static void main(String[] args) {';
-                        content += '	URL obj = new URL("'+url+'");';
-                        content += '	HttpURLConnection con = (HttpURLConnection) obj.openConnection();';
-                        content += '	con.setRequestMethod('+method.op+');';
-                        content += '	int responseCode = con.getResponseCode();';
-                        content += '	BufferedReader in = new BufferedReader(new InputStreamReader(con.getInputStream()));';
-                        content += '	String inputLine;';
-                        content += '	StringBuffer response = new StringBuffer();';
-                        content += '	while ((inputLine = in.readLine()) != null) {';
-                        content += '		response.append(inputLine);';
-                        content += '	}';
-                        content += '	in.close();';
-                        content += '	System.out.println(response.toString());';
-                        content += '}';
+                        content += 'public static void main(String[] args) {\n';
+                        content += '    URL obj = new URL("'+url+'");\n';
+                        content += '    HttpURLConnection con = (HttpURLConnection) obj.openConnection();\n';
+                        content += '    con.setRequestMethod("'+method.op.toUpperCase()+'");\n';
+                        content += '    int responseCode = con.getResponseCode();\n';
+                        content += '    BufferedReader in = new BufferedReader(\n';
+                        content += '        new InputStreamReader(con.getInputStream()));\n';
+                        content += '    String inputLine;\n';
+                        content += '    StringBuffer response = new StringBuffer();\n';
+                        content += '    while ((inputLine = in.readLine()) != null) {\n';
+                        content += '        response.append(inputLine);\n';
+                        content += '    }\n';
+                        content += '    in.close();\n';
+                        content += '    System.out.println(response.toString());\n';
+                        content += '}\n';
                         content += '````\n';
                     }
                 }
