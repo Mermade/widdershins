@@ -105,7 +105,7 @@ function languageCheck(language,language_tabs,mutate){
 function convert(swagger,options) {
 
     var defaults = {};
-    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'html': 'JavaScript'},{'javascript': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'}];
+    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'html': 'JavaScript'},{'javascript': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'},{'java': 'Java'}];
     defaults.codeSamples = true;
     options = Object.assign({},defaults,options);
 
@@ -283,6 +283,24 @@ function convert(swagger,options) {
                         content += '})\n';
                         content += '\n';
                         content += 'print r.json()\n';
+                        content += '````\n';
+
+                        content += '````java\n';
+                        content += 'public static void main(String[] args) {\n';
+                        content += '    URL obj = new URL("'+url+'");\n';
+                        content += '    HttpURLConnection con = (HttpURLConnection) obj.openConnection();\n';
+                        content += '    con.setRequestMethod("'+method.op.toUpperCase()+'");\n';
+                        content += '    int responseCode = con.getResponseCode();\n';
+                        content += '    BufferedReader in = new BufferedReader(\n';
+                        content += '        new InputStreamReader(con.getInputStream()));\n';
+                        content += '    String inputLine;\n';
+                        content += '    StringBuffer response = new StringBuffer();\n';
+                        content += '    while ((inputLine = in.readLine()) != null) {\n';
+                        content += '        response.append(inputLine);\n';
+                        content += '    }\n';
+                        content += '    in.close();\n';
+                        content += '    System.out.println(response.toString());\n';
+                        content += '}\n';
                         content += '````\n';
                     }
                 }
