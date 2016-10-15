@@ -30,4 +30,4 @@ options.theme = 'darkula';
 var str = converter.convert(swaggerObj,options);
 ````
 
-To see the list of highlight-js sytax highlighting styles, [click here](https://highlightjs.org/static/demo/)
+To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
