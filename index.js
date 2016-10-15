@@ -254,8 +254,13 @@ function convert(swagger,options) {
                         content += '````\n';
 
                         content += '````javascript\n';
-                        content += "const request = require('request');\n";
-                        content += "request('"+url+"');\n";
+                        content += "const request = require('node-fetch');\n";
+                        content += "fetch('"+url+"', { method: '"+method.op.toUpperCase()+"'})\n";
+                        content += ".then(function(res) {\n";
+                        content += "    return res.json();\n";
+                        content += "}).then(function(body) {\n";
+                        content += "    console.log(body);\n";
+                        content += "});\n";
                         content += '````\n';
 
                         content += '````ruby\n';
