@@ -23,7 +23,10 @@ or
 
 ````javascript
 var converter = require('widdershins');
-var options = {};
+var options = {}; // defaults shown
+options.codeSamples = true;
+//options.language_tabs = [];
+options.theme = 'darkula';
 var str = converter.convert(swaggerObj,options);
 ````
 
