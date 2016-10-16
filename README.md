@@ -2,9 +2,10 @@
 OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) / 
 [Shins](https://github.com/mermade/shins) compatible markdown
 
+<img src="/docs/logo.png" width="247px" height="250px" />
+
 Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions).
 
-<img src="/docs/logo.png" width="247px" height="250px" />
 ````
 widdershins [options] {input-spec} [[-o] output markdown]
 
@@ -32,3 +33,7 @@ var str = converter.convert(swaggerObj,options);
 ````
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
+
+### Acknowledgements
+
+Thanks to @latgeek for the logo.
