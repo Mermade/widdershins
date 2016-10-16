@@ -4,6 +4,7 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 
 Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions).
 
+<img src="/docs/logo.png" width="247px" height="250px" />
 ````
 widdershins [options] {input-spec} [[-o] output markdown]
 
