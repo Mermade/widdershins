@@ -3,6 +3,7 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 [Shins](https://github.com/mermade/shins) compatible markdown
 
 [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru)
+[![Tested on Mermade OpenAPIs](https://mermade.github.io/openapi_optimise/tested.svg)](https://github.com/mermade/openapi_specifications)
 
 <img src="http://mermade.github.io/widdershins/logo.png" width="247px" height="250px" />
 
