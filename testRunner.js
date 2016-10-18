@@ -33,7 +33,7 @@ var options = argv;
 
 function check(file) {
 	var result = false;
-	var components = file.split('\\');
+	var components = file.split(path.sep);
 
 	if ((components[components.length-1] == 'swagger.yaml') || (components[components.length-1] == 'swagger.json')) {
 		console.log(normal+file);
@@ -76,9 +76,7 @@ function check(file) {
 
 process.exitCode = 1;
 pathspec = path.resolve(pathspec);
-console.log(pathspec);
 rr(pathspec, function (err, files) {
-    console.log(files.length);
 	for (var i in files) {
 		if (!check(files[i])) {
 			failures.push(files[i]);
