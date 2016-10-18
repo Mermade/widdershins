@@ -2,9 +2,14 @@
 OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) / 
 [Shins](https://github.com/mermade/shins) compatible markdown
 
-<img src="/docs/logo.png" width="247px" height="250px" />
+<img src="http://mermade.github.io/widdershins/logo.png" width="247px" height="250px" />
 
-Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions).
+### Widdershins *adverb*:
+* In a direction contrary to the sun's course;
+* anticlockwise;
+* helping you produce static documentation from your OpenApi / Swagger 2.0 definition
+
+Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation.
 
 ````
 widdershins [options] {input-spec} [[-o] output markdown]
@@ -28,9 +33,14 @@ var converter = require('widdershins');
 var options = {}; // defaults shown
 options.codeSamples = true;
 //options.language_tabs = [];
+//options.loadedFrom = sourceUrl;
 options.theme = 'darkula';
 var str = converter.convert(swaggerObj,options);
 ````
+
+`loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host,
+and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
+the definition was loaded from.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
 
