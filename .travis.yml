@@ -6,8 +6,5 @@ before_script:
   - git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
   - git clone --depth 1 https://github.com/mermade/openapi_specifications.git
 script:
-  - pwd
-  - ls -l
-  - ls -l ..
   - node testRunner openapi-directory/
   - node testRunner openapi_specifications/

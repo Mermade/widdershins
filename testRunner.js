@@ -75,7 +75,10 @@ function check(file) {
 }
 
 process.exitCode = 1;
+pathspec = path.resolve(pathspec);
+console.log(pathspec);
 rr(pathspec, function (err, files) {
+    console.log(files.length);
 	for (var i in files) {
 		if (!check(files[i])) {
 			failures.push(files[i]);
