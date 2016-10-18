@@ -46,6 +46,20 @@ the definition was loaded from.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
 
+## Tests
+
+To run a test-suite:
+
+````
+node testRunner {path-to-APIs}
+````
+
+The test harness currently expects files named `swagger.yaml` or `swagger.json` and has been tested
+against
+
+* [APIs.guru](https://github.com/APIs-guru/openapi-directory)
+* [Mermade OpenApi specifications collection](https://github.com/mermade/openapi_specifications)
+
 ### Acknowledgements
 
 Thanks to @latgeek for the logo.
