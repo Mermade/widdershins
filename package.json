@@ -34,5 +34,8 @@
     "openapi-sampler": "^0.3.2",
     "openapi_optimise": "latest",
     "yargs": "^5.0.0"
+  },
+  "devDependencies": {
+    "recursive-readdir": "^2.0.0"
   }
 }
