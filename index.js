@@ -4,7 +4,10 @@ var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
 var recurseotron = require('openapi_optimise/common.js');
+var circular = require('openapi_optimise/circular.js');
 var sampler = require('openapi-sampler');
+
+var circles = [];
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
@@ -56,13 +59,13 @@ function convertSwagger(source){
 }
 
 function dereference(obj,swagger){
-    if (obj["$ref"]) obj = clone(jptr.jptr(swagger,obj["$ref"]));
+    if (obj["$ref"]) obj = jptr.jptr(swagger,obj["$ref"]);
     var changes = 1;
     while (changes>0) {
         changes = 0;
         recurseotron.recurse(obj,{},function(obj,state) {
-            if ((state.key === '$ref') && (typeof obj === 'string')) {
-                state.parents[state.parents.length-2][state.keys[state.keys.length-2]] = jptr.jptr(swagger,obj);
+            if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
+				state.parents[state.parents.length-2][state.keys[state.keys.length-2]] = jptr.jptr(swagger,obj);
                 delete state.parent["$ref"];
                 changes++;
             }
@@ -115,10 +118,12 @@ function convert(swagger,options) {
     // we always show json / yaml / xml if used in consumes/produces
     header.language_tabs = options.language_tabs;
 
+	circles = circular.getCircularRefs(swagger, options);
+
     header.toc_footers = [];
     if (swagger.externalDocs) {
         if (swagger.externalDocs.url) {
-            header.toc_footers.push('<a href="'+swagger.externalDocs.url+'">'+swagger.externalDocs.description+'</a>');
+            header.toc_footers.push('<a href="'+swagger.externalDocs.url+'">'+(swagger.externalDocs.description ? swagger.externalDocs.description : 'External Docs')+'</a>');
         }
     }
     header.includes = [];
@@ -138,7 +143,7 @@ function convert(swagger,options) {
     }
     if (!host) host = 'example.com';
     if (!protocol) protocol = 'http';
-    content += 'Base URL = '+protocol+'://'+host+swagger.basePath+'\n\n';
+    content += 'Base URL = '+protocol+'://'+host+(swagger.basePath ? swagger.basePath : '/')+'\n\n';
     if (swagger.info.termsOfService) {
         content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
     }
@@ -153,7 +158,12 @@ function convert(swagger,options) {
         }
     }
     if (swagger.info.license) {
-        content += 'License: <a href="'+swagger.info.license.url+'">'+swagger.info.license.name+'</a>\n';
+		if (swagger.info.license.url) {
+        	content += 'License: <a href="'+swagger.info.license.url+'">'+swagger.info.license.name+'</a>\n';
+		}
+		else {
+        	content += 'License: '+swagger.info.license.name+'\n';
+		}
     }
 
     if (swagger.securityDefinitions) {
@@ -206,7 +216,7 @@ function convert(swagger,options) {
                 var opName = (op.operationId ? op.operationId : subtitle);
                 content += '## '+opName+'\n\n';
 
-                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+swagger.basePath+method.path;
+                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+(swagger.basePath ? swagger.basePath : '')+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
 
@@ -413,7 +423,7 @@ function convert(swagger,options) {
                     }
                     if (url) meaning = '['+meaning+']('+url+')';
 
-                    content += resp+'|'+meaning+'|'+response.description+'\n';
+                    content += resp+'|'+meaning+'|'+(response.description ? response.description : 'No description')+'\n';
                 }
 
                 if (responseHeaders) {
@@ -423,7 +433,7 @@ function convert(swagger,options) {
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         for (var h in response.headers) {
-                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+response.headers[h].format+'|'+response.headers[h].description+'\n';
+                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+(response.headers[h].format ? response.headers[h].format : '')+'|'+response.headers[h].description+'\n';
                         }
                     }
                 }

@@ -2,6 +2,8 @@
 OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) / 
 [Shins](https://github.com/mermade/shins) compatible markdown
 
+[![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru)
+
 <img src="http://mermade.github.io/widdershins/logo.png" width="247px" height="250px" />
 
 ### Widdershins *adverb*:
