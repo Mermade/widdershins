@@ -74,7 +74,7 @@ function check(file) {
 	return result;
 }
 
-console.log(green);
+process.exitCode = 1;
 rr(pathspec, function (err, files) {
 	for (var i in files) {
 		if (!check(files[i])) {
@@ -93,4 +93,5 @@ process.on('exit', function(code) {
 	}
 	console.log(normal);
 	console.log('Tests: %s passing, %s failing', pass, fail);
+	process.exitCode = (fail === 0) ? 0 : 1;
 });

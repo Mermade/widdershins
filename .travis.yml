@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - "6"
+  - "4"
+before_script:
+  - git clone https://github.com/APIs-guru/openapi-directory.git
+  - git clone https://github.com/mermade/openapi_specifications.git
+script:
+  - node testRunner ./openapi-directory
+  - node testRunner ./openapi_specifications
