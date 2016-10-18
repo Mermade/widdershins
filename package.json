@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "OpenApi / Swagger definition to slate / shins compatible markdown",
   "main": "index.js",
   "directories": {
