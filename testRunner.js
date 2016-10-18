@@ -93,5 +93,5 @@ process.on('exit', function(code) {
 	}
 	console.log(normal);
 	console.log('Tests: %s passing, %s failing', pass, fail);
-	process.exitCode = (fail === 0) ? 0 : 1;
+	process.exitCode = ((fail === 0) && (pass > 0)) ? 0 : 1;
 });
