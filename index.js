@@ -433,7 +433,7 @@ function convert(swagger,options) {
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         for (var h in response.headers) {
-                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+(response.headers[h].format ? response.headers[h].format : '')+'|'+response.headers[h].description+'\n';
+                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+(response.headers[h].format ? response.headers[h].format : '')+'|'+(response.headers[h].description ? response.headers[h].description : '')+'\n';
                         }
                     }
                 }
