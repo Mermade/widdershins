@@ -1,3 +1,4 @@
+'use strict';
 var fs = require('fs');
 var path = require('path');
 
@@ -42,7 +43,9 @@ else {
 
 var options = {};
 options.codeSamples = !argv.code;
-if (argv.lang) options.language_tabs = [];
+if (argv.lang) {
+	options.language_tabs = [];
+}
 options.theme = argv.theme;
 
 var output = converter.convert(swagger,options);
@@ -54,3 +57,4 @@ if (outfile) {
 else {
     console.log(output);
 }
+
