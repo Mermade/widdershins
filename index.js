@@ -235,83 +235,98 @@ function convert(swagger,options) {
                         }
                     }
                     else {
-                        content += '````shell\n';
-                        content += '# you can also use wget\n';
-                        content += 'curl -X '+method.op+' '+url+'\n';
-                        content += '````\n';
-
-                        content += '````http\n';
-                        content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
-                        content += 'Host: '+swagger.host+'\n';
-                        if (consumes.length) {
-                            content += 'Content-Type: '+consumes[0]+'\n';
+                        if (languageCheck('shell', header.language_tabs, false)) {
+                            content += '````shell\n';
+                            content += '# you can also use wget\n';
+                            content += 'curl -X '+method.op+' '+url+'\n';
+                            content += '````\n\n';
                         }
-                        if (produces.length) {
-                            content += 'Accept: '+produces[0]+'\n';
+
+                        if (languageCheck('http', header.language_tabs, false)) {
+                            content += '````http\n';
+                            content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
+                            content += 'Host: '+swagger.host+'\n';
+                            if (consumes.length) {
+                                content += 'Content-Type: '+consumes[0]+'\n';
+                            }
+                            if (produces.length) {
+                                content += 'Accept: '+produces[0]+'\n';
+                            }
+                            content += '````\n\n';
                         }
-                        content += '````\n';
 
-                        content += '````html\n';
-                        content += '<script>\n';
-                        content += '  $.ajax({\n';
-                        content += "    url: '"+url+"',\n";
-                        content += "    method: '"+method.op+"',\n";
-                        content += '    success: function(data) {\n';
-                        content += '      console.log(JSON.stringify(data));\n';
-                        content += '    }\n';
-                        content += '  })\n';
-                        content += '</script>\n';
-                        content += '````\n';
+                        if (languageCheck('html', header.language_tabs, false)) {
+                            content += '````html\n';
+                            content += '<script>\n';
+                            content += '  $.ajax({\n';
+                            content += "    url: '"+url+"',\n";
+                            content += "    method: '"+method.op+"',\n";
+                            content += '    success: function(data) {\n';
+                            content += '      console.log(JSON.stringify(data));\n';
+                            content += '    }\n';
+                            content += '  })\n';
+                            content += '</script>\n';
+                            content += '````\n\n';
+                        }
 
-                        content += '````javascript\n';
-                        content += "const request = require('node-fetch');\n";
-                        content += "fetch('"+url+"', { method: '"+method.op.toUpperCase()+"'})\n";
-                        content += ".then(function(res) {\n";
-                        content += "    return res.json();\n";
-                        content += "}).then(function(body) {\n";
-                        content += "    console.log(body);\n";
-                        content += "});\n";
-                        content += '````\n';
+                        if (languageCheck('javascript', header.language_tabs, false)) {
+                            content += '````javascript\n';
+                            content += "const request = require('node-fetch');\n";
+                            content += "fetch('"+url+"', { method: '"+method.op.toUpperCase()+"'})\n";
+                            content += ".then(function(res) {\n";
+                            content += "    return res.json();\n";
+                            content += "}).then(function(body) {\n";
+                            content += "    console.log(body);\n";
+                            content += "});\n";
+                            content += '````\n\n';
+                        }
 
-                        content += '````ruby\n';
-                        content += "require 'rest-client'\n";
-                        content += "require 'json'\n";
-                        content += '\n';
-                        content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
-                        content += '  {\n';
-                        content += '    # TODO\n';
-                        content += '  }\n';
-                        content += '\n';
-                        content += 'p JSON.parse(result)\n';
-                        content += '````\n';
+                        if (languageCheck('ruby', header.language_tabs, false)) {
+                            content += '````ruby\n';
+                            content += "require 'rest-client'\n";
+                            content += "require 'json'\n";
+                            content += '\n';
+                            content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
+                            content += '  {\n';
+                            content += '    # TODO\n';
+                            content += '  }\n';
+                            content += '\n';
+                            content += 'p JSON.parse(result)\n';
+                            content += '````\n\n';
+                        }
 
-                        content += '````python\n';
-                        content += "import requests\n";
-                        content += '\n';
-                        content += 'r = requests.'+method.op+"('"+url+"', params={\n";
-                        content += '  # TODO\n';
-                        content += '})\n';
-                        content += '\n';
-                        content += 'print r.json()\n';
-                        content += '````\n';
+                        if (languageCheck('python', header.language_tabs, false)) {
+                            content += '````python\n';
+                            content += "import requests\n";
+                            content += '\n';
+                            content += 'r = requests.'+method.op+"('"+url+"', params={\n";
+                            content += '  # TODO\n';
+                            content += '})\n';
+                            content += '\n';
+                            content += 'print r.json()\n';
+                            content += '````\n\n';
+                        }
 
-                        content += '````java\n';
-                        content += 'public static void main(String[] args) {\n';
-                        content += '    URL obj = new URL("'+url+'");\n';
-                        content += '    HttpURLConnection con = (HttpURLConnection) obj.openConnection();\n';
-                        content += '    con.setRequestMethod("'+method.op.toUpperCase()+'");\n';
-                        content += '    int responseCode = con.getResponseCode();\n';
-                        content += '    BufferedReader in = new BufferedReader(\n';
-                        content += '        new InputStreamReader(con.getInputStream()));\n';
-                        content += '    String inputLine;\n';
-                        content += '    StringBuffer response = new StringBuffer();\n';
-                        content += '    while ((inputLine = in.readLine()) != null) {\n';
-                        content += '        response.append(inputLine);\n';
-                        content += '    }\n';
-                        content += '    in.close();\n';
-                        content += '    System.out.println(response.toString());\n';
-                        content += '}\n';
-                        content += '````\n';
+                        if (languageCheck('java', header.language_tabs, false)) {
+                            content += '````java\n';
+                            content += 'public static void main(String[] args) {\n';
+                            content += '    URL obj = new URL("'+url+'");\n';
+                            content += '    HttpURLConnection con = (HttpURLConnection) obj.openConnection();\n';
+                            content += '    con.setRequestMethod("'+method.op.toUpperCase()+'");\n';
+                            content += '    int responseCode = con.getResponseCode();\n';
+                            content += '    BufferedReader in = new BufferedReader(\n';
+                            content += '        new InputStreamReader(con.getInputStream()));\n';
+                            content += '    String inputLine;\n';
+                            content += '    StringBuffer response = new StringBuffer();\n';
+                            content += '    while ((inputLine = in.readLine()) != null) {\n';
+                            content += '        response.append(inputLine);\n';
+                            content += '    }\n';
+                            content += '    in.close();\n';
+                            content += '    System.out.println(response.toString());\n';
+                            content += '}\n';
+                            content += '````\n\n';
+                        }
+
                     }
                 }
 
