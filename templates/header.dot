@@ -1,6 +1,6 @@
 # {{=data.header.title}}
 
-{{=data.openapi.info.description}}
+{{? data.openapi.info.description}}{{=data.openapi.info.description}}{{?}}
 
 Base URL = {{=data.baseUrl}}
 
