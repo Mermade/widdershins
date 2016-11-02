@@ -6,6 +6,10 @@ var jptr = require('jgexml/jpath.js');
 var recurseotron = require('openapi_optimise/common.js');
 var circular = require('openapi_optimise/circular.js');
 var sampler = require('openapi-sampler');
+var dot = require('dot');
+dot.templateSettings.strip = false;
+dot.templateSettings.varname = 'data';
+var templates = dot.process({ path: './templates' });
 
 var circles = [];
 
@@ -130,41 +134,27 @@ function convert(swagger,options) {
     header.search = true;
     header.highlight_theme = options.theme||'darkula';
 
-    var content = '';
+    var data = {};
+	data.openapi = swagger;
+	data.header = header;
 
-    content += '# ' + header.title+'\n\n';
+
     if (swagger.info.description) content += swagger.info.description+'\n\n';
-    var host = swagger.host;
-    var protocol = swagger.schemes ? swagger.schemes[0] : '';
-    if (!host && options.loadedFrom) {
+    data.host = swagger.host;
+    data.protocol = swagger.schemes ? swagger.schemes[0] : '';
+    if (!data.host && options.loadedFrom) {
         var u = up.parse(options.loadedFrom);
-        host = u.host;
-        protocol = u.protocol.replace(':','');
+        data.host = u.host;
+        data.protocol = u.protocol.replace(':','');
     }
-    if (!host) host = 'example.com';
-    if (!protocol) protocol = 'http';
-    content += 'Base URL = '+protocol+'://'+host+(swagger.basePath ? swagger.basePath : '/')+'\n\n';
-    if (swagger.info.termsOfService) {
-        content += '<a href="'+swagger.info.termsOfService+'">Terms of service</a>\n';
-    }
+    if (!data.host) host = 'example.com';
+	if (!data.protocol) protocol = 'http';
 
-    if (swagger.info.contact) {
-        var name = (swagger.info.contact.name||'Support');
-        if (swagger.info.contact.email) {
-            content += 'Email: <a href="mailto:'+swagger.info.contact.email+'">'+name+'</a>\n';
-        }
-        if (swagger.info.contact.url) {
-            content += 'Web: <a href="'+swagger.info.contact.url+'">'+name+'</a>\n';
-        }
-    }
-    if (swagger.info.license) {
-		if (swagger.info.license.url) {
-        	content += 'License: <a href="'+swagger.info.license.url+'">'+swagger.info.license.name+'</a>\n';
-		}
-		else {
-        	content += 'License: '+swagger.info.license.name+'\n';
-		}
-    }
+	data.baseUrl = data.protocol+'://'+data.host+(swagger.basePath ? swagger.basePath : '/');
+    data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
+    
+    var content = '';
+	content += templates.header(data)+'\n';
 
     if (swagger.securityDefinitions) {
         content += '# Authentication\n';
@@ -216,12 +206,22 @@ function convert(swagger,options) {
                 var opName = (op.operationId ? op.operationId : subtitle);
                 content += '## '+opName+'\n\n';
 
-                var url = (swagger.schemes ? swagger.schemes[0] : 'http')+'://'+host+(swagger.basePath ? swagger.basePath : '')+method.path;
+                var url = (swagger.schemes ? swagger.schemes[0] : data.protocol)+'://'+data.host+(swagger.basePath ? swagger.basePath : '')+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
+                var parameters = (swagger.paths[method.path].parameters || []).concat(swagger.paths[method.path][method.op].parameters || []);
+                // TODO dedupe overridden parameters
 
                 var codeSamples = (options.codeSamples || op["x-code-samples"]);
                 if (codeSamples) {
+					data.method = method.op;
+					data.methodUpper = method.op.toUpperCase();
+					data.url = url;
+					data.parameters = parameters;
+					data.produces = produces;
+					data.consumes = consumes;
+					data.operation = method;
+					data.resource = resource;
 
                     content += '> Code samples\n\n';
 
@@ -230,103 +230,46 @@ function convert(swagger,options) {
                             var sample = op["x-code-samples"][s];
                             var lang = languageCheck(sample.lang,header.language_tabs,true);
                             content += '````'+lang+'\n';
-                            content += sample.source+'\n';
-                            content += '````\n';
+                            content += sample.source;
+                            content += '\n````\n';
                         }
                     }
                     else {
                         if (languageCheck('shell', header.language_tabs, false)) {
                             content += '````shell\n';
-                            content += '# you can also use wget\n';
-                            content += 'curl -X '+method.op+' '+url+'\n';
+							content += templates.code_shell(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('http', header.language_tabs, false)) {
                             content += '````http\n';
-                            content += method.op.toUpperCase()+' '+url+' HTTP/1.1\n';
-                            content += 'Host: '+swagger.host+'\n';
-                            if (consumes.length) {
-                                content += 'Content-Type: '+consumes[0]+'\n';
-                            }
-                            if (produces.length) {
-                                content += 'Accept: '+produces[0]+'\n';
-                            }
+							content += templates.code_http(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('html', header.language_tabs, false)) {
                             content += '````html\n';
-                            content += '<script>\n';
-                            content += '  $.ajax({\n';
-                            content += "    url: '"+url+"',\n";
-                            content += "    method: '"+method.op+"',\n";
-                            content += '    success: function(data) {\n';
-                            content += '      console.log(JSON.stringify(data));\n';
-                            content += '    }\n';
-                            content += '  })\n';
-                            content += '</script>\n';
+							content += templates.code_html(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('javascript', header.language_tabs, false)) {
                             content += '````javascript\n';
-                            content += "const request = require('node-fetch');\n";
-                            content += "fetch('"+url+"', { method: '"+method.op.toUpperCase()+"'})\n";
-                            content += ".then(function(res) {\n";
-                            content += "    return res.json();\n";
-                            content += "}).then(function(body) {\n";
-                            content += "    console.log(body);\n";
-                            content += "});\n";
+							content += templates.code_javascript(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('ruby', header.language_tabs, false)) {
                             content += '````ruby\n';
-                            content += "require 'rest-client'\n";
-                            content += "require 'json'\n";
-                            content += '\n';
-                            content += 'result = RestClient.'+method.op+" '"+url+"', params:\n";
-                            content += '  {\n';
-                            content += '    # TODO\n';
-                            content += '  }\n';
-                            content += '\n';
-                            content += 'p JSON.parse(result)\n';
+							content += templates.code_ruby(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('python', header.language_tabs, false)) {
                             content += '````python\n';
-                            content += "import requests\n";
-                            content += '\n';
-                            content += 'r = requests.'+method.op+"('"+url+"', params={\n";
-                            content += '  # TODO\n';
-                            content += '})\n';
-                            content += '\n';
-                            content += 'print r.json()\n';
+							content += templates.code_python(data);
                             content += '````\n\n';
                         }
-
                         if (languageCheck('java', header.language_tabs, false)) {
                             content += '````java\n';
-                            content += 'public static void main(String[] args) {\n';
-                            content += '    URL obj = new URL("'+url+'");\n';
-                            content += '    HttpURLConnection con = (HttpURLConnection) obj.openConnection();\n';
-                            content += '    con.setRequestMethod("'+method.op.toUpperCase()+'");\n';
-                            content += '    int responseCode = con.getResponseCode();\n';
-                            content += '    BufferedReader in = new BufferedReader(\n';
-                            content += '        new InputStreamReader(con.getInputStream()));\n';
-                            content += '    String inputLine;\n';
-                            content += '    StringBuffer response = new StringBuffer();\n';
-                            content += '    while ((inputLine = in.readLine()) != null) {\n';
-                            content += '        response.append(inputLine);\n';
-                            content += '    }\n';
-                            content += '    in.close();\n';
-                            content += '    System.out.println(response.toString());\n';
-                            content += '}\n';
+							content += templates.code_java(data);
                             content += '````\n\n';
                         }
-
                     }
                 }
 
@@ -334,9 +277,8 @@ function convert(swagger,options) {
                 if (subtitle != opName) content += '`'+subtitle+'`\n\n';
                 if (op.summary) content += '*'+op.summary+'*\n\n';
                 if (op.description) content += op.description+'\n\n';
-                var parameters = (swagger.paths[method.path].parameters || []).concat(swagger.paths[method.path][method.op].parameters || []);
-                // TODO dedupe overridden parameters
-                if (parameters.length>0) {
+                
+				if (parameters.length>0) {
                     var longDescs = false;
                     content += '### Parameters\n\n';
                     content += 'Parameter|In|Type|Required|Description\n';
@@ -498,9 +440,7 @@ function convert(swagger,options) {
                 var security = (op.security ? op.security : swagger.security);
                 if (!security) security = [];
                 if (security.length<=0) {
-                    content += '<aside class="success">\n';
-                    content += 'This operation does not require authentication\n';
-                    content += '</aside>\n';
+				    content += templates.authentication_none(data);
                 }
                 else {
                     content += '<aside class="warning">\n';
@@ -510,11 +450,11 @@ function convert(swagger,options) {
                         var link = '#/securityDefinitions/'+Object.keys(security[s])[0];
                         var secDef = jptr.jptr(swagger,link);
                         list += (list ? ', ' : '')+secDef.type;
-                        var data = security[s][Object.keys(security[s])[0]];
-                        if (Array.isArray(data) && (data.length>0)) {
+                        var scopes = security[s][Object.keys(security[s])[0]];
+                        if (Array.isArray(scopes) && (scopes.length>0)) {
                             list += ' ( Scopes: ';
-                            for (var scope in data) {
-                                list += data[scope] + ' ';
+                            for (var scope in scopes) {
+                                list += scopes[scope] + ' ';
                             }
                             list += ')';
                         }

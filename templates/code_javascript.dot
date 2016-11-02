@@ -1,0 +1,7 @@
+const request = require('node-fetch');
+fetch('{{=data.url}}', { method: '{{=data.methodUpper}}'})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});

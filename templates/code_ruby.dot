@@ -1,0 +1,9 @@
+require 'rest-client'
+require 'json'
+
+result = RestClient.{{=data.method}} '{{=data.url}}', params:
+  {
+    # TODO
+  }
+
+p JSON.parse(result)

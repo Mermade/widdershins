@@ -1,0 +1,7 @@
+import requests
+
+r = requests.{{=data.method}}('{{=data.url}}', params={
+  # TODO
+})
+
+print r.json()

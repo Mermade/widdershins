@@ -12,7 +12,13 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 * anticlockwise;
 * helping you produce static documentation from your OpenApi / Swagger 2.0 definition
 
-Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation.
+Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory.
+
+### To install
+
+* Clone the git repository, or
+* `npm install widdershins`, or
+* `yarn install -g widdershins`
 
 ````
 widdershins [options] {input-spec} [[-o] output markdown]
@@ -46,6 +52,31 @@ and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specifica
 the definition was loaded from.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
+
+## Template parameters
+
+Templates are compiled with [doT.js](https://github.com/olado/doT#readme).
+
+Templates have access to a `data` object with a range of properties based on the document context.
+
+### Code templates
+
+* `method` - the HTTP method of the operation (in lower-case)
+* `methodUpper` - the HTTP method of the operation (in upper-case)
+* `url` - the full URL of the operation (including protocol and host)
+* `parameters[]` - an array of parameters for the operation
+* `consumes[]` - an array of MIME-types the operation consumes
+* `produces[]` - an array of MIME-types the operation produces
+* `operation` - the current operation object
+* `resource` - the current tag/path object
+
+### Common to all templates
+
+* `openapi` - the top-level OpenApi / Swagger document
+* `header` - the front-matter of the Slate/Shins markdown document
+* `host` - the (computed) host of the API
+* `protocol` - the default/first protocol of the API
+* `baseUrl` - the (computed) baseUrl of the API (including protocol and host)
 
 ## Tests
 
