@@ -386,7 +386,7 @@ function convert(swagger,options) {
                                 xmlWrap = obj.xml.name;
                             }
                             try {
-                                obj = sampler.sample(obj);
+                                obj = sampler.sample(obj, {skipReadOnly: true});
                             }
                             catch (ex) {
                                 console.log('# '+ex);
