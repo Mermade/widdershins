@@ -78,6 +78,11 @@ Templates have access to a `data` object with a range of properties based on the
 
 * `responses[]` - an array of responses, including `status` and `meaning` properties
 
+### Authentication template
+
+* `authenticationStr` - a simple string of methods (and scopes where appropriate)
+* `securityDefinitions[]` - an array of applicable securityDefinitions
+
 ### Common to all templates
 
 * `openapi` - the top-level OpenApi / Swagger document

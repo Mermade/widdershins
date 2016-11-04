@@ -163,31 +163,24 @@ function convert(swagger,options) {
 	content += templates.heading_main(data)+'\n';
 
     if (swagger.securityDefinitions) {
-        content += '# Authentication\n';
+		data.securityDefinitions = [];
         for (var s in swagger.securityDefinitions) {
             var secdef = swagger.securityDefinitions[s];
             var desc = secdef.description ? secdef.description : '';
-            if (secdef.type == 'apiKey') {
-                content += '* '+secdef.type+'\n';
-                content += '- Parameter Name: **'+secdef.name+'**, in: '+secdef.in+'. '+desc+'\n';
-            }
-            else if (secdef.type == 'basic') {
-                content += '- Basic authentication. '+desc+'\n';
-            }
-            else if (secdef.type == 'oauth2') {
-                content += '- oAuth2 authentication. '+desc+'\n';
-                content += '- Flow: '+secdef.flow+'\n';
-                if (secdef.authorizationUrl) {
-                    content += '- Authorization URL = ['+secdef.authorizationUrl+']('+secdef.authorizationUrl+')\n';
-                }
-                if (secdef.tokenUrl) {
-                    content += '- Token URL = ['+secdef.tokenUrl+']('+secdef.tokenUrl+')\n';
-                }
+            if (secdef.type == 'oauth2') {
+			    secdef.scopeArray = [];
                 for (var s in secdef.scopes) {
-                    content += '- Scope: '+s+' = '+secdef.scopes[s]+'\n';
+					var scope = {};
+					scope.name = s;
+					scope.description = secdef.scopes[s];
+					secdef.scopeArray.push(scope);
                 }
             }
+			secdef.ref = s;
+			if (!secdef.description) secdef.description = '';
+			data.securityDefinitions.push(secdef);
         }
+		content += templates.security(data);
     }
 
     var apiInfo = convertSwagger(swagger);
@@ -451,12 +444,12 @@ function convert(swagger,options) {
 				    content += templates.authentication_none(data);
                 }
                 else {
-                    content += '<aside class="warning">\n';
-                    content += 'To perform this operation, you must be authenticated by means of one of the following methods:\n';
+				    data.securityDefinitions = [];
                     var list = '';
                     for (var s in security) {
                         var link = '#/securityDefinitions/'+Object.keys(security[s])[0];
                         var secDef = jptr.jptr(swagger,link);
+						data.securityDefinitions.push(secDef);
                         list += (list ? ', ' : '')+secDef.type;
                         var scopes = security[s][Object.keys(security[s])[0]];
                         if (Array.isArray(scopes) && (scopes.length>0)) {
@@ -467,8 +460,8 @@ function convert(swagger,options) {
                             list += ')';
                         }
                     }
-                    content += list+'\n';
-                    content += '</aside>\n';
+					data.authenticationStr = list;
+					content += templates.authentication(data);
                 }
 
                 content += '\n';
