@@ -289,7 +289,7 @@ function convert(swagger,options) {
                         var param = parameters[p];
 
                         if (param["$ref"]) {
-                            param = jptr.jptr(swagger,param["$ref"]);
+                            parameters[p] = param = jptr.jptr(swagger,param["$ref"]);
                         }
 						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
