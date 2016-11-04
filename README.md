@@ -70,6 +70,14 @@ Templates have access to a `data` object with a range of properties based on the
 * `operation` - the current operation object
 * `resource` - the current tag/path object
 
+### Parameter template
+
+* `parameters[]` - an array of parameters, including a `shortDesc` property
+
+### Responses template
+
+* `responses[]` - an array of responses, including `status` and `meaning` properties
+
 ### Common to all templates
 
 * `openapi` - the top-level OpenApi / Swagger document

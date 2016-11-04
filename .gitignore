@@ -1,4 +1,5 @@
 *.html.md
+user_templates/
 *.tgz
 doit
 

@@ -1,4 +1,5 @@
 var up = require('url');
+var path = require('path');
 
 var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
@@ -9,7 +10,7 @@ var sampler = require('openapi-sampler');
 var dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
-var templates = dot.process({ path: './templates' });
+var templates;
 
 var circles = [];
 
@@ -116,6 +117,13 @@ function convert(swagger,options) {
     defaults.codeSamples = true;
     options = Object.assign({},defaults,options);
 
+    if (typeof templates === 'undefined') {
+		templates = dot.process({ path: path.join(__dirname,'templates') });
+	}
+	if (options.user_templates) {
+		templates = Object.assign(templates, dot.process({ path: options.user_templates }));
+	}
+
     var header = {};
     header.title = swagger.info.title+' '+((swagger.info.version.toLowerCase().startsWith('v')) ? swagger.info.version : 'v'+swagger.info.version);
 
@@ -138,8 +146,6 @@ function convert(swagger,options) {
 	data.openapi = swagger;
 	data.header = header;
 
-
-    if (swagger.info.description) content += swagger.info.description+'\n\n';
     data.host = swagger.host;
     data.protocol = swagger.schemes ? swagger.schemes[0] : '';
     if (!data.host && options.loadedFrom) {
@@ -154,7 +160,7 @@ function convert(swagger,options) {
     data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
     
     var content = '';
-	content += templates.header(data)+'\n';
+	content += templates.heading_main(data)+'\n';
 
     if (swagger.securityDefinitions) {
         content += '# Authentication\n';
@@ -223,7 +229,7 @@ function convert(swagger,options) {
 					data.operation = method;
 					data.resource = resource;
 
-                    content += '> Code samples\n\n';
+                    content += templates.heading_code_samples(data);
 
                     if (op["x-code-samples"]) {
                         for (var s in op["x-code-samples"]) {
@@ -273,28 +279,25 @@ function convert(swagger,options) {
                     }
                 }
 
-                //if (op.operationId) content += '**'+op.operationId+'**\n\n';
                 if (subtitle != opName) content += '`'+subtitle+'`\n\n';
                 if (op.summary) content += '*'+op.summary+'*\n\n';
                 if (op.description) content += op.description+'\n\n';
                 
 				if (parameters.length>0) {
                     var longDescs = false;
-                    content += '### Parameters\n\n';
-                    content += 'Parameter|In|Type|Required|Description\n';
-                    content += '---|---|---|---|---|\n';
                     for (var p in parameters) {
                         var param = parameters[p];
 
                         if (param["$ref"]) {
                             param = jptr.jptr(swagger,param["$ref"]);
                         }
-
-                        var desc = param.description ? param.description.split('\n')[0] : 'No description';
+						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
-                        content += param.name+'|'+param.in+'|'+(param.type||'object')+'|'+(param.required ? param.required : false)+'|'+desc+'\n';
+						param.type = (param.type || 'object');
+						param.required = (param.required ? param.required : false);
                     }
-                    content += '\n';
+					data.parameters = parameters;
+					content += templates.parameters(data);
 
                     if (longDescs) {
                         for (var p in parameters) {
@@ -319,7 +322,7 @@ function convert(swagger,options) {
                         }
                         if (param.schema) {
                             if (!paramHeader) {
-                                content += '> Body parameter\n\n';
+                    			content += templates.heading_body_parameter(data);
                                 paramHeader = true;
                             }
                             var xmlWrap = '';
@@ -359,44 +362,49 @@ function convert(swagger,options) {
 
                 }
 
-                content += '### Responses\n\n';
-                content += 'Status|Meaning|Description\n';
-                content += '---|---|---|\n';
                 var responseSchemas = false;
                 var responseHeaders = false;
+				data.responses = [];
                 for (var resp in op.responses) {
                     var response = op.responses[resp];
                     if (response.schema) responseSchemas = true;
                     if (response.headers) responseHeaders = true;
 
-                    var meaning = (resp == 'default' ? 'Default' :'Unknown');
+					response.status = resp;
+                    response.meaning = (resp == 'default' ? 'Default' :'Unknown');
                     var url = '';
                     for (var s in statusCodes) {
                         if (statusCodes[s].code == resp) {
-                            meaning = statusCodes[s].phrase;
+                            response.meaning = statusCodes[s].phrase;
                             url = statusCodes[s].spec_href;
                             break;
                         }
                     }
-                    if (url) meaning = '['+meaning+']('+url+')';
-
-                    content += resp+'|'+meaning+'|'+(response.description ? response.description : 'No description')+'\n';
+                    if (url) response.meaning = '['+response.meaning+']('+url+')';
+					if (!response.description) response.description = 'No description';
+					data.responses.push(response);
                 }
+				content += templates.responses(data);
 
                 if (responseHeaders) {
-                    content += '### Response Headers\n\n';
-                    content += 'Status|Header|Type|Format|Description\n';
-                    content += '---|---|---|---|---|\n';
+					data.response_headers = [];
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         for (var h in response.headers) {
-                            content += resp+'|'+h+'|'+response.headers[h].type+'|'+(response.headers[h].format ? response.headers[h].format : '')+'|'+(response.headers[h].description ? response.headers[h].description : '')+'\n';
+						    var hdr = response.headers[h];
+							hdr.status = resp;
+							hdr.header = h;
+							if (!hdr.format) hdr.format = '';
+							if (!hdr.description) hdr.description = '';
+
+							data.response_headers.push(hdr);
                         }
                     }
+					content += templates.response_headers(data);
                 }
 
                 if (responseSchemas) {
-                    content += '> Example responses\n\n';
+					content += templates.heading_example_responses(data);
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         if (response.schema) {

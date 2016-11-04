@@ -1,0 +1,6 @@
+### Responses
+
+Status|Meaning|Description
+---|---|---|
+{{~ data.responses :r}}{{=r.status}}|{{=r.meaning}}|{{=r.description}}
+{{~}}
