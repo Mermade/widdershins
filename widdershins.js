@@ -25,6 +25,9 @@ var argv = require('yargs')
     .string('theme')
     .alias('t','theme')
     .describe('theme','Syntax-highlighter theme to use')
+	.string('user_templates')
+	.alias('u','user_templates')
+	.describe('user_templates','directory to load override templates from')
     .help('h')
     .alias('h', 'help')
     .version(function() {
@@ -47,6 +50,7 @@ if (argv.lang) {
 	options.language_tabs = [];
 }
 options.theme = argv.theme;
+options.user_templates = argv.user_templates;
 
 var output = converter.convert(swagger,options);
 

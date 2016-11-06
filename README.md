@@ -12,7 +12,7 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 * anticlockwise;
 * helping you produce static documentation from your OpenApi / Swagger 2.0 definition
 
-Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory.
+Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory, or override them using the `user_templates` option to specify a directory containing your templates.
 
 ### To install
 
@@ -43,6 +43,7 @@ var options = {}; // defaults shown
 options.codeSamples = true;
 //options.language_tabs = [];
 //options.loadedFrom = sourceUrl;
+//options.user_templates = './user_templates';
 options.theme = 'darkula';
 var str = converter.convert(swaggerObj,options);
 ````
