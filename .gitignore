@@ -1,6 +1,7 @@
 *.html.md
 user_templates/
 *.tgz
+*.old
 doit
 
 # Logs
