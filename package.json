@@ -32,7 +32,7 @@
     "dot": "^1.0.3",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
-    "openapi-sampler": "^0.3.2",
+    "openapi-sampler": "^0.3.3",
     "openapi_optimise": "latest",
     "yargs": "^5.0.0"
   },
