@@ -12,6 +12,8 @@ OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) /
 * anticlockwise;
 * helping you produce static documentation from your OpenApi / Swagger 2.0 definition
 
+![Widdershins screenshot](https://github.com/Mermade/oa2s-comparison/blob/master/docs/widdershins.png?raw=true)
+
 Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory, or override them using the `user_templates` option to specify a directory containing your templates.
 
 ### To install
@@ -105,6 +107,10 @@ against
 
 * [APIs.guru](https://github.com/APIs-guru/openapi-directory)
 * [Mermade OpenApi specifications collection](https://github.com/mermade/openapi_specifications)
+
+### Comparison between this and other OpenAPI / Swagger to Slate tools
+
+[Blog posting](http://mikeralphson.github.io/openapi/2016/12/19/oa2s-comparison) by the author of Widdershins
 
 ### Acknowledgements
 
