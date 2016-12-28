@@ -287,6 +287,11 @@ function convert(swagger,options) {
 						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
 						param.type = (param.type || 'object');
+						if (param.type == 'object') {
+							if (param.schema && param.schema["$ref"]) {
+								param.type = param.schema["$ref"].split('/').pop();
+							}
+						}
 						if ((param.type == 'array') && param.items && param.items.type) {
 							param.type += '['+param.items.type+']';
 						}
