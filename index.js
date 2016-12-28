@@ -287,6 +287,9 @@ function convert(swagger,options) {
 						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
 						param.type = (param.type || 'object');
+						if (param.type == 'array') {
+							param.type += '['+param.items.type+']';
+						}
 						param.required = (param.required ? param.required : false);
                     }
 					data.parameters = parameters;
