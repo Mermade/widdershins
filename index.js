@@ -64,7 +64,9 @@ function convertSwagger(source){
 }
 
 function dereference(obj,swagger){
-    if (obj["$ref"]) obj = jptr.jptr(swagger,obj["$ref"]);
+    if (obj["$ref"]) {
+		obj = jptr.jptr(swagger,obj["$ref"]);
+	}
     var changes = 1;
     while (changes>0) {
         changes = 0;
@@ -208,6 +210,9 @@ function convert(swagger,options) {
                 var url = (swagger.schemes ? swagger.schemes[0] : data.protocol)+'://'+data.host+(swagger.basePath ? swagger.basePath : '')+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
+				if ((consumes.length === 0) && (produces.length > 0)) {
+					consumes = produces; // work around deficiency in at least petstore example
+				}
                 var parameters = (swagger.paths[method.path].parameters || []).concat(swagger.paths[method.path][method.op].parameters || []);
                 // TODO dedupe overridden parameters
 
@@ -288,12 +293,18 @@ function convert(swagger,options) {
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
 						param.type = (param.type || 'object');
 						if (param.type == 'object') {
+							if (param.schema && param.schema.type) {
+								param.type = param.schema.type;
+							}
 							if (param.schema && param.schema["$ref"]) {
 								param.type = param.schema["$ref"].split('/').pop();
 							}
 						}
 						if ((param.type == 'array') && param.items && param.items.type) {
 							param.type += '['+param.items.type+']';
+						}
+						if ((param.type == 'array') && param.schema.items && param.schema.items["$ref"]) {
+							param.type += '['+param.schema.items["$ref"].split('/').pop()+']';
 						}
 						param.required = (param.required ? param.required : false);
                     }

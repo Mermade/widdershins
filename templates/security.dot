@@ -13,8 +13,12 @@
 - Flow: {{=sd.flow}}
 {{? sd.authorizationUrl}}- Authorization URL = [{{=sd.authorizationUrl}}]({{=sd.authorizationUrl}}){{?}}
 {{? sd.tokenUrl}}- Token URL = [{{=sd.tokenUrl}}]({{=sd.tokenUrl}}){{?}}
-{{~ sd.scopeArray :scope}} - Scope: {{=scope.name}} = {{=scope.description}}
+{{? sd.scopeArray}}
+|Scope|Scope Description|
+|---|---|
+{{~ sd.scopeArray :scope}}|{{=scope.name}}|{{=scope.description}}|
 {{~}}
+{{?}}
 {{?}}
 {{~}}
 
