@@ -76,6 +76,7 @@ Templates have access to a `data` object with a range of properties based on the
 ### Parameter template
 
 * `parameters[]` - an array of parameters, including a `shortDesc` property
+* `enums[]` - an array of (parameter)name/value pairs
 
 ### Responses template
 
