@@ -280,7 +280,9 @@ function convert(swagger,options) {
                 if (subtitle != opName) content += '`'+subtitle+'`\n\n';
                 if (op.summary) content += '*'+op.summary+'*\n\n';
                 if (op.description) content += op.description+'\n\n';
-                
+
+				data.enums = [];
+ 
 				if (parameters.length>0) {
                     var longDescs = false;
                     for (var p in parameters) {
@@ -307,6 +309,24 @@ function convert(swagger,options) {
 							param.type += '['+param.schema.items["$ref"].split('/').pop()+']';
 						}
 						param.required = (param.required ? param.required : false);
+
+						if (param.enum) {
+							for (var e in param.enum) {
+								var nvp = {};
+								nvp.name = param.name;
+								nvp.value = param.enum[e];
+								data.enums.push(nvp);
+							}
+						}
+						if (param.items && param.items.enum) {
+							for (var e in param.items.enum) {
+								var nvp = {};
+								nvp.name = param.name;
+								nvp.value = param.items.enum[e];
+								data.enums.push(nvp);
+							}
+						}
+
                     }
 					data.parameters = parameters;
 					content += templates.parameters(data);
