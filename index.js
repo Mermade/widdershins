@@ -305,7 +305,7 @@ function convert(swagger,options) {
 						if ((param.type == 'array') && param.items && param.items.type) {
 							param.type += '['+param.items.type+']';
 						}
-						if ((param.type == 'array') && param.schema.items && param.schema.items["$ref"]) {
+						if ((param.type == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
 							param.type += '['+param.schema.items["$ref"].split('/').pop()+']';
 						}
 						param.required = (param.required ? param.required : false);
