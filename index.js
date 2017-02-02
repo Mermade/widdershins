@@ -194,7 +194,7 @@ function convert(swagger,options) {
 
         if (resource.externalDocs) {
             if (resource.externalDocs.url) {
-                content += '<a href="'+resource.externalDocs.url+'">'+resource.externalDocs.description+'</a>\n';
+                content += '<a href="'+resource.externalDocs.url+'">'+(resource.externalDocs.description ? resource.externalDocs.description : 'External docs')+'</a>\n';
             }
         }
 
