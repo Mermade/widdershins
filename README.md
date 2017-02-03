@@ -20,10 +20,10 @@ Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/
 
 * Clone the git repository, or
 * `npm install widdershins`, or
-* `yarn install -g widdershins`
+* `yarn global add widdershins`
 
 ````
-widdershins [options] {input-spec} [[-o] output markdown]
+node widdershins [options] {input-spec} [[-o] output markdown]
 
 Options:
   -h, --help     Show help                                             [boolean]
@@ -71,6 +71,8 @@ Templates have access to a `data` object with a range of properties based on the
 * `consumes[]` - an array of MIME-types the operation consumes
 * `produces[]` - an array of MIME-types the operation produces
 * `operation` - the current operation object
+* `operationId` - the current operation id
+* `tags[]` - the full list of tags applying to the operation
 * `resource` - the current tag/path object
 
 ### Parameter template

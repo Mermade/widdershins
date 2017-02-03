@@ -225,6 +225,8 @@ function convert(swagger,options) {
 					data.produces = produces;
 					data.consumes = consumes;
 					data.operation = method;
+					data.operationId = swagger.paths[method.path][method.op].operationId;
+					data.tags = swagger.paths[method.path][method.op].tags;
 					data.resource = resource;
 
                     content += templates.heading_code_samples(data);
@@ -508,6 +510,9 @@ function convert(swagger,options) {
             }
         }
     }
+
+	content += templates.footer(data) + '\n';
+
     var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
     return (headerStr+'\n'+content);
 }
