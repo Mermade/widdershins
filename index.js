@@ -229,6 +229,31 @@ function convert(swagger,options) {
 					data.tags = swagger.paths[method.path][method.op].tags;
 					data.resource = resource;
 
+					var param;
+					// dereference parameters before including code-sample templates
+					for (var p in parameters) {
+                        param = parameters[p];
+                        if (param["$ref"]) {
+                            parameters[p] = param = jptr.jptr(swagger,param["$ref"]);
+                        }
+						param.required = (param.required ? param.required : false);
+						param.safeType = (param.type || 'object');
+						if (param.safeType == 'object') {
+							if (param.schema && param.schema.type) {
+								param.safeType = param.schema.type;
+							}
+							if (param.schema && param.schema["$ref"]) {
+								param.safeType = param.schema["$ref"].split('/').pop();
+							}
+						}
+						if ((param.safeType == 'array') && param.items && param.items.type) {
+							param.safeType += '['+param.items.type+']';
+						}
+						if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
+							param.safeType += '['+param.schema.items["$ref"].split('/').pop()+']';
+						}
+					}
+
                     content += templates.heading_code_samples(data);
 
                     if (op["x-code-samples"]) {
@@ -288,29 +313,11 @@ function convert(swagger,options) {
 				if (parameters.length>0) {
                     var longDescs = false;
                     for (var p in parameters) {
-                        var param = parameters[p];
-
-                        if (param["$ref"]) {
-                            parameters[p] = param = jptr.jptr(swagger,param["$ref"]);
-                        }
+                        param = parameters[p];
 						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
                         if (param.description && (param.description.split('\n').length>1)) longDescs = true;
-						param.type = (param.type || 'object');
-						if (param.type == 'object') {
-							if (param.schema && param.schema.type) {
-								param.type = param.schema.type;
-							}
-							if (param.schema && param.schema["$ref"]) {
-								param.type = param.schema["$ref"].split('/').pop();
-							}
-						}
-						if ((param.type == 'array') && param.items && param.items.type) {
-							param.type += '['+param.items.type+']';
-						}
-						if ((param.type == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
-							param.type += '['+param.schema.items["$ref"].split('/').pop()+']';
-						}
-						param.required = (param.required ? param.required : false);
+						param.originalType = param.type;
+						param.type = param.safeType;
 
 						if (param.enum) {
 							for (var e in param.enum) {
@@ -330,15 +337,15 @@ function convert(swagger,options) {
 						}
 
                     }
-					data.parameters = parameters;
+					data.parameters = parameters; // redundant?
 					content += templates.parameters(data);
 
                     if (longDescs) {
                         for (var p in parameters) {
                             var param = parameters[p];
-                            if (param["$ref"]) {
-                                param = jptr.jptr(swagger,param["$ref"]);
-                            }
+                            //if (param["$ref"]) {
+                            //    param = jptr.jptr(swagger,param["$ref"]);
+                            //}
                             var desc = param.description ? param.description : '';
                             var descs = desc.split('\n');
                             if (descs.length > 1) {
@@ -350,10 +357,10 @@ function convert(swagger,options) {
 
                     var paramHeader = false;
                     for (var p in parameters) {
-                        var param = parameters[p];
-                        if (param["$ref"]) {
-                            param = jptr.jptr(swagger,param["$ref"]);
-                        }
+                        param = parameters[p];
+                        //if (param["$ref"]) {
+                        //    param = jptr.jptr(swagger,param["$ref"]);
+                        //}
                         if (param.schema) {
                             if (!paramHeader) {
                     			content += templates.heading_body_parameter(data);

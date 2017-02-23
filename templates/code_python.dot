@@ -1,7 +1,8 @@
 import requests
 
 r = requests.{{=data.method}}('{{=data.url}}', params={
-  # TODO
+	{{? data.parameters.length}}{{~ data.parameters :p:index}}'{{=p.name}}':'{{=p.safeType}}'{{? data.parameters.length-1 != index && index == 0 }},{{?}}
+	{{~}}{{?}}
 })
 
 print r.json()
