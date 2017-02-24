@@ -1,7 +1,14 @@
-const request = require('node-fetch');
-fetch('{{=data.url}}', { method: '{{=data.methodUpper}}'})
-.then(function(res) {
-    return res.json();
-}).then(function(body) {
-    console.log(body);
-});
+{{?data.allHeaders.length}}var headers = {
+{{~data.allHeaders :p:index}}  '{{=p.name}}':{{=p.exampleValues.json}}{{?index < data.allHeaders.length-1}},{{?}}
+{{~}}
+};
+{{?}}
+$.ajax({
+  url: '{{=data.url}}',
+  method: '{{=data.method}}',
+  {{?data.queryString}}data: '{{=data.queryString}}',{{?}}
+  {{?data.allHeaders.length}}headers: headers,{{?}}
+  success: function(data) {
+    console.log(JSON.stringify(data));
+  }
+})

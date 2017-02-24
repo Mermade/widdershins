@@ -112,11 +112,45 @@ function languageCheck(language,language_tabs,mutate){
     return false;
 }
 
+function parameterToSchema(param,swagger) {
+	var schema = {};
+	schema.type = 'object';
+	schema.properties = {};
+	var definition = {};
+	if ((param.type == 'integer') || (param.type == 'string') || (param.type == 'array')) {
+		definition.type = param.type;
+	}
+	if (param.format == 'password') {
+		definition.format = param.format;
+	}
+	if (param.default) {
+		definition.default = param.default;
+	}
+	if (param.schema) {
+		definition = dereference(param.schema,swagger);
+	}
+	if (param.type == 'array') {
+		definition.items = {};
+		if (param.items && param.items.type) {
+			definition.items.type = param.items.type;
+		}
+		if (param.items && param.items.schema) {
+			definition.items.schema = dereference(param.items.schema,swagger);
+		}
+	}
+	schema.properties[param.name] = definition;
+	return schema;
+}
+
 function convert(swagger,options) {
 
     var defaults = {};
-    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'html': 'JavaScript'},{'javascript': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'},{'java': 'Java'}];
+    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'javascript': 'JavaScript'},{'javascript--nodejs': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'},{'java': 'Java'}];
     defaults.codeSamples = true;
+	defaults.theme = 'darkula';
+	defaults.search = true;
+	defaults.includes = [];
+	defaults.templateCallback = function(templateName,data) { return data; };
     options = Object.assign({},defaults,options);
 
     if (typeof templates === 'undefined') {
@@ -140,9 +174,9 @@ function convert(swagger,options) {
             header.toc_footers.push('<a href="'+swagger.externalDocs.url+'">'+(swagger.externalDocs.description ? swagger.externalDocs.description : 'External Docs')+'</a>');
         }
     }
-    header.includes = [];
-    header.search = true;
-    header.highlight_theme = options.theme||'darkula';
+    header.includes = options.includes;
+    header.search = options.search;
+    header.highlight_theme = options.theme;
 
     var data = {};
 	data.openapi = swagger;
@@ -162,6 +196,7 @@ function convert(swagger,options) {
     data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
     
     var content = '';
+	data = options.templateCallback('heading_main',data);
 	content += templates.heading_main(data)+'\n';
 
     if (swagger.securityDefinitions) {
@@ -182,6 +217,7 @@ function convert(swagger,options) {
 			if (!secdef.description) secdef.description = '';
 			data.securityDefinitions.push(secdef);
         }
+		data = options.templateCallback('security',data);
 		content += templates.security(data);
     }
 
@@ -227,7 +263,12 @@ function convert(swagger,options) {
 					data.operation = method;
 					data.operationId = swagger.paths[method.path][method.op].operationId;
 					data.tags = swagger.paths[method.path][method.op].tags;
+					data.security = swagger.paths[method.path][method.op].security;
 					data.resource = resource;
+					data.queryString = '';
+					data.queryParameters = [];
+					data.headerParameters = [];
+					data.bodyParameter = null;
 
 					var param;
 					// dereference parameters before including code-sample templates
@@ -252,8 +293,61 @@ function convert(swagger,options) {
 						if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
 							param.safeType += '['+param.schema.items["$ref"].split('/').pop()+']';
 						}
+                        param.exampleSchema = parameterToSchema(param,swagger);
+						param.exampleValues = {};
+						param.exampleValues.json = {};
+						try {
+                        	var obj = sampler.sample(param.exampleSchema, {skipReadOnly: true});
+							var t = obj[param.name];
+							if (typeof t == 'string') t = "'"+t+"'";
+							if (typeof t == 'object') t = JSON.stringify(t,null,2);
+							param.exampleValues.json = t;
+							param.exampleValues.object = obj[param.name];
+                        }
+                        catch (ex) {
+                        	console.log('# '+ex);
+							param.exampleValues.json = '...';
+                        }
+						if (param.in == 'body') {
+							data.bodyParameter = param;
+						}
+						if (param.in == 'header') {
+							data.headerParameters.push(param);
+						}
+						if (param.in == 'query') {
+							var temp = param.exampleValues.object;
+							if (Array.isArray(temp)) {
+								temp = '...';
+							}
+							data.queryString += (data.queryString ? '&' : '?') +
+								param.name + '=' + encodeURIComponent(temp);
+							data.queryParameters.push(param);
+						}
 					}
 
+					data.allHeaders = clone(data.headerParameters);
+					if (data.produces.length) {
+						var accept = {};
+						accept.name = 'Accept';
+						accept.type = 'string';
+						accept.in = 'header';
+						accept.exampleValues = {};
+						accept.exampleValues.json = "'"+data.produces[0]+"'";
+						accept.exampleValues.object = data.produces[0];
+						data.allHeaders.push(accept);
+					}
+					if (data.produces.length) {
+						var contentType = {};
+						contentType.name = 'Content-Type';
+						contentType.type = 'string';
+						contentType.in = 'header';
+						contentType.exampleValues = {};
+						contentType.exampleValues.json = "'"+data.consumes[0]+"'";
+						contentType.exampleValues.object = data.consumes[0];
+						data.allHeaders.push(contentType);
+					}
+
+					data = options.templateCallback('heading_code_samples',data);
                     content += templates.heading_code_samples(data);
 
                     if (op["x-code-samples"]) {
@@ -268,36 +362,43 @@ function convert(swagger,options) {
                     else {
                         if (languageCheck('shell', header.language_tabs, false)) {
                             content += '````shell\n';
+							data = options.templateCallback('code_shell',data);
 							content += templates.code_shell(data);
                             content += '````\n\n';
                         }
                         if (languageCheck('http', header.language_tabs, false)) {
                             content += '````http\n';
+							data = options.templateCallback('code_http',data);
 							content += templates.code_http(data);
-                            content += '````\n\n';
-                        }
-                        if (languageCheck('html', header.language_tabs, false)) {
-                            content += '````html\n';
-							content += templates.code_html(data);
                             content += '````\n\n';
                         }
                         if (languageCheck('javascript', header.language_tabs, false)) {
                             content += '````javascript\n';
+							data = options.templateCallback('code_javascript',data);
 							content += templates.code_javascript(data);
+                            content += '````\n\n';
+                        }
+                        if (languageCheck('javascript--nodejs', header.language_tabs, false)) {
+                            content += '````javascript--nodejs\n';
+							data = options.templateCallback('code_nodejs',data);
+							content += templates.code_nodejs(data);
                             content += '````\n\n';
                         }
                         if (languageCheck('ruby', header.language_tabs, false)) {
                             content += '````ruby\n';
+							data = options.templateCallback('code_ruby',data);
 							content += templates.code_ruby(data);
                             content += '````\n\n';
                         }
                         if (languageCheck('python', header.language_tabs, false)) {
                             content += '````python\n';
+							data = options.templateCallback('code_python',data);
 							content += templates.code_python(data);
                             content += '````\n\n';
                         }
                         if (languageCheck('java', header.language_tabs, false)) {
                             content += '````java\n';
+							data = options.templateCallback('code_java',data);
 							content += templates.code_java(data);
                             content += '````\n\n';
                         }
@@ -338,6 +439,7 @@ function convert(swagger,options) {
 
                     }
 					data.parameters = parameters; // redundant?
+					data = options.templateCallback('parameters',data);
 					content += templates.parameters(data);
 
                     if (longDescs) {
@@ -363,6 +465,7 @@ function convert(swagger,options) {
                         //}
                         if (param.schema) {
                             if (!paramHeader) {
+								data = options.templateCallback('heading_body_parameter',data);
                     			content += templates.heading_body_parameter(data);
                                 paramHeader = true;
                             }
@@ -425,6 +528,7 @@ function convert(swagger,options) {
 					if (!response.description) response.description = 'No description';
 					data.responses.push(response);
                 }
+				data = options.templateCallback('responses',data);
 				content += templates.responses(data);
 
                 if (responseHeaders) {
@@ -441,10 +545,12 @@ function convert(swagger,options) {
 							data.response_headers.push(hdr);
                         }
                     }
+					data = options.templateCallback('response_headers',data);
 					content += templates.response_headers(data);
                 }
 
                 if (responseSchemas) {
+					data = options.templateCallback('heading_example_responses',data);
 					content += templates.heading_example_responses(data);
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
@@ -456,7 +562,7 @@ function convert(swagger,options) {
                             }
                             if (Object.keys(obj).length>0) {
                                 try {
-                                    obj = sampler.sample(obj);
+                                    obj = sampler.sample(obj); // skipReadOnly: false
                                 }
                                 catch (ex) {
                                     console.log('# '+ex);
@@ -489,6 +595,7 @@ function convert(swagger,options) {
                 var security = (op.security ? op.security : swagger.security);
                 if (!security) security = [];
                 if (security.length<=0) {
+					data = options.templateCallback('authentication_none',data);
 				    content += templates.authentication_none(data);
                 }
                 else {
@@ -509,6 +616,7 @@ function convert(swagger,options) {
                         }
                     }
 					data.authenticationStr = list;
+					data = options.templateCallback('authentication',data);
 					content += templates.authentication(data);
                 }
 
@@ -518,10 +626,11 @@ function convert(swagger,options) {
         }
     }
 
+	data = options.templateCallback('footer',data);
 	content += templates.footer(data) + '\n';
 
     var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
-    return (headerStr+'\n'+content);
+    return (headerStr+'\n'+content.split('\n\n\n').join('\n\n'));
 }
 
 module.exports = {

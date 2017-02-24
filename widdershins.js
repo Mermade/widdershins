@@ -18,12 +18,19 @@ var argv = require('yargs')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
+	.string('includes')
+	.alias('i','includes')
+	.describe('includes','List of files to include, comma separated')
     .boolean('lang')
     .alias('l','lang')
     .describe('lang','Automatically generate list of languages for code samples')
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','file to write output markdown to')
+	.boolean('search')
+	.alias('s','search')
+	.default('search',true)
+	.describe('search','whether to enable search or not, default true')
     .string('theme')
     .alias('t','theme')
     .describe('theme','Syntax-highlighter theme to use')
@@ -51,8 +58,11 @@ options.codeSamples = !argv.code;
 if (argv.lang) {
 	options.language_tabs = [];
 }
-options.theme = argv.theme;
+if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;
+options.inline = argv.inline;
+if (argv.search === false) options.search = false;
+if (argv.includes) options.includes = argv.includes.split(',');
 
 var output = converter.convert(swagger,options);
 

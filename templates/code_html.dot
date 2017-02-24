@@ -1,9 +1,0 @@
-<script>
-  $.ajax({
-    url: '{{=data.url}}',
-    method: '{{=data.method}}',
-    success: function(data) {
-      console.log(JSON.stringify(data));
-    }
-  })
-</script>

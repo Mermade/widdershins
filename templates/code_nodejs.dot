@@ -1,0 +1,18 @@
+const request = require('node-fetch');
+{{?data.bodyParameter}}var inputBody = '{{=data.bodyParameter.exampleValues.json}}';{{?}}
+{{?data.allHeaders.length}}var headers = {
+{{~data.allHeaders :p:index}}  '{{=p.name}}':{{=p.exampleValues.json}}{{?index < data.allHeaders.length-1}},{{?}}
+{{~}}
+};
+{{?}}
+fetch('{{=data.url}}{{=data.queryString}}',
+{ 
+  method: '{{=data.methodUpper}}'{{?data.bodyParameter || data.headerParameters.length}},{{?}}
+  {{?data.bodyParameter}}body: inputBody{{?}}{{? data.bodyParameter && data.headerParameters.length}},{{?}}
+  {{?data.headerParameters.length}}headers: headers{{?}}
+})
+.then(function(res) {
+    return res.json();
+}).then(function(body) {
+    console.log(body);
+});
