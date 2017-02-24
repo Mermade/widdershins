@@ -123,7 +123,8 @@ function parameterToSchema(param,swagger) {
 	if (param.format == 'password') {
 		definition.format = param.format;
 	}
-	if (param.default) {
+	if ((param.default) && (param.default != 'undefined')) {
+		// bugfix for Trello spec in test cases
 		definition.default = param.default;
 	}
 	if (param.schema) {
