@@ -72,7 +72,7 @@ Templates are compiled with [doT.js](https://github.com/olado/doT#readme).
 
 Templates have access to a `data` object with a range of properties based on the document context.
 
-If you specify an `options.templateCallback' function, it will be called before each template, with two parameters, the template name and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it.
+If you specify an `options.templateCallback` function, it will be called before each template, with two parameters, the template name and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it.
 
 ### Code templates
 

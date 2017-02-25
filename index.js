@@ -117,16 +117,30 @@ function parameterToSchema(param,swagger) {
 	schema.type = 'object';
 	schema.properties = {};
 	var definition = {};
-	if ((param.type == 'integer') || (param.type == 'string') || (param.type == 'array')) {
+	if ((param.type == 'integer') || (param.type == 'string') || (param.type == 'array')
+		|| (param.type == 'boolean') || (param.type == 'number')) {
 		definition.type = param.type;
 	}
 	if (param.format == 'password') {
 		definition.format = param.format;
 	}
-	if ((param.default) && (param.default != 'undefined')) {
-		// bugfix for Trello spec in test cases
+	if ((typeof param.default !== 'undefined') && (param.default != 'undefined')) {
+		// bugfix for Trello spec in test cases, and for boolean:false
 		definition.default = param.default;
 	}
+	if (typeof param.maximum !== 'undefined') definition.maximum = param.maximum;
+	if (typeof param.minimum !== 'undefined') definition.minimum = param.minimum;
+	if (typeof param.maxLength !== 'undefined') definition.maxLength = param.maxLength;
+	if (typeof param.minLength !== 'undefined') definition.minLength = param.minLength;
+	if (typeof param.maxItems !== 'undefined') definition.maxItems = param.maxItems;
+	if (typeof param.minItems !== 'undefined') definition.minItems = param.minItems;
+	if (param.pattern) definition.pattern = param.pattern;
+	if (param.enum) definition.enum = param.enum;
+	if (typeof param.multipleOf !== 'undefined') definition.multipleOf = param.multipleOf;
+	if (typeof param.exclusiveMaximum !== 'undefined') definition.exclusiveMaximum = param.exclusiveMaximum;
+	if (typeof param.exclusiveMinimum !== 'undefined') definition.exclusiveMinimum = param.exclusiveMinimum;
+	if (typeof param.uniqueItems !== 'undefined') definition.uniqueItems = param.uniqueItems;
+
 	if (param.schema) {
 		definition = dereference(param.schema,swagger);
 	}
@@ -134,6 +148,7 @@ function parameterToSchema(param,swagger) {
 		definition.items = {};
 		if (param.items && param.items.type) {
 			definition.items.type = param.items.type;
+			// do we need to repeat or recurse the min,max etc here?
 		}
 		if (param.items && param.items.schema) {
 			definition.items.schema = dereference(param.items.schema,swagger);
