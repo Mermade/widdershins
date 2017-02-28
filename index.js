@@ -288,7 +288,9 @@ function convert(swagger,options) {
 					data.security = swagger.paths[method.path][method.op].security;
 					data.resource = resource;
 					data.queryString = '';
+					data.requiredQueryString = '';
 					data.queryParameters = [];
+					data.requiredParameters = [];
 					data.headerParameters = [];
 					data.bodyParameter = null;
 
@@ -344,6 +346,11 @@ function convert(swagger,options) {
 							data.queryString += (data.queryString ? '&' : '?') +
 								param.name + '=' + encodeURIComponent(temp);
 							data.queryParameters.push(param);
+							if (param.required) {
+								data.requiredQueryString += (data.requiredQueryString ?
+								'&' : '?') + param.name + '=' + encodeURIComponent(temp);
+								data.requiredParameters.push(param);
+							}
 						}
 					}
 
@@ -578,6 +585,7 @@ function convert(swagger,options) {
                     }
                     if (url) response.meaning = '['+response.meaning+']('+url+')';
 					if (!response.description) response.description = 'No description';
+					response.description = response.description.trim();
 					data.responses.push(response);
                 }
 				data = options.templateCallback('responses','pre',data);
