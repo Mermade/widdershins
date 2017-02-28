@@ -2,5 +2,4 @@
 
 Status|Header|Type|Format|Description
 ---|---|---|---|---|
-{{~ data.response_headers :h}}{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format}}|{{=h.description}}
-{{~}}
+{{~ data.response_headers :h}}{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format}}|{{=h.description}}{{~}}
