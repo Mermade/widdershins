@@ -79,7 +79,6 @@ If you specify an `options.templateCallback` function, it will be called before 
 * `method` - the HTTP method of the operation (in lower-case)
 * `methodUpper` - the HTTP method of the operation (in upper-case)
 * `url` - the full URL of the operation (including protocol and host)
-* `parameters[]` - an array of parameters for the operation (see below)
 * `consumes[]` - an array of MIME-types the operation consumes
 * `produces[]` - an array of MIME-types the operation produces
 * `operation` - the current operation object
@@ -87,6 +86,7 @@ If you specify an `options.templateCallback` function, it will be called before 
 * `tags[]` - the full list of tags applying to the operation
 * `security` - the security definitions applying to the operation
 * `resource` - the current tag/path object
+* `parameters[]` - an array of parameters for the operation (see below)
 * `queryString` - an example queryString, urlEncoded
 * `requiredQueryString` - an example queryString for `required:true` parameters
 * `queryParameters[]` - a subset of `parameters` that are `in:query`
@@ -142,7 +142,7 @@ against
 
 ### Acknowledgements
 
-Thanks to @latgeek for the logo.
+Thanks to @latgeek for the logo
 
 ### Widdershins in the wild
 
