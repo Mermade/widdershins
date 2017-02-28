@@ -469,7 +469,7 @@ function convert(swagger,options) {
                     for (var p in parameters) {
                         param = parameters[p];
 						param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
-                        if (param.description && (param.description.split('\n').length>1)) longDescs = true;
+                        if (param.description && (param.description.trim().split('\n').length>1)) longDescs = true;
 						param.originalType = param.type;
 						param.type = param.safeType;
 
@@ -505,7 +505,7 @@ function convert(swagger,options) {
                             //    param = jptr.jptr(swagger,param["$ref"]);
                             //}
                             var desc = param.description ? param.description : '';
-                            var descs = desc.split('\n');
+                            var descs = desc.trim().split('\n');
                             if (descs.length > 1) {
                                 content += '##### '+param.name+'\n';
                                 content += desc + '\n';
