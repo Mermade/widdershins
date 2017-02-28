@@ -397,63 +397,63 @@ function convert(swagger,options) {
 							data = options.templateCallback('code_shell','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_shell(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_shell','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('http', header.language_tabs, false)) {
                             content += '````http\n';
 							data = options.templateCallback('code_http','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_http(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_http','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('javascript', header.language_tabs, false)) {
                             content += '````javascript\n';
 							data = options.templateCallback('code_javascript','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_javascript(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_javascript','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('javascript--nodejs', header.language_tabs, false)) {
                             content += '````javascript--nodejs\n';
 							data = options.templateCallback('code_nodejs','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_nodejs(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_nodejs','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('ruby', header.language_tabs, false)) {
                             content += '````ruby\n';
 							data = options.templateCallback('code_ruby','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_ruby(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_ruby','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('python', header.language_tabs, false)) {
                             content += '````python\n';
 							data = options.templateCallback('code_python','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_python(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_python','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                         if (languageCheck('java', header.language_tabs, false)) {
                             content += '````java\n';
 							data = options.templateCallback('code_java','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_java(data);
-                            content += '````\n\n';
 							data = options.templateCallback('code_java','post',data);
 							if (data.append) { content += data.append; delete data.append; }
+                            content += '````\n\n';
                         }
                     }
                 }
