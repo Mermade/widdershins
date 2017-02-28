@@ -92,7 +92,7 @@ If you specify an `options.templateCallback` function, it will be called before 
 * `queryParameters[]` - a subset of `parameters` that are `in:query`
 * `requiredParameters[]` - a subset of `queryParameters` that are `required:true`
 * `headerParameters[]` - a subset of `parameters` that are `in:header`
-* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content_Type`
+* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`
 
 ### Parameter template
 
