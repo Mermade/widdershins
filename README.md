@@ -51,7 +51,7 @@ options.codeSamples = true;
 //options.language_tabs = [];
 //options.loadedFrom = sourceUrl;
 //options.user_templates = './user_templates';
-options.templateCallback = function(templateName,data) { return data };
+options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
 options.search = true;
 options.includes = [];
@@ -72,7 +72,7 @@ Templates are compiled with [doT.js](https://github.com/olado/doT#readme).
 
 Templates have access to a `data` object with a range of properties based on the document context.
 
-If you specify an `options.templateCallback` function, it will be called before each template, with two parameters, the template name and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it.
+If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
 
 ### Code templates
 
@@ -88,7 +88,9 @@ If you specify an `options.templateCallback` function, it will be called before 
 * `security` - the security definitions applying to the operation
 * `resource` - the current tag/path object
 * `queryString` - an example queryString, urlEncoded
+* `requiredQueryString` - an example queryString for `required:true` parameters
 * `queryParameters[]` - a subset of `parameters` that are `in:query`
+* `requiredParameters[]` - a subset of `queryParameters` that are `required:true`
 * `headerParameters[]` - a subset of `parameters` that are `in:header`
 * `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content_Type`
 
@@ -141,3 +143,7 @@ against
 ### Acknowledgements
 
 Thanks to @latgeek for the logo.
+
+### Widdershins in the wild
+
+Please feel free to add a link to your API documentation here

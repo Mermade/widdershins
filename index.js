@@ -166,7 +166,7 @@ function convert(swagger,options) {
 	defaults.theme = 'darkula';
 	defaults.search = true;
 	defaults.includes = [];
-	defaults.templateCallback = function(templateName,data) { return data; };
+	defaults.templateCallback = function(templateName,stage,data) { return data; };
     options = Object.assign({},defaults,options);
 
     if (typeof templates === 'undefined') {
@@ -212,8 +212,11 @@ function convert(swagger,options) {
     data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
     
     var content = '';
-	data = options.templateCallback('heading_main',data);
+	data = options.templateCallback('heading_main','pre',data);
+	if (data.append) { content += data.append; delete data.append; }
 	content += templates.heading_main(data)+'\n';
+	data = options.templateCallback('heading_main','post',data);
+	if (data.append) { content += data.append; delete data.append; }
 
     if (swagger.securityDefinitions) {
 		data.securityDefinitions = [];
@@ -233,8 +236,11 @@ function convert(swagger,options) {
 			if (!secdef.description) secdef.description = '';
 			data.securityDefinitions.push(secdef);
         }
-		data = options.templateCallback('security',data);
+		data = options.templateCallback('security','pre',data);
+		if (data.append) { content += data.append; delete data.append; }
 		content += templates.security(data);
+		data = options.templateCallback('security','post',data);
+		if (data.append) { content += data.append; delete data.append; }
     }
 
     var apiInfo = convertSwagger(swagger);
@@ -363,8 +369,11 @@ function convert(swagger,options) {
 						data.allHeaders.push(contentType);
 					}
 
-					data = options.templateCallback('heading_code_samples',data);
+					data = options.templateCallback('heading_code_samples','pre',data);
+					if (data.append) { content += data.append; delete data.append; }
                     content += templates.heading_code_samples(data);
+					data = options.templateCallback('heading_code_samples','post',data);
+					if (data.append) { content += data.append; delete data.append; }
 
                     if (op["x-code-samples"]) {
                         for (var s in op["x-code-samples"]) {
@@ -378,45 +387,66 @@ function convert(swagger,options) {
                     else {
                         if (languageCheck('shell', header.language_tabs, false)) {
                             content += '````shell\n';
-							data = options.templateCallback('code_shell',data);
+							data = options.templateCallback('code_shell','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_shell(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_shell','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('http', header.language_tabs, false)) {
                             content += '````http\n';
-							data = options.templateCallback('code_http',data);
+							data = options.templateCallback('code_http','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_http(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_http','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('javascript', header.language_tabs, false)) {
                             content += '````javascript\n';
-							data = options.templateCallback('code_javascript',data);
+							data = options.templateCallback('code_javascript','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_javascript(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_javascript','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('javascript--nodejs', header.language_tabs, false)) {
                             content += '````javascript--nodejs\n';
-							data = options.templateCallback('code_nodejs',data);
+							data = options.templateCallback('code_nodejs','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_nodejs(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_nodejs','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('ruby', header.language_tabs, false)) {
                             content += '````ruby\n';
-							data = options.templateCallback('code_ruby',data);
+							data = options.templateCallback('code_ruby','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_ruby(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_ruby','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('python', header.language_tabs, false)) {
                             content += '````python\n';
-							data = options.templateCallback('code_python',data);
+							data = options.templateCallback('code_python','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_python(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_python','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                         if (languageCheck('java', header.language_tabs, false)) {
                             content += '````java\n';
-							data = options.templateCallback('code_java',data);
+							data = options.templateCallback('code_java','pre',data);
+							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_java(data);
                             content += '````\n\n';
+							data = options.templateCallback('code_java','post',data);
+							if (data.append) { content += data.append; delete data.append; }
                         }
                     }
                 }
@@ -455,8 +485,11 @@ function convert(swagger,options) {
 
                     }
 					data.parameters = parameters; // redundant?
-					data = options.templateCallback('parameters',data);
+					data = options.templateCallback('parameters','pre',data);
+					if (data.append) { content += data.append; delete data.append; }
 					content += templates.parameters(data);
+					data = options.templateCallback('parameters','post',data);
+					if (data.append) { content += data.append; delete data.append; }
 
                     if (longDescs) {
                         for (var p in parameters) {
@@ -481,8 +514,11 @@ function convert(swagger,options) {
                         //}
                         if (param.schema) {
                             if (!paramHeader) {
-								data = options.templateCallback('heading_body_parameter',data);
+								data = options.templateCallback('heading_body_parameter','pre',data);
+								if (data.append) { content += data.append; delete data.append; }
                     			content += templates.heading_body_parameter(data);
+								data = options.templateCallback('heading_body_parameter','post',data);
+								if (data.append) { content += data.append; delete data.append; }
                                 paramHeader = true;
                             }
                             var xmlWrap = '';
@@ -544,8 +580,11 @@ function convert(swagger,options) {
 					if (!response.description) response.description = 'No description';
 					data.responses.push(response);
                 }
-				data = options.templateCallback('responses',data);
+				data = options.templateCallback('responses','pre',data);
+				if (data.append) { content += data.append; delete data.append; }
 				content += templates.responses(data);
+				data = options.templateCallback('responses','post',data);
+				if (data.append) { content += data.append; delete data.append; }
 
                 if (responseHeaders) {
 					data.response_headers = [];
@@ -561,13 +600,19 @@ function convert(swagger,options) {
 							data.response_headers.push(hdr);
                         }
                     }
-					data = options.templateCallback('response_headers',data);
+					data = options.templateCallback('response_headers','pre',data);
 					content += templates.response_headers(data);
+					if (data.append) { content += data.append; delete data.append; }
+					data = options.templateCallback('response_headers','post',data);
+					if (data.append) { content += data.append; delete data.append; }
                 }
 
                 if (responseSchemas) {
-					data = options.templateCallback('heading_example_responses',data);
+					data = options.templateCallback('heading_example_responses','pre',data);
+					if (data.append) { content += data.append; delete data.append; }
 					content += templates.heading_example_responses(data);
+					data = options.templateCallback('heading_example_responses','post',data);
+					if (data.append) { content += data.append; delete data.append; }
                     for (var resp in op.responses) {
                         var response = op.responses[resp];
                         if (response.schema) {
@@ -611,8 +656,11 @@ function convert(swagger,options) {
                 var security = (op.security ? op.security : swagger.security);
                 if (!security) security = [];
                 if (security.length<=0) {
-					data = options.templateCallback('authentication_none',data);
+					data = options.templateCallback('authentication_none','pre',data);
+					if (data.append) { content += data.append; delete data.append; }
 				    content += templates.authentication_none(data);
+					data = options.templateCallback('authentication_none','post',data);
+					if (data.append) { content += data.append; delete data.append; }
                 }
                 else {
 				    data.securityDefinitions = [];
@@ -632,8 +680,11 @@ function convert(swagger,options) {
                         }
                     }
 					data.authenticationStr = list;
-					data = options.templateCallback('authentication',data);
+					data = options.templateCallback('authentication','pre',data);
+					if (data.append) { content += data.append; delete data.append; }
 					content += templates.authentication(data);
+					data = options.templateCallback('authentication','post',data);
+					if (data.append) { content += data.append; delete data.append; }
                 }
 
                 content += '\n';
@@ -642,10 +693,14 @@ function convert(swagger,options) {
         }
     }
 
-	data = options.templateCallback('footer',data);
+	data = options.templateCallback('footer','pre',data);
+	if (data.append) { content += data.append; delete data.append; }
 	content += templates.footer(data) + '\n';
+	data = options.templateCallback('footer','post',data);
+	if (data.append) { content += data.append; delete data.append; }
 
     var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
+	// apparently you can insert jekyll front-matter in here for github -- see lord/slate
     return (headerStr+'\n'+content.split('\n\n\n').join('\n\n'));
 }
 
