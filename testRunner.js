@@ -8,9 +8,12 @@ var widdershins = require('./index.js');
 
 var argv = require('yargs')
 	.usage('testRunner [options] [{path-to-specs}]')
+	.boolean('raw')
+	.alias('r','raw')
+	.describe('raw','Set widdershins --raw option')
 	.count('verbose')
 	.alias('v','verbose')
-	.describe('verbose','increase verbosity')
+	.describe('verbose','Increase verbosity')
 	.help('h')
     .alias('h', 'help')
 	.strict()
@@ -30,6 +33,8 @@ var failures = [];
 var pathspec = argv._.length>0 ? argv._[0] : '../openapi-directory/APIs/';
 
 var options = argv;
+var widdershinsOptions = {};
+if (options.raw) widdershinsOptions.sample = false;
 
 function check(file) {
 	var result = false;
@@ -48,7 +53,8 @@ function check(file) {
 		}
 
 		try {
-	        result = widdershins.convert(src, {});
+	        result = widdershins.convert(src, widdershinsOptions);
+			result = result.split('is undefined').join('x');
 			if ((result != '') && (result.indexOf('undefined')<0)) {
 		    	console.log(green+'  %s %s',src.info.title,src.info.version);
 		    	console.log('  %s',src.host);
