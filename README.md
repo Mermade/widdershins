@@ -21,7 +21,7 @@ Widdershins supports the use of multiple language tabs with the same language (i
 ### To install
 
 * Clone the git repository, or
-* `npm install widdershins`, or
+* `npm install [-g] widdershins`, or
 * `yarn global add widdershins`
 
 ````
@@ -35,8 +35,9 @@ Options:
   -i, --includes List of files to include, comma separated              [string]
   -l, --lang     Automatically generate list of languages for code samples
                                                                        [boolean]
-  -o, --outfile  file to write output markdown to                       [string]
-  -s, --search   whether to enable search, defaults to true            [boolean]
+  -o, --outfile  File to write output markdown to                       [string]
+  -r, --raw      Output raw schemas not example values                 [boolean]
+  -s, --search   Whether to enable search, defaults to true            [boolean]
   -t, --theme    Syntax-highlighter theme to use                        [string]
   -u, --user_templates  directory to load override templates from       [string]
 ````
@@ -54,6 +55,7 @@ options.codeSamples = true;
 options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
 options.search = true;
+options.sample = true; // set false by --raw
 options.includes = [];
 var str = converter.convert(swaggerObj,options);
 ````

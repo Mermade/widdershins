@@ -26,11 +26,14 @@ var argv = require('yargs')
     .describe('lang','Automatically generate list of languages for code samples')
     .string('outfile')
     .alias('o','outfile')
-    .describe('outfile','file to write output markdown to')
+    .describe('outfile','File to write output markdown to')
+	.boolean('raw')
+	.alias('r','raw')
+	.describe('raw','Output raw schemas not example values')
 	.boolean('search')
 	.alias('s','search')
 	.default('search',true)
-	.describe('search','whether to enable search or not, default true')
+	.describe('search','Whether to enable search or not, default true')
     .string('theme')
     .alias('t','theme')
     .describe('theme','Syntax-highlighter theme to use')
@@ -61,6 +64,7 @@ if (argv.lang) {
 if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;
 options.inline = argv.inline;
+options.sample = !argv.raw;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

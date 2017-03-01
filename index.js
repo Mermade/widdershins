@@ -165,6 +165,7 @@ function convert(swagger,options) {
     defaults.codeSamples = true;
 	defaults.theme = 'darkula';
 	defaults.search = true;
+	defaults.sample = true;
 	defaults.includes = [];
 	defaults.templateCallback = function(templateName,stage,data) { return data; };
     options = Object.assign({},defaults,options);
@@ -533,12 +534,14 @@ function convert(swagger,options) {
                             if (obj.xml && obj.xml.name) {
                                 xmlWrap = obj.xml.name;
                             }
-                            try {
-                                obj = sampler.sample(obj, {skipReadOnly: true});
-                            }
-                            catch (ex) {
-                                console.log('# '+ex);
-                            }
+							if (options.sample) {
+                           		try {
+                              		obj = sampler.sample(obj, {skipReadOnly: true});
+                          	 	}
+                          		catch (ex) {
+                           	    	console.log('# '+ex);
+                           		}
+							}
                             if (obj.properties) obj = obj.properties;
                             if (doContentType(consumes,'application/json')) {
                                 content += '````json\n';
@@ -630,11 +633,13 @@ function convert(swagger,options) {
                                 xmlWrap = obj.xml.name;
                             }
                             if (Object.keys(obj).length>0) {
-                                try {
-                                    obj = sampler.sample(obj); // skipReadOnly: false
-                                }
-                                catch (ex) {
-                                    console.log('# '+ex);
+								if (options.sample) {
+                                	try {
+                                   		obj = sampler.sample(obj); // skipReadOnly: false
+                                	}
+                                	catch (ex) {
+                                  		console.log('# '+ex);
+                                	}
                                 }
                                 if (doContentType(produces,'application/json')) {
                                     content += '````json\n';
