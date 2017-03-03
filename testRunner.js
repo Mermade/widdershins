@@ -66,6 +66,7 @@ function check(file) {
 		}
 		catch (ex) {
 			console.log(ex.message);
+			result = false;
 		}
 		if (result) {
 			pass++;

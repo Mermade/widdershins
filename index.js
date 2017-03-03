@@ -679,7 +679,7 @@ function convert(swagger,options) {
 				    data.securityDefinitions = [];
                     var list = '';
                     for (var s in security) {
-                        var link = '#/securityDefinitions/'+Object.keys(security[s])[0];
+                        var link = '#/securityDefinitions/'+Object.keys(security[s])[0]; //3.0.x
                         var secDef = jptr.jptr(swagger,link);
 						data.securityDefinitions.push(secDef);
                         list += (list ? ', ' : '')+secDef.type;
