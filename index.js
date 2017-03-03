@@ -14,8 +14,9 @@ var templates;
 
 var circles = [];
 
-var xmlContentTypes = ['application/xml','text/xml','image/svg+xml','application/rss+xml','application/rdf+xml','application/atom+xml','application/mathml+xml'];
-var jsonContentTypes = ['application/json','text/json'];
+// could change these to be regexes...
+var xmlContentTypes = ['application/xml','text/xml','image/svg+xml','application/rss+xml','application/rdf+xml','application/atom+xml','application/mathml+xml','application/hal+xml'];
+var jsonContentTypes = ['application/json','text/json','application/hal+json','application/ld+json','application/json-patch+json'];
 var yamlContentTypes = ['application/x-yaml','text/x-yaml'];
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
@@ -172,6 +173,7 @@ function convert(swagger,options) {
 	defaults.theme = 'darkula';
 	defaults.search = true;
 	defaults.sample = true;
+	defaults.discovery = false;
 	defaults.includes = [];
 	defaults.templateCallback = function(templateName,stage,data) { return data; };
 
@@ -222,6 +224,7 @@ function convert(swagger,options) {
     data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
     
     var content = '';
+
 	data = options.templateCallback('heading_main','pre',data);
 	if (data.append) { content += data.append; delete data.append; }
 	content += templates.heading_main(data)+'\n';
@@ -720,6 +723,14 @@ function convert(swagger,options) {
 	content += templates.footer(data) + '\n';
 	data = options.templateCallback('footer','post',data);
 	if (data.append) { content += data.append; delete data.append; }
+
+	if (options.discovery) {
+		data = options.templateCallback('discovery','pre',data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.discovery(data)+'\n';
+		data = options.templateCallback('discovery','post',data);
+		if (data.append) { content += data.append; delete data.append; }
+	}
 
     var headerStr = '---\n'+yaml.safeDump(header)+'---\n';
 	// apparently you can insert jekyll front-matter in here for github -- see lord/slate

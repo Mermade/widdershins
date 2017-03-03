@@ -28,17 +28,18 @@ Widdershins supports the use of multiple language tabs with the same language (i
 node widdershins [options] {input-spec} [[-o] output markdown]
 
 Options:
-  -h, --help     Show help                                             [boolean]
-  --version      Show version number                                   [boolean]
-  -y, --yaml     Load spec in yaml format, default json                [boolean]
-  -c, --code     Turn generic code samples off                         [boolean]
-  -i, --includes List of files to include, comma separated              [string]
-  -l, --lang     Automatically generate list of languages for code samples
+  -h, --help       Show help                                           [boolean]
+  --version        Show version number                                 [boolean]
+  -y, --yaml       Load spec in yaml format, default json              [boolean]
+  -c, --code       Turn generic code samples off                       [boolean]
+  -d, --discovery  Include schema.org WebAPI discovery data            [boolean]
+  -i, --includes   List of files to include, comma separated            [string]
+  -l, --lang       Automatically generate list of languages for code samples
                                                                        [boolean]
-  -o, --outfile  File to write output markdown to                       [string]
-  -r, --raw      Output raw schemas not example values                 [boolean]
-  -s, --search   Whether to enable search, defaults to true            [boolean]
-  -t, --theme    Syntax-highlighter theme to use                        [string]
+  -o, --outfile    File to write output markdown to                     [string]
+  -r, --raw        Output raw schemas not example values               [boolean]
+  -s, --search     Whether to enable search, defaults to true          [boolean]
+  -t, --theme      Syntax-highlighter theme to use                      [string]
   -u, --user_templates  directory to load override templates from       [string]
 ````
 
@@ -56,6 +57,7 @@ options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
 options.search = true;
 options.sample = true; // set false by --raw
+options.discovery = false;
 options.includes = [];
 var str = converter.convert(swaggerObj,options);
 ````
@@ -67,6 +69,8 @@ the definition was loaded from.
 Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
+
+Schema.org WebAPI discovery data is included if the options above are set. See the W3C [WebAPI Discovery Community Group](https://www.w3.org/community/web-api-discovery/) for more information.
 
 ## Template parameters
 

@@ -19,6 +19,9 @@ var argv = require('yargs')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
 	.string('includes')
+	.boolean('discovery')
+	.alias('d','discovery')
+	.describe('discovery','Include schema.org WebAPI discovery data')
 	.alias('i','includes')
 	.describe('includes','List of files to include, comma separated')
     .boolean('lang')
@@ -65,6 +68,7 @@ if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;
 options.inline = argv.inline;
 options.sample = !argv.raw;
+options.discovery = argv.discovery;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 
