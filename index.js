@@ -14,6 +14,10 @@ var templates;
 
 var circles = [];
 
+var xmlContentTypes = ['application/xml','text/xml','image/svg+xml','application/rss+xml','application/rdf+xml','application/atom+xml','application/mathml+xml'];
+var jsonContentTypes = ['application/json','text/json'];
+var yamlContentTypes = ['application/x-yaml','text/x-yaml'];
+
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
 var statusCodes = require('./statusCodes.json');
@@ -81,9 +85,11 @@ function dereference(obj,swagger){
     return obj;
 }
 
-function doContentType(types,target){
+function doContentType(types,targets){
     for (var type in types) {
-        if (types[type] === target) return true;
+		for (var target of targets) {
+			if (types[type] === target) return true;
+		}
     }
     return false;
 }
@@ -546,17 +552,17 @@ function convert(swagger,options) {
                            		}
 							}
                             if (obj.properties) obj = obj.properties;
-                            if (doContentType(consumes,'application/json')) {
+                            if (doContentType(consumes,jsonContentTypes)) {
                                 content += '````json\n';
                                 content += JSON.stringify(obj,null,2)+'\n';
                                 content += '````\n';
                             }
-                            if (doContentType(consumes,'text/x-yaml')) {
+                            if (doContentType(consumes,yamlContentTypes)) {
                                 content += '````yaml\n';
                                 content += yaml.safeDump(obj)+'\n';
                                 content += '````\n';
                             }
-                            if (doContentType(consumes,'application/xml')) {
+                            if (doContentType(consumes,xmlContentTypes)) {
                                 content += '````xml\n';
                                 if (xmlWrap) {
                                     var newObj = {};
@@ -644,12 +650,12 @@ function convert(swagger,options) {
                                   		console.log('# '+ex);
                                 	}
                                 }
-                                if (doContentType(produces,'application/json')) {
+                                if (doContentType(produces,jsonContentTypes)) {
                                     content += '````json\n';
                                     content += JSON.stringify(obj,null,2)+'\n';
                                     content += '````\n';
                                 }
-                                if (doContentType(produces,'text/x-yaml')) {
+                                if (doContentType(produces,yamlContentTypes)) {
                                     content += '````json\n';
                                     content += yaml.safeDump(obj)+'\n';
                                     content += '````\n';
@@ -659,7 +665,7 @@ function convert(swagger,options) {
                                     newObj[xmlWrap] = obj;
                                     obj = newObj;
                                 }
-                                if ((typeof obj === 'object') && doContentType(produces,'application/xml')) {
+                                if ((typeof obj === 'object') && doContentType(produces,xmlContentTypes)) {
                                     content += '````xml\n';
                                     content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
                                     content += '````\n';
