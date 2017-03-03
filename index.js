@@ -168,6 +168,9 @@ function convert(swagger,options) {
 	defaults.sample = true;
 	defaults.includes = [];
 	defaults.templateCallback = function(templateName,stage,data) { return data; };
+
+	if (!options.codeSamples) defaults.language_tabs = [];
+
     options = Object.assign({},defaults,options);
 
     if (typeof templates === 'undefined') {
