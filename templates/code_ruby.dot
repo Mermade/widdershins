@@ -7,7 +7,7 @@ require 'json'
 }{{?}}
 
 result = RestClient.{{=data.method}} '{{=data.url}}', params: {
-  {{~ data.queryParameters :p:index}}'{{=p.name}}':'{{=p.safeType}}'{{? data.parameters.length-1 != index }},{{?}}
+  {{~ data.requiredParameters :p:index}}'{{=p.name}}':'{{=p.safeType}}'{{? data.requiredParameters.length-1 != index }},{{?}}
   {{~}}
 }{{? data.allHeaders.length}}, headers: headers
 {{?}}

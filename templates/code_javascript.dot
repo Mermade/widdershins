@@ -6,8 +6,8 @@
 $.ajax({
   url: '{{=data.url}}',
   method: '{{=data.method}}',
-  {{?data.queryString}}data: '{{=data.queryString}}',{{?}}
-  {{?data.allHeaders.length}}headers: headers,{{?}}
+{{?data.requiredQueryString}}  data: '{{=data.requiredQueryString}}',{{?}}
+{{?data.allHeaders.length}}  headers: headers,{{?}}
   success: function(data) {
     console.log(JSON.stringify(data));
   }

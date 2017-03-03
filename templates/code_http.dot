@@ -1,4 +1,4 @@
-{{=data.methodUpper}} {{=data.url}}{{=data.queryString}} HTTP/1.1
+{{=data.methodUpper}} {{=data.url}}{{=data.requiredQueryString}} HTTP/1.1
 Host: {{=data.host}}
 {{?data.consumes.length}}Content-Type: {{=data.consumes[0]}}{{?}}
 {{?data.produces.length}}Accept: {{=data.produces[0]}}{{?}}

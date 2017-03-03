@@ -1,4 +1,4 @@
 # You can also use wget
-curl -X {{=data.method}} {{=data.url}}{{=data.queryString}}{{?data.allHeaders.length}} \ {{?}}
-{{~data.allHeaders :p:index}}  -H '{{=p.name}}: {{=p.exampleValues.object}}'{{?index < data.allHeaders.length-1}} \ {{?}}
+curl -X {{=data.method}} {{=data.url}}{{=data.requiredQueryString}}{{?data.allHeaders.length}} \{{?}}
+{{~data.allHeaders :p:index}}  -H '{{=p.name}}: {{=p.exampleValues.object}}'{{?index < data.allHeaders.length-1}} \{{?}}
 {{~}}
