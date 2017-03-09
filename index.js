@@ -318,18 +318,20 @@ function convert(swagger, options) {
 				}
 
 				// remove overridden shared (path) parameters
-				sharedParameters = [].concat(sharedParameters); // clone
-				for (var sp of sharedParameters) {
-					var match = opParameters.find(function (elem) {
-						return ((elem.name == sp.name) && (elem.in == sp.in));
-					});
-					if (match) {
-						sp["x-widdershins-delete"] = true;
+				if ((sharedParameters.length > 0) && (opParameters.length > 0)) {
+					sharedParameters = [].concat(sharedParameters); // clone
+					for (var sp of sharedParameters) {
+						var match = opParameters.find(function (elem) {
+							return ((elem.name == sp.name) && (elem.in == sp.in));
+						});
+						if (match) {
+							sp["x-widdershins-delete"] = true;
+						}
 					}
+					sharedParameters = sharedParameters.filter(function (e, i, a) {
+						return !e["x-widdershins-delete"];
+					});
 				}
-				sharedParameters = sharedParameters.filter(function (e, i, a) {
-					return !e["x-widdershins-delete"];
-				});
 				
 				// combine
 				var parameters = sharedParameters.concat(opParameters);
@@ -412,14 +414,14 @@ function convert(swagger, options) {
 					data.allHeaders.push(contentType);
 				}
 
-				data = options.templateCallback('heading_code_samples', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.heading_code_samples(data);
-				data = options.templateCallback('heading_code_samples', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-
 				var codeSamples = (options.codeSamples || op["x-code-samples"]);
 				if (codeSamples) {
+					data = options.templateCallback('heading_code_samples', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.heading_code_samples(data);
+					data = options.templateCallback('heading_code_samples', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+
 					if (op["x-code-samples"]) {
 						for (var s in op["x-code-samples"]) {
 							var sample = op["x-code-samples"][s];
