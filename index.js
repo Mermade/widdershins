@@ -210,17 +210,33 @@ function convert(swagger, options) {
 	data.openapi = swagger;
 	data.header = header;
 
-	data.host = swagger.host;
-	data.protocol = swagger.schemes ? swagger.schemes[0] : '';
-	if (!data.host && options.loadedFrom) {
-		var u = up.parse(options.loadedFrom);
+	if (swagger.openapi) {
+		if (swagger.servers && swagger.servers.length) {
+			data.baseUrl = swagger.servers[0].url;
+		}
+		else if (options.loadedFrom) {
+			data.baseUrl = options.loadedFrom;
+		}
+		else {
+			data.baseUrl = 'http://example.com';
+		}
+		var u = up.parse(data.baseUrl);
+		data.protocol = u.protocol;
 		data.host = u.host;
-		data.protocol = u.protocol.replace(':', '');
 	}
-	if (!data.host) host = 'example.com';
-	if (!data.protocol) protocol = 'http';
+	else {
+		data.host = swagger.host;
+		data.protocol = swagger.schemes ? swagger.schemes[0] : '';
+		if (!data.host && options.loadedFrom) {
+			var u = up.parse(options.loadedFrom);
+			data.host = u.host;
+			data.protocol = u.protocol.replace(':', '');
+		}
+		if (!data.host) host = 'example.com';
+		if (!data.protocol) protocol = 'http';
+		data.baseUrl = data.protocol + '://' + data.host + (swagger.basePath ? swagger.basePath : '/');
+	}
 
-	data.baseUrl = data.protocol + '://' + data.host + (swagger.basePath ? swagger.basePath : '/');
 	data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
 
 	var content = '';
@@ -718,7 +734,13 @@ function convert(swagger, options) {
 					data.securityDefinitions = [];
 					var list = '';
 					for (var s in security) {
-						var link = '#/securityDefinitions/' + Object.keys(security[s])[0]; //3.0.x
+						var link;
+						if (swagger.openapi) {
+							link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
+						}
+						else {
+							link = '#/securityDefinitions/' + Object.keys(security[s])[0];
+						}
 						var secDef = jptr.jptr(swagger, link);
 						data.securityDefinitions.push(secDef);
 						list += (list ? ', ' : '') + secDef.type;
