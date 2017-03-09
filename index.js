@@ -221,7 +221,7 @@ function convert(swagger, options) {
 			data.baseUrl = 'http://example.com';
 		}
 		var u = up.parse(data.baseUrl);
-		data.protocol = u.protocol;
+		data.protocol = u.protocol.split(':')[0];
 		data.host = u.host;
 	}
 	else {
@@ -294,9 +294,36 @@ function convert(swagger, options) {
 				var opName = (op.operationId ? op.operationId : subtitle);
 				content += '## ' + opName + '\n\n';
 
-				var url = (swagger.schemes ? swagger.schemes[0] : data.protocol) + '://' + data.host + (swagger.basePath ? swagger.basePath : '') + method.path;
+				var url;
+				if (swagger.openapi) {
+					url = data.baseUrl + method.path;
+				}
+				else {
+					url = (swagger.schemes ? swagger.schemes[0] : data.protocol) + '://' + data.host + (swagger.basePath ? swagger.basePath : '') + method.path;
+				}
 				var consumes = (op.consumes || []).concat(swagger.consumes || []);
 				var produces = (op.produces || []).concat(swagger.produces || []);
+
+				if (swagger.openapi) {
+					if (op.requestBody) {
+						if (op.requestBody.$ref) {
+							op.requestBody = jptr.jptr(swagger,op.requestBody.$ref);
+						}
+						for (var rb in op.requestBody.content) {
+							consumes.push(rb);
+						}
+					}
+					for (var r in op.responses) {
+						var response = op.responses[r];
+						if (response.$ref) {
+							response = jptr.jptr(swagger,response.$ref);
+						}
+						for (var prod in response.content) {
+							produces.push(prod);
+						}
+					}
+				}
+
 				if ((consumes.length === 0) && (produces.length > 0)) {
 					consumes = produces; // work around deficiency in at least petstore example
 				}
