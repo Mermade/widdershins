@@ -39,17 +39,29 @@ if (options.raw) widdershinsOptions.sample = false;
 function check(file) {
 	var result = false;
 	var components = file.split(path.sep);
+	var filename = components[components.length-1];
 
-	if ((components[components.length-1] == 'swagger.yaml') || (components[components.length-1] == 'swagger.json')) {
+	if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
 		console.log(normal+file);
 
 		var srcStr = fs.readFileSync(path.resolve(file),'utf8');
 		var src;
-		if (components[components.length-1] == 'swagger.yaml') {
-			src = yaml.safeLoad(srcStr);
+		try {
+			if (components[components.length-1] == 'swagger.yaml') {
+				src = yaml.safeLoad(srcStr);
+			}
+			else {
+				src = JSON.parse(srcStr);
+			}
 		}
-		else {
-			src = JSON.parse(srcStr);
+		catch (ex) {
+			console.log('Could not parse file');
+			return true;
+		}
+
+		if (!src.swagger && !src.openapi) {
+			console.log('Not an OpenAPI definition');
+			return true;
 		}
 
 		try {
@@ -57,7 +69,7 @@ function check(file) {
 			result = result.split('is undefined').join('x');
 			if ((result != '') && (result.indexOf('undefined')<0)) {
 		    	console.log(green+'  %s %s',src.info.title,src.info.version);
-		    	console.log('  %s',src.host);
+		    	console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
 				result = true;
 			}
 			else {

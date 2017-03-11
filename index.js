@@ -701,6 +701,10 @@ function convert(swagger, options) {
 							hdr.header = h;
 							if (!hdr.format) hdr.format = '';
 							if (!hdr.description) hdr.description = '';
+							if (!hdr.type && hdr.schema && hdr.schema.type) {
+								hdr.type = hdr.schema.type;
+								hdr.format = hdr.schema.format||'';
+							}
 
 							data.response_headers.push(hdr);
 						}

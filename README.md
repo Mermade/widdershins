@@ -136,11 +136,10 @@ To run a test-suite:
 node testRunner {path-to-APIs}
 ````
 
-The test harness currently expects files named `swagger.yaml` or `swagger.json` and has been tested
-against
+The test harness currently expects `.yaml` or `.json` files and has been tested against
 
 * [APIs.guru](https://github.com/APIs-guru/openapi-directory)
-* [Mermade OpenApi specifications collection](https://github.com/mermade/openapi_specifications)
+* [Mermade OpenApi definitions collection](https://github.com/mermade/openapi-definitions)
 
 ### Comparison between this and other OpenAPI / Swagger to Slate tools
 
