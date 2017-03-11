@@ -247,10 +247,11 @@ function convert(swagger, options) {
 	data = options.templateCallback('heading_main', 'post', data);
 	if (data.append) { content += data.append; delete data.append; }
 
-	if (swagger.securityDefinitions) {
+	var securityContainer = swagger.securityDefinitions || swagger.components.securitySchemes;
+	if (securityContainer) {
 		data.securityDefinitions = [];
-		for (var s in swagger.securityDefinitions) {
-			var secdef = swagger.securityDefinitions[s];
+		for (var s in securityContainer) {
+			var secdef = securityContainer[s];
 			var desc = secdef.description ? secdef.description : '';
 			if (secdef.type == 'oauth2') {
 				secdef.scopeArray = [];
@@ -378,6 +379,17 @@ function convert(swagger, options) {
 				
 				// combine
 				var parameters = sharedParameters.concat(opParameters);
+
+				if (op.requestBody) {
+					// fake a version 2-style body parameter for now
+					var body = {};
+					body.name = 'body';
+					body.in = 'body';
+					body.type = 'object';
+					body.required = true; // possibly
+					body.description = 'No description'; // todo
+					parameters.push(body);
+				}
 
 				for (var p in parameters) {
 					var param = parameters[p];
