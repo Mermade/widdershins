@@ -4,7 +4,10 @@ node_js:
   - "4"
 before_script:
   - git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
-  - git clone --depth 1 https://github.com/mermade/openapi_specifications.git
+  - git clone --depth 1 https://github.com/mermade/openapi-definitions.git
+  - git clone --depth 1 https://github.com/SOM-Research/hapi.git
 script:
-  - node testRunner openapi-directory/
-  - node testRunner openapi_specifications/
+  - node testRunner openapi-directory/APIs/
+  - node testRunner openapi-definitions/
+  - node testRunner hapi/apis/
+
