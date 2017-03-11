@@ -77,7 +77,7 @@ function check(file) {
 			}
 		}
 		catch (ex) {
-			console.log(ex.message);
+			console.log(red+ex.message);
 			result = false;
 		}
 		if (result) {

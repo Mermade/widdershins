@@ -189,7 +189,7 @@ function convert(swagger, options) {
 	}
 
 	var header = {};
-	header.title = swagger.info.title + ' ' + ((swagger.info.version.toLowerCase().startsWith('v')) ? swagger.info.version : 'v' + swagger.info.version);
+	header.title = swagger.info.title + ' ' + ((swagger.info.version && swagger.info.version.toLowerCase().startsWith('v')) ? swagger.info.version : 'v' + (swagger.info.version||'?'));
 
 	// we always show json / yaml / xml if used in consumes/produces
 	header.language_tabs = options.language_tabs;
