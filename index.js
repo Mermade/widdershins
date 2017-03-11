@@ -247,7 +247,7 @@ function convert(swagger, options) {
 	data = options.templateCallback('heading_main', 'post', data);
 	if (data.append) { content += data.append; delete data.append; }
 
-	var securityContainer = swagger.securityDefinitions || swagger.components.securitySchemes;
+	var securityContainer = swagger.securityDefinitions || (swagger.components && swagger.components.securitySchemes);
 	if (securityContainer) {
 		data.securityDefinitions = [];
 		for (var s in securityContainer) {
