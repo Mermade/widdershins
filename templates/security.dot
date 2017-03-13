@@ -10,15 +10,17 @@
 {{?}}
 {{? sd.type == 'oauth2'}}
 - oAuth2 authentication. {{=sd.description}}
-    - Flow: {{=sd.flow}}
-{{? sd.authorizationUrl}}    - Authorization URL = [{{=sd.authorizationUrl}}]({{=sd.authorizationUrl}}){{?}}
-{{? sd.tokenUrl}}    - Token URL = [{{=sd.tokenUrl}}]({{=sd.tokenUrl}}){{?}}
-{{? sd.scopeArray}}
+{{~ sd.flowArray :flow}}
+    - Flow: {{=flow.flowName}}
+{{? flow.authorizationUrl}}    - Authorization URL = [{{=flow.authorizationUrl}}]({{=flow.authorizationUrl}}){{?}}
+{{? flow.tokenUrl}}    - Token URL = [{{=flow.tokenUrl}}]({{=flow.tokenUrl}}){{?}}
+{{? flow.scopeArray}}
 |Scope|Scope Description|
 |---|---|
-{{~ sd.scopeArray :scope}}|{{=scope.name}}|{{=scope.description}}|
+{{~ flow.scopeArray :scope}}|{{=scope.name}}|{{=scope.description}}|
 {{~}}
 {{?}}
+{{~}}
 {{?}}
 {{~}}
 

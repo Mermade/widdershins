@@ -254,12 +254,30 @@ function convert(swagger, options) {
 			var secdef = securityContainer[s];
 			var desc = secdef.description ? secdef.description : '';
 			if (secdef.type == 'oauth2') {
-				secdef.scopeArray = [];
-				for (var s in secdef.scopes) {
-					var scope = {};
-					scope.name = s;
-					scope.description = secdef.scopes[s];
-					secdef.scopeArray.push(scope);
+				if (typeof secdef.flow === 'string') {
+					var flowName = secdef.flow;
+					var flow2 = {};
+					flow2.scopes = secdef.scopes;
+					flow2.authorizationUrl = secdef.authorizationUrl;
+					flow2.tokenUrl = secdef.tokenUrl;
+					secdef.flow = {};
+					secdef.flow[flowName] = flow2;
+					delete secdef.scopes;
+					delete secdef.authorizationUrl;
+					delete secdef.tokenUrl;
+				}
+				secdef.flowArray = [];
+				for (var f in secdef.flow) {
+					var flow = secdef.flow[f];
+					flow.flowName = f;
+					flow.scopeArray = [];
+					for (var s in flow.scopes) {
+						var scope = {};
+						scope.name = s;
+						scope.description = flow.scopes[s];
+						flow.scopeArray.push(scope);
+					}
+					secdef.flowArray.push(flow);
 				}
 			}
 			secdef.ref = s;
