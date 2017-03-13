@@ -406,6 +406,7 @@ function convert(swagger, options) {
 					body.type = 'object';
 					body.required = true; // possibly
 					body.description = 'No description'; // todo
+					body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
 					parameters.push(body);
 				}
 
