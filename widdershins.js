@@ -12,6 +12,9 @@ var argv = require('yargs')
     .usage('widdershins [options] {input-spec} [[-o] output markdown]')
     .demand(1)
     .strict()
+    .boolean('httpsnippet')
+    .describe('httpsnippet','Use httpsnippet to generate codes')
+
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Load spec in yaml format, default json')
@@ -61,6 +64,8 @@ else {
 
 var options = {};
 options.codeSamples = !argv.code;
+options.httpsnippet = argv.httpsnippet;
+
 if (argv.lang) {
 	options.language_tabs = [];
 }

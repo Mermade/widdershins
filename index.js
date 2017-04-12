@@ -10,6 +10,8 @@ var sampler = require('openapi-sampler');
 var dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
+
+var httpsnippetGenerator = require('./httpsnippetGenerator.js');
 var templates;
 
 var circles = [];
@@ -403,8 +405,9 @@ function convert(swagger,options) {
                             content += sample.source;
                             content += '\n````\n';
                         }
-                    }
-                    else {
+                    } else if(options.httpsnippet) {
+                      content += httpsnippetGenerator.generate(header.language_tabs, data);
+                    } else {
                         if (languageCheck('shell', header.language_tabs, false)) {
                             content += '````shell\n';
 							data = options.templateCallback('code_shell','pre',data);

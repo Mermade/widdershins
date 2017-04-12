@@ -33,6 +33,7 @@
   "homepage": "https://github.com/Mermade/widdershins#readme",
   "dependencies": {
     "dot": "^1.0.3",
+    "httpsnippet": "^1.16.5",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
     "openapi-sampler": "^0.3.3",
@@ -40,6 +41,7 @@
     "yargs": "^5.0.0"
   },
   "devDependencies": {
-    "recursive-readdir": "^2.0.0"
+    "recursive-readdir": "^2.0.0",
+    "underscore": "^1.8.3"
   }
 }
