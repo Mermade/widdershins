@@ -5,6 +5,9 @@
   "description": "{{=data.openapi.info.description}}",
   "documentation": "{{=data.openapi.externalDocs.url}}",
   "termsOfService": "{{=data.openapi.info.termsOfService}}",
+{{? data.openapi.info['x-logo'] }}
+  "logo": "{{=data.openapi.info['x-logo'].url}}",
+{{?}}
   "name": "{{=data.openapi.info.title}}"
 }
 </script>
