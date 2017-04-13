@@ -14,7 +14,8 @@ var argv = require('yargs')
     .strict()
     .boolean('httpsnippet')
     .describe('httpsnippet','Use httpsnippet to generate codes')
-
+    .array('language_tabs')
+    .describe('language_tabs','List of language tabs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Load spec in yaml format, default json')
@@ -68,6 +69,12 @@ options.httpsnippet = argv.httpsnippet;
 
 if (argv.lang) {
 	options.language_tabs = [];
+} else if(argv.language_tabs) {
+  options.language_tabs = argv.language_tabs.map(function(lang){
+    var pair = {};
+    pair[lang] = lang;
+    return pair;
+  });
 }
 if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;
