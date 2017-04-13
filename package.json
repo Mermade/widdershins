@@ -41,7 +41,6 @@
     "yargs": "^5.0.0"
   },
   "devDependencies": {
-    "recursive-readdir": "^2.0.0",
-    "underscore": "^1.8.3"
+    "recursive-readdir": "^2.0.0"
   }
 }
