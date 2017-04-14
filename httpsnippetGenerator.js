@@ -3,7 +3,7 @@ var HTTPSnippet= require('httpsnippet');
 function generate(langs, data){
   var snippet = new HTTPSnippet({
     method: data.methodUpper,
-    url: 'http' + data.url,
+    url: data.url,
     queryString: data.queryParameters.map(function(item){
       return { "name": item.name, "value": item.exampleValues.object }
     }),
@@ -13,11 +13,10 @@ function generate(langs, data){
   });
 
   content = ""
-  var keyLangs = langs.map(function(lang){ return [Object.keys(lang)]});
-  keyLangs.forEach(function(lang){
-    var code = snippet.convert(lang);
+  langs.forEach(function(item){
+    var code = snippet.convert(item.lang, item.client);
     if(code){
-      content += '```' + lang + '\n';
+      content += '```' + item.lang + '\n';
       content += code;
       content += '\n```\n\n';
     }

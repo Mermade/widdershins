@@ -70,10 +70,10 @@ options.httpsnippet = argv.httpsnippet;
 if (argv.lang) {
 	options.language_tabs = [];
 } else if(argv.language_tabs) {
-  options.language_tabs = argv.language_tabs.map(function(lang){
-    var pair = {};
-    pair[lang] = lang;
-    return pair;
+  options.language_tabs = argv.language_tabs.map(function(item){
+    var [lang, name, client] = item.split(':', 3)
+    name = name || lang;
+    return {lang, name, client}
   });
 }
 if (argv.theme) options.theme = argv.theme;

@@ -170,7 +170,15 @@ function parameterToSchema(param,swagger) {
 function convert(swagger,options) {
 
     var defaults = {};
-    defaults.language_tabs = [{'shell': 'Shell'},{'http': 'HTTP'},{'javascript': 'JavaScript'},{'javascript--nodejs': 'Node.JS'},{'python': 'Python'},{'ruby': 'Ruby'},{'java': 'Java'}];
+    defaults.language_tabs = [
+      {lang: 'shell', name: 'Shell'},
+      {lang: 'http', name: 'HTTP'},
+      {lang: 'javascript', name: 'JavaScript'},
+      {lang: 'javascript--nodejs', name: 'Node.JS'},
+      {lang: 'python', name: 'Python'},
+      {lang: 'ruby', name: 'Ruby'},
+      {lang: 'java', name: 'Java'}
+    ]
     defaults.codeSamples = true;
 	defaults.theme = 'darkula';
 	defaults.search = true;
@@ -178,7 +186,6 @@ function convert(swagger,options) {
 	defaults.discovery = false;
 	defaults.includes = [];
 	defaults.templateCallback = function(templateName,stage,data) { return data; };
-
 	if (!options.codeSamples) defaults.language_tabs = [];
 
     options = Object.assign({},defaults,options);
@@ -194,7 +201,11 @@ function convert(swagger,options) {
     header.title = swagger.info.title+' '+((swagger.info.version.toLowerCase().startsWith('v')) ? swagger.info.version : 'v'+swagger.info.version);
 
     // we always show json / yaml / xml if used in consumes/produces
-    header.language_tabs = options.language_tabs;
+    header.language_tabs = options.language_tabs.map(function(item){
+      map = {}
+      map[item.lang] = item.name
+      return map;
+    });
 
 	circles = circular.getCircularRefs(swagger, options);
 
@@ -406,7 +417,7 @@ function convert(swagger,options) {
                             content += '\n````\n';
                         }
                     } else if(options.httpsnippet) {
-                      content += httpsnippetGenerator.generate(header.language_tabs, data);
+                      content += httpsnippetGenerator.generate(options.language_tabs, data);
                     } else {
                         if (languageCheck('shell', header.language_tabs, false)) {
                             content += '````shell\n';
