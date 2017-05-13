@@ -35,9 +35,9 @@
     "dot": "^1.0.3",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
-    "openapi-sampler": "^0.3.3",
+    "openapi-sampler": "^0.4.1",
     "openapi_optimise": "latest",
-    "yargs": "^5.0.0"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "recursive-readdir": "^2.0.0"
