@@ -362,13 +362,17 @@ function convert(swagger,options) {
                             if (obj.xml && obj.xml.name) {
                                 xmlWrap = obj.xml.name;
                             }
+                            var oobj = clone(obj);
                             try {
-                                obj = sampler.sample(obj, {skipReadOnly: true});
-                            }
-                            catch (ex) {
-                                console.log('# '+ex);
-                            }
-                            if (obj.properties) obj = obj.properties;
+                           		obj = sampler.sample(obj, {skipReadOnly: true});
+                                if (obj == null) {
+                                    obj = oobj;
+                                }
+                          	}
+                          	catch (ex) {
+                           	   	console.log('# '+ex);
+                           	}
+                            if (obj && obj.properties) obj = obj.properties;
                             if (doContentType(consumes,'application/json')) {
                                 content += '````json\n';
                                 content += JSON.stringify(obj,null,2)+'\n';
