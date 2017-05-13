@@ -66,6 +66,7 @@ function check(file) {
 		}
 		catch (ex) {
 			console.log(ex.message);
+			console.log(ex.stack);
 			result = false;
 		}
 		if (result) {
