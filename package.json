@@ -37,7 +37,7 @@
     "js-yaml": "^3.6.1",
     "openapi-sampler": "~0.3.3",
     "openapi_optimise": "latest",
-    "yargs": "^5.0.0"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "recursive-readdir": "^2.0.0"

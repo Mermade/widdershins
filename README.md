@@ -1,4 +1,6 @@
 # widdershins
+
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/widdershins.svg)](https://greenkeeper.io/)
 OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) / 
 [Shins](https://github.com/mermade/shins) compatible markdown
 
