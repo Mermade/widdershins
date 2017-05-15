@@ -3,6 +3,7 @@ user_templates/
 *.tgz
 *.old
 doit
+test*.sh
 
 # Logs
 logs
