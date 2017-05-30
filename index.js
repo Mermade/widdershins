@@ -1,7 +1,9 @@
 var up = require('url');
 var path = require('path');
+var util = require('util');
 
 var yaml = require('js-yaml');
+var swagger2openapi = require('swagger2openapi');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
 var recurseotron = require('openapi_optimise/common.js');
@@ -165,6 +167,20 @@ function parameterToSchema(param, swagger) {
 	return schema;
 }
 
+function convertAsyncApi(asyncapi, options) {
+	var result = clone(asyncapi);
+	result.servers = [];
+	var u = up.parse(options.loadedFrom ? options.loadedFrom : '/');
+	var schemes = asyncapi.schemes || [];
+	if (!schemes.length) {
+		schemes.push((u.protocol ? u.protocol : 'http').split(':')[0]);
+	}
+	for (var scheme of schemes) {
+		result.servers.push({url:scheme+'://'+(asyncapi.host ? asyncapi.host : (u.host ? u.host : 'example.com'))+(asyncapi.basePath ? asyncApi.basePath : (u.path ? u.path : '/'))});
+	}
+	return result;
+}
+
 function convert(swagger, options) {
 
 	var defaults = {};
@@ -210,36 +226,31 @@ function convert(swagger, options) {
 	data.openapi = swagger;
 	data.header = header;
 
-	if (swagger.openapi) {
-		if (swagger.servers && swagger.servers.length) {
-			data.baseUrl = swagger.servers[0].url;
-		}
-		else if (options.loadedFrom) {
-			data.baseUrl = options.loadedFrom;
-		}
-		else {
-			data.baseUrl = 'http://example.com';
-		}
-		var u = up.parse(data.baseUrl);
-		data.protocol = u.protocol.split(':')[0];
-		data.host = u.host;
+	var content = '';
+
+	if (swagger.swagger) {
+		swagger = convertAsyncApi(swagger, options); // for now, to do host,basePath,schemes
+	}
+	else if (swagger.openapi) {
+	}
+	else if (swagger.asyncapi) {
+		swagger = convertAsyncApi(swagger, options);
 	}
 	else {
-		data.host = swagger.host;
-		data.protocol = swagger.schemes ? swagger.schemes[0] : '';
-		if (!data.host && options.loadedFrom) {
-			var u = up.parse(options.loadedFrom);
-			data.host = u.host;
-			data.protocol = u.protocol.replace(':', '');
-		}
-		if (!data.host) host = 'example.com';
-		if (!data.protocol) protocol = 'http';
-		data.baseUrl = data.protocol + '://' + data.host + (swagger.basePath ? swagger.basePath : '/');
+		content = '# Unrecognised input format';
+	}
+
+	if (swagger.servers && swagger.servers.length) {
+		data.servers = swagger.servers;
+	}
+	else if (options.loadedFrom) {
+		data.servers = [{url:options.loadedFrom}];
+	}
+	else {
+		data.servers = [{url:'//'}];
 	}
 
 	data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
-
-	var content = '';
 
 	data = options.templateCallback('heading_main', 'pre', data);
 	if (data.append) { content += data.append; delete data.append; }

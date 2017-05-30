@@ -4,8 +4,11 @@
 
 {{? data.openapi.info.description}}{{=data.openapi.info.description}}{{?}}
 
-Base URL = <a href="{{=data.baseUrl}}">{{=data.baseUrl}}</a>
+Base URLs:
+{{~data.servers :s}}
+* <a href="{{=s.url}}">{{=s.url}}</a>{{~}}
 
+{{? data.openapi.baseTopic}}Base Topic: {{=data.openapi.baseTopic}}{{?}}
 {{? data.openapi.info.termsOfService}}<a href="{{=data.openapi.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.openapi.info.contact}}{{? data.openapi.info.contact.email}}Email: <a href="mailto:{{=data.openapi.info.contact.email}}">{{=data.contactName}}</a>{{?}}{{? data.openapi.info.contact.url}}Web: <a href="{{=data.openapi.info.contact.url}}">{{=data.contactName}}</a>{{?}}{{?}}
 {{? data.openapi.info.license}}{{? data.openapi.info.license.url}}License: <a href="{{=data.openapi.info.license.url}}">{{=data.openapi.info.license.name}}</a>{{??}}License: {{=data.openapi.info.license.name}}{{?}}{{?}}
