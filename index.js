@@ -529,9 +529,6 @@ function convert(swagger,options) {
                     var paramHeader = false;
                     for (var p in parameters) {
                         param = parameters[p];
-                        //if (param["$ref"]) {
-                        //    param = jptr.jptr(swagger,param["$ref"]);
-                        //}
                         if (param.schema) {
                             if (!paramHeader) {
 								data = options.templateCallback('heading_body_parameter','pre',data);
@@ -550,7 +547,7 @@ function convert(swagger,options) {
                                 var oobj = clone(obj);
                            		try {
                               		obj = sampler.sample(obj, {skipReadOnly: true});
-                                    if (obj == null) {
+                                    if ((obj == null) || (Object.keys(obj).length === 0)) {
                                         obj = oobj;
                                     }
                           	 	}
