@@ -177,9 +177,9 @@ function convert(swagger,options) {
 	defaults.includes = [];
 	defaults.templateCallback = function(templateName,stage,data) { return data; };
 
-	if (!options.codeSamples) defaults.language_tabs = [];
-
     options = Object.assign({},defaults,options);
+
+	if (!options.codeSamples) defaults.language_tabs = [];
 
     if (typeof templates === 'undefined') {
 		templates = dot.process({ path: path.join(__dirname,'templates') });
@@ -399,74 +399,74 @@ function convert(swagger,options) {
                         for (var s in op["x-code-samples"]) {
                             var sample = op["x-code-samples"][s];
                             var lang = languageCheck(sample.lang,header.language_tabs,true);
-                            content += '````'+lang+'\n';
+                            content += '```'+lang+'\n';
                             content += sample.source;
-                            content += '\n````\n';
+                            content += '\n```\n';
                         }
                     }
                     else {
                         if (languageCheck('shell', header.language_tabs, false)) {
-                            content += '````shell\n';
+                            content += '```shell\n';
 							data = options.templateCallback('code_shell','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_shell(data);
 							data = options.templateCallback('code_shell','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('http', header.language_tabs, false)) {
-                            content += '````http\n';
+                            content += '```http\n';
 							data = options.templateCallback('code_http','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_http(data);
 							data = options.templateCallback('code_http','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('javascript', header.language_tabs, false)) {
-                            content += '````javascript\n';
+                            content += '```javascript\n';
 							data = options.templateCallback('code_javascript','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_javascript(data);
 							data = options.templateCallback('code_javascript','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('javascript--nodejs', header.language_tabs, false)) {
-                            content += '````javascript--nodejs\n';
+                            content += '```javascript--nodejs\n';
 							data = options.templateCallback('code_nodejs','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_nodejs(data);
 							data = options.templateCallback('code_nodejs','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('ruby', header.language_tabs, false)) {
-                            content += '````ruby\n';
+                            content += '```ruby\n';
 							data = options.templateCallback('code_ruby','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_ruby(data);
 							data = options.templateCallback('code_ruby','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('python', header.language_tabs, false)) {
-                            content += '````python\n';
+                            content += '```python\n';
 							data = options.templateCallback('code_python','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_python(data);
 							data = options.templateCallback('code_python','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                         if (languageCheck('java', header.language_tabs, false)) {
-                            content += '````java\n';
+                            content += '```java\n';
 							data = options.templateCallback('code_java','pre',data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_java(data);
 							data = options.templateCallback('code_java','post',data);
 							if (data.append) { content += data.append; delete data.append; }
-                            content += '````\n\n';
+                            content += '```\n\n';
                         }
                     }
                 }
@@ -557,24 +557,24 @@ function convert(swagger,options) {
 							}
                             if (obj && obj.properties) obj = obj.properties;
                             if (doContentType(consumes,jsonContentTypes)) {
-                                content += '````json\n';
+                                content += '```json\n';
                                 content += JSON.stringify(obj,null,2)+'\n';
-                                content += '````\n';
+                                content += '```\n';
                             }
                             if (doContentType(consumes,yamlContentTypes)) {
-                                content += '````yaml\n';
+                                content += '```yaml\n';
                                 content += yaml.safeDump(obj)+'\n';
-                                content += '````\n';
+                                content += '```\n';
                             }
                             if (doContentType(consumes,xmlContentTypes)) {
-                                content += '````xml\n';
+                                content += '```xml\n';
                                 if (xmlWrap) {
                                     var newObj = {};
                                     newObj[xmlWrap] = obj;
                                     obj = newObj;
                                 }
                                 content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
-                                content += '````\n';
+                                content += '```\n';
                             }
                         }
                     }
@@ -655,14 +655,14 @@ function convert(swagger,options) {
                                 	}
                                 }
                                 if (doContentType(produces,jsonContentTypes)) {
-                                    content += '````json\n';
+                                    content += '```json\n';
                                     content += JSON.stringify(obj,null,2)+'\n';
-                                    content += '````\n';
+                                    content += '```\n';
                                 }
                                 if (doContentType(produces,yamlContentTypes)) {
-                                    content += '````json\n';
+                                    content += '```json\n';
                                     content += yaml.safeDump(obj)+'\n';
-                                    content += '````\n';
+                                    content += '```\n';
                                 }
                                 if (xmlWrap) {
                                     var newObj = {};
@@ -670,9 +670,9 @@ function convert(swagger,options) {
                                     obj = newObj;
                                 }
                                 if ((typeof obj === 'object') && doContentType(produces,xmlContentTypes)) {
-                                    content += '````xml\n';
+                                    content += '```xml\n';
                                     content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
-                                    content += '````\n';
+                                    content += '```\n';
                                 }
                             }
                         }
