@@ -317,7 +317,7 @@ function convert(openapi, options, callback) {
 				data.allHeaders = common.clone(data.headerParameters);
 				if (data.produces.length) {
 					var accept = {};
-					accept.name = 'Accept';
+					accept.name = 'Content-Type';
 					accept.type = 'string';
 					accept.in = 'header';
 					accept.exampleValues = {};
@@ -327,7 +327,7 @@ function convert(openapi, options, callback) {
 				}
 				if (data.consumes.length) {
 					var contentType = {};
-					contentType.name = 'Content-Type';
+					contentType.name = 'Accept';
 					contentType.type = 'string';
 					contentType.in = 'header';
 					contentType.exampleValues = {};
