@@ -1,0 +1,26 @@
+# Authentication
+
+{{~ data.securityDefinitions :sd}}
+{{? sd.type == 'apiKey' }}
+* API Key
+    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
+{{?}}
+{{? sd.type == 'basic'}}
+- Basic Authentication. {{=sd.description}} 
+{{?}}
+{{? sd.type == 'oauth2'}}
+- oAuth2 authentication. {{=sd.description}}
+{{~ sd.flowArray :flow}}
+    - Flow: {{=flow.flowName}}
+{{? flow.authorizationUrl}}    - Authorization URL = [{{=flow.authorizationUrl}}]({{=flow.authorizationUrl}}){{?}}
+{{? flow.tokenUrl}}    - Token URL = [{{=flow.tokenUrl}}]({{=flow.tokenUrl}}){{?}}
+{{? flow.scopeArray}}
+|Scope|Scope Description|
+|---|---|
+{{~ flow.scopeArray :scope}}|{{=scope.name}}|{{=scope.description}}|
+{{~}}
+{{?}}
+{{~}}
+{{?}}
+{{~}}
+

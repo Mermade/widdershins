@@ -50,13 +50,13 @@ var argv = require('yargs')
     })
     .argv;
 
-var swagger = {};
+var api = {};
 if (argv.yaml) {
     var s = fs.readFileSync(path.resolve(argv._[0]),'utf8');
-    swagger = yaml.safeLoad(s);
+    api = yaml.safeLoad(s);
 }
 else {
-    swagger = require(path.resolve(argv._[0]));
+    api = require(path.resolve(argv._[0]));
 }
 
 var options = {};
@@ -72,13 +72,12 @@ options.discovery = argv.discovery;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 
-var output = converter.convert(swagger,options);
-
-var outfile = argv.outfile||argv._[1];
-if (outfile) {
-    fs.writeFileSync(path.resolve(outfile),output,'utf8');
-}
-else {
-    console.log(output);
-}
-
+converter.convert(api,options,function(err,output){
+	var outfile = argv.outfile||argv._[1];
+	if (outfile) {
+  	  fs.writeFileSync(path.resolve(outfile),output,'utf8');
+	}
+	else {
+  	  console.log(output);
+	}
+});

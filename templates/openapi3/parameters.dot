@@ -1,0 +1,15 @@
+### Parameters
+
+Parameter|In|Type|Required|Description
+---|---|---|---|---|
+{{~ data.parameters :p}}{{=p.name}}|{{=p.in}}|{{=p.type}}|{{=p.required}}|{{=p.shortDesc}}
+{{~}}
+
+{{? data.enums.length}}
+#### Enumerated Values
+
+|Parameter|Value|
+|---|---|
+{{~ data.enums :e}}{{=e.name}}|{{=e.value}}|
+{{~}}
+{{?}}
