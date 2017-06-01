@@ -36,6 +36,16 @@ var options = argv;
 var widdershinsOptions = {};
 if (options.raw) widdershinsOptions.sample = false;
 
+function handleResult(file, result) {
+	if (result) {
+		pass++;
+	}
+	else {
+		fail++;
+		failures.push(file);
+	}
+}
+
 function check(file) {
 	var result = false;
 	var components = file.split(path.sep);
@@ -59,47 +69,41 @@ function check(file) {
 			return true;
 		}
 
-		if (!src.swagger && !src.openapi) {
-			console.log('Not an OpenAPI definition');
+		if (!src.swagger && !src.openapi && !src.asyncApi) {
+			console.log('Not a known API definition');
 			return true;
 		}
 
 		try {
-	        result = widdershins.convert(src, widdershinsOptions);
-			result = result.split('is undefined').join('x');
-			if ((result != '') && (result.indexOf('undefined')<0)) {
-		    	console.log(green+'  %s %s',src.info.title,src.info.version);
-		    	console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
-				result = true;
-			}
-			else {
-				result = false;
-			}
+	        widdershins.convert(src, widdershinsOptions, function(err, result){
+				result = result.split('is undefined').join('x');
+				if ((result != '') && (result.indexOf('undefined')<0)) {
+			    	console.log(green+'  %s %s',src.info.title,src.info.version);
+			    	console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
+					result = true;
+				}
+				else {
+					result = false;
+				}
+				handleResult(file, result);
+			});
 		}
 		catch (ex) {
 			console.log(red+ex.message);
 			result = false;
-		}
-		if (result) {
-			pass++;
-		}
-		else {
-			fail++;
+			handleResult(file, result);
 		}
 	}
 	else {
 		result = true;
 	}
-	return result;
 }
 
 process.exitCode = 1;
 pathspec = path.resolve(pathspec);
 rr(pathspec, function (err, files) {
 	for (var i in files) {
-		if (!check(files[i])) {
-			failures.push(files[i]);
-		}
+		check(files[i]);
 	}
 });
 
