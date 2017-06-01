@@ -288,11 +288,11 @@ function convert(openapi, options, callback) {
 					param.exampleValues.json = {};
 					try {
 						var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true });
-						var t = obj[param.name] || obj;
+						var t = obj[param.name] || obj; // FIXME - always obj?
 						if (typeof t == 'string') t = "'" + t + "'";
 						if (typeof t == 'object') t = JSON.stringify(t, null, 2);
 						param.exampleValues.json = t;
-						param.exampleValues.object = obj[param.name];
+						param.exampleValues.object = obj[param.name] || obj; // FIXME - always obj?
 					}
 					catch (ex) {
 						console.log('# ' + ex);
