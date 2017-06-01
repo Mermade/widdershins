@@ -281,9 +281,6 @@ function convert(swagger,options) {
                 var url = (swagger.schemes ? swagger.schemes[0] : data.protocol)+'://'+data.host+(swagger.basePath ? swagger.basePath : '')+method.path;
                 var consumes = (op.consumes||[]).concat(swagger.consumes||[]);
                 var produces = (op.produces||[]).concat(swagger.produces||[]);
-				if ((consumes.length === 0) && (produces.length > 0)) {
-					consumes = produces; // work around deficiency in at least petstore example
-				}
                 var parameters = (swagger.paths[method.path].parameters || []).concat(swagger.paths[method.path][method.op].parameters || []);
                 // TODO dedupe overridden parameters
 
@@ -369,24 +366,24 @@ function convert(swagger,options) {
 
 					data.allHeaders = clone(data.headerParameters);
 					if (data.produces.length) {
-						var accept = {};
-						accept.name = 'Accept';
-						accept.type = 'string';
-						accept.in = 'header';
-						accept.exampleValues = {};
-						accept.exampleValues.json = "'"+data.produces[0]+"'";
-						accept.exampleValues.object = data.produces[0];
-						data.allHeaders.push(accept);
-					}
-					if (data.consumes.length) {
 						var contentType = {};
 						contentType.name = 'Content-Type';
 						contentType.type = 'string';
 						contentType.in = 'header';
 						contentType.exampleValues = {};
-						contentType.exampleValues.json = "'"+data.consumes[0]+"'";
-						contentType.exampleValues.object = data.consumes[0];
+						contentType.exampleValues.json = "'"+data.produces[0]+"'";
+						contentType.exampleValues.object = data.produces[0];
 						data.allHeaders.push(contentType);
+					}
+					if (data.consumes.length) {
+						var accept = {};
+						accept.name = 'Accept';
+						accept.type = 'string';
+						accept.in = 'header';
+						accept.exampleValues = {};
+						accept.exampleValues.json = "'"+data.consumes[0]+"'";
+						accept.exampleValues.object = data.consumes[0];
+						data.allHeaders.push(accept);
 					}
 
 					data = options.templateCallback('heading_code_samples','pre',data);
