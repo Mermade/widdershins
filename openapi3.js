@@ -10,6 +10,7 @@ var sampler = require('openapi-sampler');
 var dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
+var templates;
 
 var common = require('./common.js');
 
@@ -72,7 +73,9 @@ function convert(openapi, options, callback) {
 	options = Object.assign({}, defaults, options);
 	if (!options.codeSamples) options.language_tabs = [];
 
-	var templates = dot.process({ path: path.join(__dirname, 'templates', 'openapi3') });
+	if (!templates || options.resetTemplates) {
+		templates = dot.process({ path: path.join(__dirname, 'templates', 'openapi3') });
+	}
 	if (options.user_templates) {
 		templates = Object.assign(templates, dot.process({ path: options.user_templates }));
 	}
@@ -256,6 +259,9 @@ function convert(openapi, options, callback) {
 					body.required = true; // possibly
 					body.description = 'No description'; // todo
 					body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
+					if (typeof body.schema.$ref === 'string') {
+						body.schema = common.dereference(body.schema, circles, openapi);
+					}
 					parameters.push(body);
 				}
 
@@ -282,7 +288,7 @@ function convert(openapi, options, callback) {
 					param.exampleValues.json = {};
 					try {
 						var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true });
-						var t = obj[param.name];
+						var t = obj[param.name] || obj;
 						if (typeof t == 'string') t = "'" + t + "'";
 						if (typeof t == 'object') t = JSON.stringify(t, null, 2);
 						param.exampleValues.json = t;
