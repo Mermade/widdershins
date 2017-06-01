@@ -7,10 +7,10 @@ function convert(api, options, callback) {
 	if (api.swagger) {
 		openapi2.convert(api, options, callback);
 	}
-	else if (swagger.openapi) {
+	else if (api.openapi) {
 		openapi3.convert(api, options, callback);
 	}
-	else if (swagger.asyncapi) {
+	else if (api.asyncapi) {
 		asyncapi.convert(api, options, callback);
 	}
 	else {

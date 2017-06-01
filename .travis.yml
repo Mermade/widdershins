@@ -10,6 +10,6 @@ before_script:
 script:
   - node testRunner openapi-directory/APIs/
   - node testRunner openapi-definitions/
-  - node testRunner hapi/apis/
+#  - node testRunner hapi/APIs/
   - node testRunner openapi3-examples/pass/
 

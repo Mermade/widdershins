@@ -77,6 +77,7 @@ function check(file) {
 		try {
 	        widdershins.convert(src, widdershinsOptions, function(err, result){
 				result = result.split('is undefined').join('x');
+				result = result.split('undefined behavio').join('x');
 				if ((result != '') && (result.indexOf('undefined')<0)) {
 			    	console.log(green+'  %s %s',src.info.title,src.info.version);
 			    	console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
