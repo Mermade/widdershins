@@ -1,6 +1,6 @@
-### Responses
+### Payloads
 
-Status|Meaning|Description
----|---|---|
+|Payload|Description|
+---|---|
 {{~ data.responses :r}}{{=r.status}}|{{=r.meaning}}|{{=r.description}}
 {{~}}

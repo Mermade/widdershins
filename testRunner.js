@@ -69,7 +69,7 @@ function check(file) {
 			return true;
 		}
 
-		if (!src.swagger && !src.openapi && !src.asyncApi) {
+		if (!src.swagger && !src.openapi && !src.asyncapi) {
 			console.log('Not a known API definition');
 			return true;
 		}
