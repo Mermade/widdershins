@@ -16,7 +16,7 @@ function clone(obj) {
 }
 
 function dereference(obj, circles, api) {
-    if (obj["$ref"]) {
+    if (obj && obj["$ref"]) {
         obj = jptr.jptr(api, obj["$ref"]);
     }
     var changes = 1;
