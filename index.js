@@ -179,7 +179,7 @@ function convert(swagger,options) {
 
     options = Object.assign({},defaults,options);
 
-	if (!options.codeSamples) defaults.language_tabs = [];
+	if (!options.codeSamples) options.language_tabs = [];
 
     if (typeof templates === 'undefined') {
 		templates = dot.process({ path: path.join(__dirname,'templates') });
@@ -378,7 +378,7 @@ function convert(swagger,options) {
 						accept.exampleValues.object = data.produces[0];
 						data.allHeaders.push(accept);
 					}
-					if (data.produces.length) {
+					if (data.consumes.length) {
 						var contentType = {};
 						contentType.name = 'Content-Type';
 						contentType.type = 'string';
