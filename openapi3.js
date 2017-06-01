@@ -110,6 +110,7 @@ function convert(openapi, options, callback) {
 	else {
 		data.servers = [{url:'//'}];
 	}
+	data.host = up.parse(data.servers[0].url).host;
 
 	data.contactName = (openapi.info.contact && openapi.info.contact.name ? openapi.info.contact.name : 'Support');
 
@@ -270,8 +271,8 @@ function convert(openapi, options, callback) {
 							param.safeType = param.schema["$ref"].split('/').pop();
 						}
 					}
-					if ((param.safeType == 'array') && param.items && param.items.type) {
-						param.safeType += '[' + param.items.type + ']';
+					if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items.type) {
+						param.safeType += '[' + param.schema.items.type + ']';
 					}
 					if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
 						param.safeType += '[' + param.schema.items["$ref"].split('/').pop() + ']';
@@ -316,24 +317,24 @@ function convert(openapi, options, callback) {
 
 				data.allHeaders = common.clone(data.headerParameters);
 				if (data.produces.length) {
-					var accept = {};
-					accept.name = 'Content-Type';
-					accept.type = 'string';
-					accept.in = 'header';
-					accept.exampleValues = {};
-					accept.exampleValues.json = "'" + data.produces[0] + "'";
-					accept.exampleValues.object = data.produces[0];
-					data.allHeaders.push(accept);
-				}
-				if (data.consumes.length) {
 					var contentType = {};
-					contentType.name = 'Accept';
+					contentType.name = 'Content-Type';
 					contentType.type = 'string';
 					contentType.in = 'header';
 					contentType.exampleValues = {};
-					contentType.exampleValues.json = "'" + data.consumes[0] + "'";
-					contentType.exampleValues.object = data.consumes[0];
+					contentType.exampleValues.json = "'" + data.produces[0] + "'";
+					contentType.exampleValues.object = data.produces[0];
 					data.allHeaders.push(contentType);
+				}
+				if (data.consumes.length) {
+					var accept = {};
+					accept.name = 'Accept';
+					accept.type = 'string';
+					accept.in = 'header';
+					accept.exampleValues = {};
+					accept.exampleValues.json = "'" + data.consumes[0] + "'";
+					accept.exampleValues.object = data.consumes[0];
+					data.allHeaders.push(accept);
 				}
 
 				var codeSamples = (options.codeSamples || op["x-code-samples"]);
@@ -435,19 +436,19 @@ function convert(openapi, options, callback) {
 						param.originalType = param.type;
 						param.type = param.safeType;
 
-						if (param.enum) {
-							for (var e in param.enum) {
+						if (param.schema && param.schema.enum) {
+							for (var e in param.schema.enum) {
 								var nvp = {};
 								nvp.name = param.name;
-								nvp.value = param.enum[e];
+								nvp.value = param.schema.enum[e];
 								data.enums.push(nvp);
 							}
 						}
-						if (param.items && param.items.enum) {
-							for (var e in param.items.enum) {
+						if (param.schema && param.schema.items && param.schema.items.enum) {
+							for (var e in param.schema.items.enum) {
 								var nvp = {};
 								nvp.name = param.name;
-								nvp.value = param.items.enum[e];
+								nvp.value = param.schema.items.enum[e];
 								data.enums.push(nvp);
 							}
 						}
@@ -534,7 +535,7 @@ function convert(openapi, options, callback) {
 				data.responses = [];
 				for (var resp in op.responses) {
 					var response = op.responses[resp];
-					if (response.schema) responseSchemas = true;
+					if (response.schema || response.content) responseSchemas = true;
 					if (response.headers) responseHeaders = true;
 
 					response.status = resp;
@@ -591,40 +592,43 @@ function convert(openapi, options, callback) {
 					if (data.append) { content += data.append; delete data.append; }
 					for (var resp in op.responses) {
 						var response = op.responses[resp];
-						if (response.schema) {
-							var xmlWrap = '';
-							var obj = common.dereference(response.schema, circles, openapi);
-							if (obj.xml && obj.xml.name) {
-								xmlWrap = obj.xml.name;
-							}
-							if (Object.keys(obj).length > 0) {
-								if (options.sample) {
-									try {
-										obj = sampler.sample(obj); // skipReadOnly: false
+						for (var ct in response.content) {
+							var contentType = response.content[ct];
+							if (contentType.schema) {
+								var xmlWrap = '';
+								var obj = common.dereference(contentType.schema, circles, openapi);
+								if (obj.xml && obj.xml.name) {
+									xmlWrap = obj.xml.name;
+								}
+								if (Object.keys(obj).length > 0) {
+									if (options.sample) {
+										try {
+											obj = sampler.sample(obj); // skipReadOnly: false
+										}
+										catch (ex) {
+											console.log('# ' + ex);
+										}
 									}
-									catch (ex) {
-										console.log('# ' + ex);
+									if (common.doContentType([ct], common.jsonContentTypes)) {
+										content += '```json\n';
+										content += JSON.stringify(obj, null, 2) + '\n';
+										content += '```\n';
 									}
-								}
-								if (common.doContentType(produces, common.jsonContentTypes)) {
-									content += '```json\n';
-									content += JSON.stringify(obj, null, 2) + '\n';
-									content += '```\n';
-								}
-								if (common.doContentType(produces, common.yamlContentTypes)) {
-									content += '```json\n';
-									content += yaml.safeDump(obj) + '\n';
-									content += '```\n';
-								}
-								if (xmlWrap) {
-									var newObj = {};
-									newObj[xmlWrap] = obj;
-									obj = newObj;
-								}
-								if ((typeof obj === 'object') && common.doContentType(produces, common.xmlContentTypes)) {
-									content += '```xml\n';
-									content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-									content += '```\n';
+									if (common.doContentType([ct], common.yamlContentTypes)) {
+										content += '```json\n';
+										content += yaml.safeDump(obj) + '\n';
+										content += '```\n';
+									}
+									if (xmlWrap) {
+										var newObj = {};
+										newObj[xmlWrap] = obj;
+										obj = newObj;
+									}
+									if ((typeof obj === 'object') && common.doContentType([ct], common.xmlContentTypes)) {
+										content += '```xml\n';
+										content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+										content += '```\n';
+									}
 								}
 							}
 						}
