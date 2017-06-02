@@ -80,53 +80,8 @@ Templates have access to a `data` object with a range of properties based on the
 
 If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
 
-### Code templates
-
-* `method` - the HTTP method of the operation (in lower-case)
-* `methodUpper` - the HTTP method of the operation (in upper-case)
-* `url` - the full URL of the operation (including protocol and host)
-* `consumes[]` - an array of MIME-types the operation consumes
-* `produces[]` - an array of MIME-types the operation produces
-* `operation` - the current operation object
-* `operationId` - the current operation id
-* `tags[]` - the full list of tags applying to the operation
-* `security` - the security definitions applying to the operation
-* `resource` - the current tag/path object
-* `parameters[]` - an array of parameters for the operation (see below)
-* `queryString` - an example queryString, urlEncoded
-* `requiredQueryString` - an example queryString for `required:true` parameters
-* `queryParameters[]` - a subset of `parameters` that are `in:query`
-* `requiredParameters[]` - a subset of `queryParameters` that are `required:true`
-* `headerParameters[]` - a subset of `parameters` that are `in:header`
-* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`
-
-### Parameter template
-
-* `parameters[]` - an array of parameters, including the following pseudo-properties
-    * `shortDesc` - a truncated version of the parameter description
-    * `safeType` - a computed version of the parameter type, including Body and schema names
-    * `originalType` - the original type of the parameter
-    * `exampleValues` - an object containing examples for use in code-templates
-        * `json` - example values in JSON compatible syntax
-        * `object` - example values in raw object form (unquoted strings etc)
-* `enums[]` - an array of (parameter)name/value pairs
-
-### Responses template
-
-* `responses[]` - an array of responses, including `status` and `meaning` properties
-
-### Authentication template
-
-* `authenticationStr` - a simple string of methods (and scopes where appropriate)
-* `securityDefinitions[]` - an array of applicable securityDefinitions
-
-### Common to all templates
-
-* `openapi` - the top-level OpenApi / Swagger document
-* `header` - the front-matter of the Slate/Shins markdown document
-* `host` - the (computed) host of the API
-* `protocol` - the default/first protocol of the API
-* `baseUrl` - the (computed) baseUrl of the API (including protocol and host)
+* [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
+* [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
 
 ## Tests
 

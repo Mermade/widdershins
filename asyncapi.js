@@ -114,7 +114,7 @@ function convert(asyncapi, options, callback) {
 	asyncapi = convertServers(asyncapi, options);
 
 	var data = {};
-	data.api = data.openapi = asyncapi;
+	data.api = data.asyncapi = data.openapi = asyncapi;
 	data.baseTopic = asyncapi.baseTopic;
 	data.header = header;
 
