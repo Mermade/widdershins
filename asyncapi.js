@@ -96,7 +96,7 @@ function convert(asyncapi, options, callback) {
 	var header = {};
 	header.title = asyncapi.info.title + ' ' + ((asyncapi.info.version && asyncapi.info.version.toLowerCase().startsWith('v')) ? asyncapi.info.version : 'v' + (asyncapi.info.version||'?'));
 
-	// we always show json / yaml / xml if used in consumes/produces
+	// we always show json / yaml / xml if used in headers/payloads
 	header.language_tabs = options.language_tabs;
 
 	circles = circular.getCircularRefs(asyncapi, options);
@@ -168,14 +168,12 @@ function convert(asyncapi, options, callback) {
 				data.tags = asyncapi.topics[message.topic][message.message].tags;
 				data.security = asyncapi.topics[message.topic][message.message].security;
 				data.resource = resource;
-				data.allHeaders = []; // TODO remove me
-				data.headerParameters = [];
-				data.consumes = [];
-				data.produces = [];
 
 				if (msg.$ref) {
 					msg = common.dereference(msg, circles, asyncapi);
 				}
+
+				// TODO headers, as per payload
 
 				data.payload = {};
 				var obj = data.payload.obj = common.dereference(msg.payload, circles, asyncapi);
