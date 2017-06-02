@@ -115,6 +115,7 @@ function convert(asyncapi, options, callback) {
 
 	var data = {};
 	data.api = data.openapi = asyncapi;
+	data.baseTopic = asyncapi.baseTopic;
 	data.header = header;
 
 	var content = '';
@@ -136,50 +137,6 @@ function convert(asyncapi, options, callback) {
 	content += templates.heading_main(data) + '\n';
 	data = options.templateCallback('heading_main', 'post', data);
 	if (data.append) { content += data.append; delete data.append; }
-
-	var securityContainer = asyncapi.securityDefinitions || (asyncapi.components && asyncapi.components.securitySchemes);
-	if (securityContainer) {
-		data.securityDefinitions = [];
-		for (var s in securityContainer) {
-			var secdef = securityContainer[s];
-			var desc = secdef.description ? secdef.description : '';
-			if (secdef.type == 'oauth2') {
-				if (typeof secdef.flow === 'string') {
-					var flowName = secdef.flow;
-					var flow2 = {};
-					flow2.scopes = secdef.scopes;
-					flow2.authorizationUrl = secdef.authorizationUrl;
-					flow2.tokenUrl = secdef.tokenUrl;
-					secdef.flow = {};
-					secdef.flow[flowName] = flow2;
-					delete secdef.scopes;
-					delete secdef.authorizationUrl;
-					delete secdef.tokenUrl;
-				}
-				secdef.flowArray = [];
-				for (var f in secdef.flow) {
-					var flow = secdef.flow[f];
-					flow.flowName = f;
-					flow.scopeArray = [];
-					for (var s in flow.scopes) {
-						var scope = {};
-						scope.name = s;
-						scope.description = flow.scopes[s];
-						flow.scopeArray.push(scope);
-					}
-					secdef.flowArray.push(flow);
-				}
-			}
-			secdef.ref = s;
-			if (!secdef.description) secdef.description = '';
-			data.securityDefinitions.push(secdef);
-		}
-		data = options.templateCallback('security', 'pre', data);
-		if (data.append) { content += data.append; delete data.append; }
-		content += templates.security(data);
-		data = options.templateCallback('security', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
-	}
 
 	var apiInfo = convertToToc(asyncapi);
 
@@ -203,7 +160,7 @@ function convert(asyncapi, options, callback) {
 				var opName = subtitle;
 				content += '## ' + opName + '\n\n';
 
-				var topic = data.baseTopic + message.topic;
+				var topic = data.baseTopic + '.' + message.topic;
 
 				data.message = data.method = message.message;
 				data.topic = topic;
@@ -215,6 +172,51 @@ function convert(asyncapi, options, callback) {
 				data.headerParameters = [];
 				data.consumes = [];
 				data.produces = [];
+
+				if (msg.$ref) {
+					msg = common.dereference(msg, circles, asyncapi);
+				}
+
+				data.payload = {};
+				var obj = data.payload.obj = common.dereference(msg.payload, circles, asyncapi);
+
+				var xmlWrap = '';
+				if (obj && obj.xml && obj.xml.name) {
+					xmlWrap = obj.xml.name;
+				}
+				if (Object.keys(obj).length > 0) {
+					data = options.templateCallback('heading_example_payloads', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.heading_example_payloads(data) + '\n';
+					data = options.templateCallback('heading_example_payloads', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+
+					if (options.sample) {
+						try {
+							obj = sampler.sample(obj); // skipReadOnly: false
+						}
+						catch (ex) {
+							console.log('# ' + ex);
+						}
+					}
+					content += '```json\n';
+					content += JSON.stringify(obj, null, 2) + '\n';
+					content += '```\n';
+					if (xmlWrap) {
+						var newObj = {};
+						newObj[xmlWrap] = obj;
+						obj = newObj;
+					}
+					if ((typeof obj === 'object') && xmlWrap) {
+						content += '```xml\n';
+						content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+						content += '```\n';
+					}
+				}
+
+				data.payload.obj = obj;
+				data.payload.str = util.inspect(data.payload.obj);
+				data.payload.json = JSON.stringify(data.payload.obj, null, 2);
 
 				var codeSamples = (options.codeSamples || msg["x-code-samples"]);
 				if (codeSamples) {
@@ -293,114 +295,8 @@ function convert(asyncapi, options, callback) {
 
 				if (subtitle != opName) content += '`' + subtitle + '`\n\n';
 
-				if (msg.$ref) {
-					msg = common.dereference(msg, circles, asyncapi);
-				}
-
 				if (msg.summary) content += '*' + msg.summary + '*\n\n';
 				if (msg.description) content += msg.description + '\n\n';
-
-				var responseSchemas = false;
-				var responseHeaders = false;
-				data.responses = [];
-				for (var resp in msg.responses) {
-					var response = msg.responses[resp];
-					if (response.schema) responseSchemas = true;
-					if (response.headers) responseHeaders = true;
-
-					response.status = resp;
-					response.meaning = (resp == 'default' ? 'Default' : 'Unknown');
-					var url = '';
-					for (var s in statusCodes) {
-						if (statusCodes[s].code == resp) {
-							response.meaning = statusCodes[s].phrase;
-							url = statusCodes[s].spec_href;
-							break;
-						}
-					}
-					if (url) response.meaning = '[' + response.meaning + '](' + url + ')';
-					if (!response.description) response.description = 'No description';
-					response.description = response.description.trim();
-					data.responses.push(response);
-				}
-				data = options.templateCallback('payloads', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.payloads(data);
-				data = options.templateCallback('payloads', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-
-				if (responseHeaders) {
-					data.response_headers = [];
-					for (var resp in op.responses) {
-						var response = op.responses[resp];
-						for (var h in response.headers) {
-							var hdr = response.headers[h];
-							hdr.status = resp;
-							hdr.header = h;
-							if (!hdr.format) hdr.format = '';
-							if (!hdr.description) hdr.description = '';
-							if (!hdr.type && hdr.schema && hdr.schema.type) {
-								hdr.type = hdr.schema.type;
-								hdr.format = hdr.schema.format||'';
-							}
-
-							data.response_headers.push(hdr);
-						}
-					}
-					data = options.templateCallback('response_headers', 'pre', data);
-					content += templates.response_headers(data);
-					if (data.append) { content += data.append; delete data.append; }
-					data = options.templateCallback('response_headers', 'post', data);
-					if (data.append) { content += data.append; delete data.append; }
-				}
-
-				if (responseSchemas) {
-					data = options.templateCallback('heading_example_responses', 'pre', data);
-					if (data.append) { content += data.append; delete data.append; }
-					content += templates.heading_example_responses(data);
-					data = options.templateCallback('heading_example_responses', 'post', data);
-					if (data.append) { content += data.append; delete data.append; }
-					for (var resp in op.responses) {
-						var response = op.responses[resp];
-						if (response.schema) {
-							var xmlWrap = '';
-							var obj = common.dereference(response.schema, circles, asyncapi);
-							if (obj.xml && obj.xml.name) {
-								xmlWrap = obj.xml.name;
-							}
-							if (Object.keys(obj).length > 0) {
-								if (options.sample) {
-									try {
-										obj = sampler.sample(obj); // skipReadOnly: false
-									}
-									catch (ex) {
-										console.log('# ' + ex);
-									}
-								}
-								if (doContentType(produces, jsonContentTypes)) {
-									content += '```json\n';
-									content += JSON.stringify(obj, null, 2) + '\n';
-									content += '```\n';
-								}
-								if (doContentType(produces, yamlContentTypes)) {
-									content += '```json\n';
-									content += yaml.safeDump(obj) + '\n';
-									content += '```\n';
-								}
-								if (xmlWrap) {
-									var newObj = {};
-									newObj[xmlWrap] = obj;
-									obj = newObj;
-								}
-								if ((typeof obj === 'object') && doContentType(produces, xmlContentTypes)) {
-									content += '```xml\n';
-									content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-									content += '```\n';
-								}
-							}
-						}
-					}
-				}
 
 				var security = (msg.security ? msg.security : asyncapi.security);
 				if (!security) security = [];
@@ -409,31 +305,6 @@ function convert(asyncapi, options, callback) {
 					if (data.append) { content += data.append; delete data.append; }
 					content += templates.authentication_none(data);
 					data = options.templateCallback('authentication_none', 'post', data);
-					if (data.append) { content += data.append; delete data.append; }
-				}
-				else {
-					data.securityDefinitions = [];
-					var list = '';
-					for (var s in security) {
-						var link;
-						link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
-						var secDef = jptr.jptr(asyncapi, link);
-						data.securityDefinitions.push(secDef);
-						list += (list ? ', ' : '') + secDef.type;
-						var scopes = security[s][Object.keys(security[s])[0]];
-						if (Array.isArray(scopes) && (scopes.length > 0)) {
-							list += ' ( Scopes: ';
-							for (var scope in scopes) {
-								list += scopes[scope] + ' ';
-							}
-							list += ')';
-						}
-					}
-					data.authenticationStr = list;
-					data = options.templateCallback('authentication', 'pre', data);
-					if (data.append) { content += data.append; delete data.append; }
-					content += templates.authentication(data);
-					data = options.templateCallback('authentication', 'post', data);
 					if (data.append) { content += data.append; delete data.append; }
 				}
 
