@@ -1,6 +1,6 @@
 # {{=data.header.title}}
 
-> Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example messages and payloads.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
+> Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example headers and payloads.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
 
 {{? data.openapi.info.description}}{{=data.openapi.info.description}}{{?}}
 

@@ -16,6 +16,7 @@ dot.templateSettings.varname = 'data';
 var templates;
 
 var circles = [];
+var content = '';
 
 /**
 * function to reformat asyncapi topics object into an iodocs-style resources object, tags-first
@@ -26,6 +27,9 @@ function convertToToc(source) {
 	for (var t in apiInfo.topics) {
 		for (var m in apiInfo.topics[t]) {
 			var sMessage = apiInfo.topics[t][m];
+			if (sMessage.$ref) {
+				sMessage = common.dereference(sMessage, circles, source);
+			}
 			var ioMessage = {};
 			ioMessage.topic = t;
 			ioMessage.message = m;
@@ -33,7 +37,7 @@ function convertToToc(source) {
 			sMessageUniqueName = sMessageUniqueName.split(' ').join('_'); // TODO {, } and : ?
 			var tagName = 'Default';
 			if (sMessage.tags && sMessage.tags.length > 0) {
-				tagName = sMessage.tags[0];
+				tagName = sMessage.tags[0].name;
 			}
 			if (!apiInfo.resources[tagName]) {
 				apiInfo.resources[tagName] = {};
@@ -68,6 +72,45 @@ function convertServers(asyncapi, options) {
 	for (var scheme of schemes) {
 		result.servers.push({url:scheme+'://'+(asyncapi.host ? asyncapi.host : (u.host ? u.host : 'example.com'))+(asyncapi.basePath ? asyncapi.basePath : (u.path ? u.path : '/'))});
 	}
+	return result;
+}
+
+function processObject(obj, options, asyncapi) {
+	obj = common.dereference(obj, circles, asyncapi);
+
+	var xmlWrap = '';
+	if (obj && obj.xml && obj.xml.name) {
+		xmlWrap = obj.xml.name;
+	}
+	if (Object.keys(obj).length > 0) {
+
+		if (options.sample) {
+			try {
+				obj = sampler.sample(obj); // skipReadOnly: false
+			}
+			catch (ex) {
+				console.log('# ' + ex);
+			}
+		}
+		content += '```json\n';
+		content += JSON.stringify(obj, null, 2) + '\n';
+		content += '```\n';
+		if (xmlWrap) {
+			var newObj = {};
+			newObj[xmlWrap] = obj;
+			obj = newObj;
+		}
+		if ((typeof obj === 'object') && xmlWrap) {
+			content += '```xml\n';
+			content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+			content += '```\n';
+		}
+	}
+
+	var result = {};
+	result.obj = obj;
+	result.str = util.inspect(obj);
+	result.json = JSON.stringify(obj, null, 2);
 	return result;
 }
 
@@ -118,7 +161,7 @@ function convert(asyncapi, options, callback) {
 	data.baseTopic = asyncapi.baseTopic;
 	data.header = header;
 
-	var content = '';
+	content = '';
 
 	if (asyncapi.servers && asyncapi.servers.length) {
 		data.servers = asyncapi.servers;
@@ -173,48 +216,22 @@ function convert(asyncapi, options, callback) {
 					msg = common.dereference(msg, circles, asyncapi);
 				}
 
-				// TODO headers, as per payload
-
-				data.payload = {};
-				var obj = data.payload.obj = common.dereference(msg.payload, circles, asyncapi);
-
-				var xmlWrap = '';
-				if (obj && obj.xml && obj.xml.name) {
-					xmlWrap = obj.xml.name;
+				if (msg.headers) {
+					data = options.templateCallback('heading_example_headers', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.heading_example_headers(data) + '\n';
+					data = options.templateCallback('heading_example_headers', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+					data.headers = processObject(msg.headers, options, asyncapi);
 				}
-				if (Object.keys(obj).length > 0) {
+				if (msg.payload) {
 					data = options.templateCallback('heading_example_payloads', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
 					content += templates.heading_example_payloads(data) + '\n';
 					data = options.templateCallback('heading_example_payloads', 'post', data);
 					if (data.append) { content += data.append; delete data.append; }
-
-					if (options.sample) {
-						try {
-							obj = sampler.sample(obj); // skipReadOnly: false
-						}
-						catch (ex) {
-							console.log('# ' + ex);
-						}
-					}
-					content += '```json\n';
-					content += JSON.stringify(obj, null, 2) + '\n';
-					content += '```\n';
-					if (xmlWrap) {
-						var newObj = {};
-						newObj[xmlWrap] = obj;
-						obj = newObj;
-					}
-					if ((typeof obj === 'object') && xmlWrap) {
-						content += '```xml\n';
-						content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-						content += '```\n';
-					}
+					data.payload = processObject(msg.payload, options, asyncapi);
 				}
-
-				data.payload.obj = obj;
-				data.payload.str = util.inspect(data.payload.obj);
-				data.payload.json = JSON.stringify(data.payload.obj, null, 2);
 
 				var codeSamples = (options.codeSamples || msg["x-code-samples"]);
 				if (codeSamples) {
