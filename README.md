@@ -1,9 +1,11 @@
 # widdershins
+
 OpenApi / Swagger definition to [Slate](https://github.com/lord/slate) / 
 [Shins](https://github.com/mermade/shins) compatible markdown
 
 ![Build](https://img.shields.io/travis/Mermade/widdershins.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-882-brightgreen.svg)](https://github.com/mermade/openapi_specifications)
 [![Known Vulnerabilities](https://snyk.io/test/npm/widdershins/badge.svg)](https://snyk.io/test/npm/widdershins)
+[![Greenkeeper badge](https://badges.greenkeeper.io/Mermade/widdershins.svg)](https://greenkeeper.io/)
 
 <img src="http://mermade.github.io/widdershins/logo.png" width="247px" height="250px" />
 

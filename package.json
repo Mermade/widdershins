@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "1.0.8",
+  "version": "1.1.0",
   "description": "OpenApi / Swagger definition to slate / shins compatible markdown",
   "main": "index.js",
   "bin": {
@@ -36,9 +36,9 @@
     "httpsnippet": "^1.16.5",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
-    "openapi-sampler": "^0.3.3",
+    "openapi-sampler": "~0.3.3",
     "openapi_optimise": "latest",
-    "yargs": "^5.0.0"
+    "yargs": "^8.0.1"
   },
   "devDependencies": {
     "recursive-readdir": "^2.0.0"

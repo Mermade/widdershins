@@ -55,6 +55,7 @@ function check(file) {
 		try {
 	        result = widdershins.convert(src, widdershinsOptions);
 			result = result.split('is undefined').join('x');
+			result = result.split('undefined behavio').join('x');
 			if ((result != '') && (result.indexOf('undefined')<0)) {
 		    	console.log(green+'  %s %s',src.info.title,src.info.version);
 		    	console.log('  %s',src.host);
@@ -66,6 +67,7 @@ function check(file) {
 		}
 		catch (ex) {
 			console.log(ex.message);
+			console.log(ex.stack);
 			result = false;
 		}
 		if (result) {
