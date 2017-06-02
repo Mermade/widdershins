@@ -2,7 +2,9 @@
 user_templates/
 *.tgz
 *.old
-doit
+in/
+out/
+scripts/
 
 # Logs
 logs
