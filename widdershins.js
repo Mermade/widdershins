@@ -12,6 +12,10 @@ var argv = require('yargs')
     .usage('widdershins [options] {input-spec} [[-o] output markdown]')
     .demand(1)
     .strict()
+    .boolean('httpsnippet')
+    .describe('httpsnippet','Use httpsnippet to generate codes')
+    .array('language_tabs')
+    .describe('language_tabs','List of language tabs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Load spec in yaml format, default json')
@@ -61,8 +65,16 @@ else {
 
 var options = {};
 options.codeSamples = !argv.code;
+options.httpsnippet = argv.httpsnippet;
+
 if (argv.lang) {
 	options.language_tabs = [];
+} else if(argv.language_tabs) {
+  options.language_tabs = argv.language_tabs.map(function(item){
+    var [lang, name, client] = item.split(':', 3)
+    name = name || lang;
+    return {lang, name, client}
+  });
 }
 if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;
