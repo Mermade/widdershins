@@ -285,6 +285,9 @@ function convert(openapi, options, callback) {
 					if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
 						param.safeType += '[' + param.schema.items["$ref"].split('/').pop() + ']';
 					}
+					if (param.schema && param.schema.format) {
+						param.safeType = param.safeType + '(' + param.schema.format + ')';
+					}
 					param.exampleSchema = param.schema || {};
 					param.exampleValues = {};
 					param.exampleValues.json = {};
@@ -524,7 +527,7 @@ function convert(openapi, options, callback) {
 								content += '```\n';
 							}
 							if (common.doContentType(consumes, common.formContentTypes)) {
-								content += '```http\n';
+								content += '```yaml\n';
 								content += yaml.safeDump(obj) + '\n';
 								content += '```\n';
 							}
