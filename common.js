@@ -10,6 +10,7 @@ var statusCodes = require('./statusCodes.json');
 var xmlContentTypes = ['application/xml', 'text/xml', 'image/svg+xml', 'application/rss+xml', 'application/rdf+xml', 'application/atom+xml', 'application/mathml+xml', 'application/hal+xml'];
 var jsonContentTypes = ['application/json', 'text/json', 'application/hal+json', 'application/ld+json', 'application/json-patch+json'];
 var yamlContentTypes = ['application/x-yaml', 'text/x-yaml'];
+var formContentTypes = ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'];
 
 function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
@@ -71,6 +72,7 @@ module.exports = {
 	xmlContentTypes : xmlContentTypes,
 	jsonContentTypes : jsonContentTypes,
 	yamlContentTypes : yamlContentTypes,
+	formContentTypes : formContentTypes,
 	dereference : dereference,
 	doContentType : doContentType,
 	languageCheck : languageCheck,

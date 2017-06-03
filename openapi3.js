@@ -490,7 +490,7 @@ function convert(openapi, options, callback) {
 						//if (param["$ref"]) {
 						//    param = jptr.jptr(openapi,param["$ref"]);
 						//}
-						if (param.schema) {
+						if (param.in === 'body') {
 							if (!paramHeader) {
 								data = options.templateCallback('heading_body_parameter', 'pre', data);
 								if (data.append) { content += data.append; delete data.append; }
@@ -520,6 +520,11 @@ function convert(openapi, options, callback) {
 							}
 							if (common.doContentType(consumes, common.yamlContentTypes)) {
 								content += '```yaml\n';
+								content += yaml.safeDump(obj) + '\n';
+								content += '```\n';
+							}
+							if (common.doContentType(consumes, common.formContentTypes)) {
+								content += '```http\n';
 								content += yaml.safeDump(obj) + '\n';
 								content += '```\n';
 							}
@@ -602,6 +607,7 @@ function convert(openapi, options, callback) {
 						var response = op.responses[resp];
 						for (var ct in response.content) {
 							var contentType = response.content[ct];
+							var cta = [ct];
 							if (contentType.schema) {
 								var xmlWrap = '';
 								var obj = common.dereference(contentType.schema, circles, openapi);
@@ -617,12 +623,12 @@ function convert(openapi, options, callback) {
 											console.log('# ' + ex);
 										}
 									}
-									if (common.doContentType([ct], common.jsonContentTypes)) {
+									if (common.doContentType(cta, common.jsonContentTypes)) {
 										content += '```json\n';
 										content += JSON.stringify(obj, null, 2) + '\n';
 										content += '```\n';
 									}
-									if (common.doContentType([ct], common.yamlContentTypes)) {
+									if (common.doContentType(cta, common.yamlContentTypes)) {
 										content += '```json\n';
 										content += yaml.safeDump(obj) + '\n';
 										content += '```\n';
@@ -632,7 +638,7 @@ function convert(openapi, options, callback) {
 										newObj[xmlWrap] = obj;
 										obj = newObj;
 									}
-									if ((typeof obj === 'object') && common.doContentType([ct], common.xmlContentTypes)) {
+									if ((typeof obj === 'object') && common.doContentType(cta, common.xmlContentTypes)) {
 										content += '```xml\n';
 										content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
 										content += '```\n';
