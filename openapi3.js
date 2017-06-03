@@ -181,8 +181,10 @@ function convert(openapi, options, callback) {
 				var produces = [];
 				var consumes = [];
 
+				var rbType = 'object';
 				if (op.requestBody) {
 					if (op.requestBody.$ref) {
+						rbType = op.requestBody.$ref.replace('#/components/requestBodies/','');
 						op.requestBody = jptr.jptr(openapi,op.requestBody.$ref);
 					}
 					for (var rb in op.requestBody.content) {
@@ -255,9 +257,9 @@ function convert(openapi, options, callback) {
 					var body = {};
 					body.name = 'body';
 					body.in = 'body';
-					body.type = 'object';
+					body.type = rbType;
 					body.required = true; // possibly
-					body.description = 'No description'; // todo
+					body.description = op.requestBody.description ? op.requestBody.description : 'No description';
 					body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
 					if (typeof body.schema.$ref === 'string') {
 						body.schema = common.dereference(body.schema, circles, openapi);
