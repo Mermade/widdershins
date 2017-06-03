@@ -365,24 +365,24 @@ function convert(swagger,options) {
 					}
 
 					data.allHeaders = clone(data.headerParameters);
-					if (data.produces.length) {
+					if (data.consumes.length) {
 						var contentType = {};
 						contentType.name = 'Content-Type';
 						contentType.type = 'string';
 						contentType.in = 'header';
 						contentType.exampleValues = {};
-						contentType.exampleValues.json = "'"+data.produces[0]+"'";
-						contentType.exampleValues.object = data.produces[0];
+						contentType.exampleValues.json = "'"+data.consumes[0]+"'";
+						contentType.exampleValues.object = data.consumes[0];
 						data.allHeaders.push(contentType);
 					}
-					if (data.consumes.length) {
+					if (data.produces.length) {
 						var accept = {};
 						accept.name = 'Accept';
 						accept.type = 'string';
 						accept.in = 'header';
 						accept.exampleValues = {};
-						accept.exampleValues.json = "'"+data.consumes[0]+"'";
-						accept.exampleValues.object = data.consumes[0];
+						accept.exampleValues.json = "'"+data.produces[0]+"'";
+						accept.exampleValues.object = data.produces[0];
 						data.allHeaders.push(accept);
 					}
 
