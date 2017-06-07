@@ -1,6 +1,6 @@
 <!--- Provide a general summary of the issue in the Title above -->
 
-## Checklist
+### Checklist
 
 - [ ] I have checked my source definition is valid
 
@@ -12,11 +12,11 @@ For validating OpenAPI 3.0.x definitions, please use the [OpenAPI-converter](htt
 For validating AsyncAPI 1.0.x definitions, please use the [schema](https://github.com/asyncapi/asyncapi/blob/develop/schema/asyncapi.json) included in the [AsyncAPI repository](https://github.com/asyncapi/asyncapi/)
 -->
 
-## Detailed Description
+### Detailed Description
 <!--- Provide a detailed description of the bug, change or feature you are reporting -->
 
 
-# Other stuff
+#### Other stuff
 
 <!-- Please also let us know how you found out about widdershins! -->
 
