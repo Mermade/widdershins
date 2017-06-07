@@ -669,7 +669,7 @@ function convert(openapi, options, callback) {
 						link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
 						var secDef = jptr.jptr(openapi, link);
 						data.securityDefinitions.push(secDef);
-						list += (list ? ', ' : '') + secDef.type;
+						list += (list ? ', ' : '') + (secDef ? secDef.type : 'None');
 						var scopes = security[s][Object.keys(security[s])[0]];
 						if (Array.isArray(scopes) && (scopes.length > 0)) {
 							list += ' ( Scopes: ';
