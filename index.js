@@ -1,10 +1,14 @@
 var openapi2 = require('./openapi2.js');
 var openapi3 = require('./openapi3.js');
 var asyncapi = require('./asyncapi.js');
+var apiblueprint = require('./apiblueprint.js');
 
 function convert(api, options, callback) {
 
-	if (api.swagger) {
+	if (typeof api === 'string') {
+		apiblueprint.convert(api, options, callback);
+	}
+	else if (api.swagger) {
 		openapi2.convert(api, options, callback);
 	}
 	else if (api.openapi) {
