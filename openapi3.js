@@ -220,7 +220,7 @@ function convert(openapi, options, callback) {
 
 				var sharedParameters = openapi.paths[method.path].parameters || [];
 				var opParameters = (openapi.paths[method.path][method.op].parameters || []);
-				
+
 				// dereference shared/op parameters while separate before removing overridden shared parameters
 				for (var p in sharedParameters) {
 					if (sharedParameters[p]["$ref"]) {
@@ -248,7 +248,7 @@ function convert(openapi, options, callback) {
 						return !e["x-widdershins-delete"];
 					});
 				}
-				
+
 				// combine
 				var parameters = sharedParameters.concat(opParameters);
 
@@ -290,7 +290,8 @@ function convert(openapi, options, callback) {
 					}
 					param.exampleSchema = param.schema || {};
 					param.exampleValues = {};
-					param.exampleValues.json = {};
+					param.exampleValues.json = '{}';
+					param.exampleValues.object = {};
 					try {
 						var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true });
 						var t = obj[param.name] || obj; // FIXME - always obj?
@@ -300,7 +301,7 @@ function convert(openapi, options, callback) {
 						param.exampleValues.object = obj[param.name] || obj; // FIXME - always obj?
 					}
 					catch (ex) {
-						console.log('# ' + ex);
+						console.error(ex);
 						param.exampleValues.json = '...';
 					}
 					if (param.in == 'body') {
@@ -314,12 +315,12 @@ function convert(openapi, options, callback) {
 						if (Array.isArray(temp)) {
 							temp = '...';
 						}
-						data.queryString += (data.queryString ? '&' : '?') +
-							param.name + '=' + encodeURIComponent(temp);
 						data.queryParameters.push(param);
+						data.queryString += (data.queryString ? '&' : '?') +
+							param.name + '=' + encodeURIComponent(temp); // TODO make encoding optional
 						if (param.required) {
 							data.requiredQueryString += (data.requiredQueryString ?
-								'&' : '?') + param.name + '=' + encodeURIComponent(temp);
+								'&' : '?') + param.name + '=' + encodeURIComponent(temp); // TODO make encoding optional
 							data.requiredParameters.push(param);
 						}
 					}
@@ -512,7 +513,7 @@ function convert(openapi, options, callback) {
 									obj = sampler.sample(obj, { skipReadOnly: true });
 								}
 								catch (ex) {
-									console.log('# ' + ex);
+									console.error(ex);
 								}
 							}
 							if (obj.properties) obj = obj.properties;
@@ -613,7 +614,14 @@ function convert(openapi, options, callback) {
 							var cta = [ct];
 							if (contentType.schema) {
 								var xmlWrap = '';
-								var obj = common.dereference(contentType.schema, circles, openapi);
+								var obj = {};
+								try {
+									obj = common.dereference(contentType.schema, circles, openapi);
+								}
+								catch (ex) {
+									console.error(JSON.stringify(options,null,2));
+									console.error(ex.message);
+								}
 								if (obj.xml && obj.xml.name) {
 									xmlWrap = obj.xml.name;
 								}
@@ -623,7 +631,7 @@ function convert(openapi, options, callback) {
 											obj = sampler.sample(obj); // skipReadOnly: false
 										}
 										catch (ex) {
-											console.log('# ' + ex);
+											console.error(ex);
 										}
 									}
 									if (common.doContentType(cta, common.jsonContentTypes)) {

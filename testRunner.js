@@ -57,7 +57,7 @@ function check(file) {
 		var srcStr = fs.readFileSync(path.resolve(file),'utf8');
 		var src;
 		try {
-			if (components[components.length-1] == 'swagger.yaml') {
+			if (components[components.length-1].endsWith('.yaml')) {
 				src = yaml.safeLoad(srcStr);
 			}
 			else {
@@ -74,6 +74,7 @@ function check(file) {
 			return true;
 		}
 
+		widdershinsOptions.source = file;
 		try {
 	        widdershins.convert(src, widdershinsOptions, function(err, result){
 				result = result.split('is undefined').join('x');
