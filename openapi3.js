@@ -258,10 +258,10 @@ function convert(openapi, options, callback) {
 					body.name = 'body';
 					body.in = 'body';
 					body.type = rbType;
-					body.required = true; // possibly
+					body.required = op.requestBody.required;
 					body.description = op.requestBody.description ? op.requestBody.description : 'No description';
 					body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
-					if (typeof body.schema.$ref === 'string') {
+					if (body.schema && typeof body.schema.$ref === 'string') {
 						body.schema = common.dereference(body.schema, circles, openapi);
 					}
 					parameters.push(body);
@@ -495,7 +495,9 @@ function convert(openapi, options, callback) {
 						//    param = jptr.jptr(openapi,param["$ref"]);
 						//}
 						if (param.in === 'body') {
-							if (!paramHeader) {
+							var xmlWrap = '';
+							var obj = common.dereference(param.schema, circles, openapi);
+							if (obj && !paramHeader) {
 								data = options.templateCallback('heading_body_parameter', 'pre', data);
 								if (data.append) { content += data.append; delete data.append; }
 								content += templates.heading_body_parameter(data);
@@ -503,12 +505,10 @@ function convert(openapi, options, callback) {
 								if (data.append) { content += data.append; delete data.append; }
 								paramHeader = true;
 							}
-							var xmlWrap = '';
-							var obj = common.dereference(param.schema, circles, openapi);
-							if (obj.xml && obj.xml.name) {
+							if (obj && obj.xml && obj.xml.name) {
 								xmlWrap = obj.xml.name;
 							}
-							if (options.sample) {
+							if (obj && options.sample) {
 								try {
 									obj = sampler.sample(obj, { skipReadOnly: true });
 								}
@@ -516,31 +516,33 @@ function convert(openapi, options, callback) {
 									console.error(ex);
 								}
 							}
-							if (obj.properties) obj = obj.properties;
-							if (common.doContentType(consumes, common.jsonContentTypes)) {
-								content += '```json\n';
-								content += JSON.stringify(obj, null, 2) + '\n';
-								content += '```\n';
-							}
-							if (common.doContentType(consumes, common.yamlContentTypes)) {
-								content += '```yaml\n';
-								content += yaml.safeDump(obj) + '\n';
-								content += '```\n';
-							}
-							if (common.doContentType(consumes, common.formContentTypes)) {
-								content += '```yaml\n';
-								content += yaml.safeDump(obj) + '\n';
-								content += '```\n';
-							}
-							if (common.doContentType(consumes, common.xmlContentTypes)) {
-								content += '```xml\n';
-								if (xmlWrap) {
-									var newObj = {};
-									newObj[xmlWrap] = obj;
-									obj = newObj;
+							if (obj && obj.properties) obj = obj.properties;
+							if (obj) {
+								if (common.doContentType(consumes, common.jsonContentTypes)) {
+									content += '```json\n';
+									content += JSON.stringify(obj, null, 2) + '\n';
+									content += '```\n';
 								}
-								content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-								content += '```\n';
+								if (common.doContentType(consumes, common.yamlContentTypes)) {
+									content += '```yaml\n';
+									content += yaml.safeDump(obj) + '\n';
+									content += '```\n';
+								}
+								if (common.doContentType(consumes, common.formContentTypes)) {
+									content += '```yaml\n';
+									content += yaml.safeDump(obj) + '\n';
+									content += '```\n';
+								}
+								if (common.doContentType(consumes, common.xmlContentTypes)) {
+									content += '```xml\n';
+									if (xmlWrap) {
+										var newObj = {};
+										newObj[xmlWrap] = obj;
+										obj = newObj;
+									}
+									content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+									content += '```\n';
+								}
 							}
 						}
 					}
@@ -622,7 +624,7 @@ function convert(openapi, options, callback) {
 									console.error(JSON.stringify(options,null,2));
 									console.error(ex.message);
 								}
-								if (obj.xml && obj.xml.name) {
+								if (obj && obj.xml && obj.xml.name) {
 									xmlWrap = obj.xml.name;
 								}
 								if (Object.keys(obj).length > 0) {
