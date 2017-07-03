@@ -621,7 +621,6 @@ function convert(openapi, options, callback) {
 									obj = common.dereference(contentType.schema, circles, openapi);
 								}
 								catch (ex) {
-									console.error(JSON.stringify(options,null,2));
 									console.error(ex.message);
 								}
 								if (obj && obj.xml && obj.xml.name) {
