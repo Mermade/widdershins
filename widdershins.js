@@ -53,12 +53,7 @@ var argv = require('yargs')
 var api = {};
 var s = fs.readFileSync(path.resolve(argv._[0]),'utf8');
 try {
-  if (argv.yaml) {
-    api = yaml.safeLoad(s);
-  }
-  else {
-    api = JSON.parse(s);
-  }
+    api = yaml.safeLoad(s,{json:true});
 }
 catch(ex) {
 	api = s;
