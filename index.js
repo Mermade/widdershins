@@ -68,8 +68,8 @@ function convertSwagger(source){
     return apiInfo;
 }
 
-function dereference(obj,swagger){
-    if (obj["$ref"]) {
+function dereference(obj, swagger){
+    while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
 		obj = jptr.jptr(swagger,obj["$ref"]);
 	}
     var changes = 1;
