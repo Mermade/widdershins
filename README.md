@@ -26,7 +26,7 @@ Widdershins supports the use of multiple language tabs with the same language (i
 * `npm install [-g] widdershins`, or
 * `yarn global add widdershins`
 
-````
+```
 node widdershins [options] {input-spec} [[-o] output markdown]
 
 Options:
@@ -43,12 +43,12 @@ Options:
   -s, --search     Whether to enable search, defaults to true          [boolean]
   -t, --theme      Syntax-highlighter theme to use                      [string]
   -u, --user_templates  directory to load override templates from       [string]
-````
+```
 
 or
 
 
-````javascript
+```javascript
 var converter = require('widdershins');
 var options = {}; // defaults shown
 options.codeSamples = true;
@@ -62,7 +62,7 @@ options.sample = true; // set false by --raw
 options.discovery = false;
 options.includes = [];
 var str = converter.convert(swaggerObj,options);
-````
+```
 
 `loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host,
 and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
@@ -134,9 +134,9 @@ If you specify an `options.templateCallback` function, it will be called before 
 
 To run a test-suite:
 
-````
+```
 node testRunner {path-to-APIs}
-````
+```
 
 The test harness currently expects files named `swagger.yaml` or `swagger.json` and has been tested
 against
