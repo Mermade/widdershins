@@ -18,6 +18,7 @@ var circles = [];
 var xmlContentTypes = ['application/xml','text/xml','image/svg+xml','application/rss+xml','application/rdf+xml','application/atom+xml','application/mathml+xml','application/hal+xml'];
 var jsonContentTypes = ['application/json','text/json','application/hal+json','application/ld+json','application/json-patch+json'];
 var yamlContentTypes = ['application/x-yaml','text/x-yaml'];
+var xWwwFormUrlEncodedContentTypes = ['application/x-www-form-urlencoded'];
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
@@ -572,6 +573,13 @@ function convert(swagger,options) {
                                 }
                                 content += xml.getXml(obj,'@','',true,'  ',false)+'\n';
                                 content += '```\n';
+                            }
+                            if (doContentType(consumes,xWwwFormUrlEncodedContentTypes)) {
+                                content += '````text\n';
+                                content += Object.keys(obj).map(function(key){
+                                    return key + "=" + obj[key];
+                                }).join("&\n")+'\n';
+                                content += '````\n';
                             }
                         }
                     }
