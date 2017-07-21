@@ -63,7 +63,7 @@ function convertToToc(source) {
 function processOperation(op, method, resource, options) {
 	var header = data.header;
 	var opName = (op.operationId ? op.operationId : data.subtitle);
-	content += '## ' + opName + '\n\n';
+	content += '## ' + opName + '\n\n'; // TODO template?
 
 	var url = data.servers[0].url + method.path;
 	var produces = [];
@@ -321,6 +321,7 @@ function processOperation(op, method, resource, options) {
 		}
 	}
 
+	// TODO template?
 	if (data.subtitle != opName) content += '`' + data.subtitle + '`\n\n';
 	if (op.summary) content += '*' + op.summary + '*\n\n';
 	if (op.description) content += op.description + '\n\n';
@@ -367,7 +368,7 @@ function processOperation(op, method, resource, options) {
 				var desc = param.description ? param.description : '';
 				var descs = desc.trim().split('\n');
 				if (descs.length > 1) {
-					content += '##### ' + param.name + '\n';
+					content += '##### ' + param.name + '\n'; // TODO template
 					content += desc + '\n';
 				}
 			}
@@ -581,7 +582,7 @@ function processOperation(op, method, resource, options) {
 	content += '\n';
 }
 
-// TODO: callbacks
+// TODO: callbacks, include an enclosing div with a specific class
 // TODO: links
 
 function convert(openapi, options, callback) {
