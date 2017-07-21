@@ -217,8 +217,8 @@ function convert(swagger,options) {
         data.host = u.host;
         data.protocol = u.protocol.replace(':','');
     }
-    if (!data.host) host = 'example.com';
-	if (!data.protocol) protocol = 'http';
+    if (!data.host) data.host = 'example.com';
+	if (!data.protocol) data.protocol = 'http';
 
 	data.baseUrl = data.protocol+'://'+data.host+(swagger.basePath ? swagger.basePath : '/');
     data.contactName = (swagger.info.contact && swagger.info.contact.name ? swagger.info.contact.name : 'Support');
