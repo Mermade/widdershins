@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "1.0.8",
+  "version": "2.0.0",
   "description": "OpenApi / Swagger / AsyncAPI definition to slate / shins compatible markdown",
   "main": "index.js",
   "bin": {
@@ -39,7 +39,7 @@
     "js-yaml": "^3.6.1",
     "openapi-sampler": "^0.3.3",
     "openapi_optimise": "latest",
-	"swagger2openapi": "^2.2.0",
+    "swagger2openapi": "^2.2.0",
     "yargs": "^5.0.0"
   },
   "devDependencies": {
