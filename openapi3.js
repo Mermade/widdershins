@@ -643,7 +643,8 @@ function convert(openapi, options, callback) {
 		data.servers = [{url:'//'}];
 	}
 	data.host = up.parse(data.servers[0].url).host;
-	data.protocol = up.parse(data.servers[0].url).protocol.replace(':','');
+	data.protocol = up.parse(data.servers[0].url).protocol;
+	if (data.protocol) data.protocol = data.protocol.replace(':','');
 
 	data.contactName = (openapi.info.contact && openapi.info.contact.name ? openapi.info.contact.name : 'Support');
 
