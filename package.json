@@ -39,7 +39,7 @@
     "js-yaml": "^3.6.1",
     "openapi-sampler": "^0.3.3",
     "openapi_optimise": "latest",
-    "swagger2openapi": "^2.2.0",
+    "swagger2openapi": "^2.6.1",
     "yargs": "^5.0.0"
   },
   "devDependencies": {

@@ -5,6 +5,7 @@ user_templates/
 in/
 out/
 scripts/
+test/
 
 # Logs
 logs
