@@ -19,7 +19,7 @@ As above for code templates
 
 ### Common to all templates
 
-* `api` - the top-level AsynAPI document
+* `api` - the top-level AsyncAPI document
 * `header` - the front-matter of the Slate/Shins markdown document
 * `servers` - the (computed) servers of the API
 * `baseTopic` - the baseTopic of the API
