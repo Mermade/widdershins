@@ -29,6 +29,7 @@
     * `exampleValues` - an object containing examples for use in code-templates
         * `json` - example values in JSON compatible syntax
         * `object` - example values in raw object form (unquoted strings etc)
+	* `depth` - a zero-based indicator of the depth of expanded request body parameters
 * `enums[]` - an array of (parameter)name/value pairs
 
 ### Responses template
@@ -39,6 +40,15 @@
 
 * `authenticationStr` - a simple string of methods (and scopes where appropriate)
 * `securityDefinitions[]` - an array of applicable securityDefinitions
+
+### Schema Property template
+
+* `schemaProperties[]` - an array of
+	* `name`
+	* `type`
+	* `required`
+	* `description`
+* `enums[]` - an array of (schema property)name/value pairs
 
 ### Common to all templates
 

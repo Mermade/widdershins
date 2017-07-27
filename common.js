@@ -1,4 +1,4 @@
-var recurseotron = require('openapi_optimise/common.js');
+var recurse = require('openapi_optimise/common.js').recurse;
 var circular = require('openapi_optimise/circular.js');
 var jptr = require('jgexml/jpath.js');
 
@@ -23,7 +23,7 @@ function dereference(obj, circles, api) {
     var changes = 1;
     while (changes > 0) {
         changes = 0;
-        recurseotron.recurse(obj, {}, function (obj, state) {
+        recurse(obj, {}, function (obj, state) {
             if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = jptr.jptr(api, obj);
                 delete state.parent["$ref"];
@@ -67,6 +67,50 @@ function languageCheck(language, language_tabs, mutate) {
     return false;
 }
 
+function gfmLink(text) {
+    text = text.trim().toLowerCase();
+    text = text.split("'").join('');
+    text = text.split('"').join('');
+    text = text.split('.').join('');
+    text = text.split('`').join('');
+    text = text.split(':').join('');
+    text = text.split('/').join('');
+    text = text.split('&lt;').join('');
+    text = text.split('&gt;').join('');
+    text = text.split('<').join('');
+    text = text.split('>').join('');
+    text = text.split(' ').join('-');
+    return text;
+}
+
+function schemaToArray(schema,depth,lines) {
+
+    let oDepth = 0;
+    let prefix = '';
+    recurse(schema,{},function(obj,state){
+        if ((state.key === 'properties') && (typeof obj === 'object')) {
+            if (state.depth>oDepth) {
+                depth++;
+                oDepth = state.depth;
+                prefix = '»'.repeat(depth);
+            }
+
+            for (let p in obj) {
+                var prop = {};
+                prop.name = prefix+' '+p;
+                prop.in = 'body';
+                prop.type = obj[p].type;
+                if (obj[p].format) prop.type = prop.type+'('+obj[p].format+')';
+                prop.required = ((state.parent.required ? true : false) && state.parent.required.indexOf(p)>=0);
+                prop.description = obj[p].description||'No description';
+                prop.depth = depth;
+                if (obj[p].enum) prop.schema = {enum:obj[p].enum};
+                lines.push(prop);
+            }
+        }
+    });
+}
+
 module.exports = {
 	statusCodes : statusCodes,
 	xmlContentTypes : xmlContentTypes,
@@ -76,5 +120,7 @@ module.exports = {
 	dereference : dereference,
 	doContentType : doContentType,
 	languageCheck : languageCheck,
-	clone : clone
+	clone : clone,
+	gfmLink : gfmLink,
+	schemaToArray : schemaToArray
 };

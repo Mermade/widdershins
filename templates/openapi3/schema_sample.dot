@@ -1,0 +1,4 @@
+```json
+{{=JSON.stringify(data.schema,null,2)}} 
+```
+

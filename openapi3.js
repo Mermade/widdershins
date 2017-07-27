@@ -75,6 +75,7 @@ function processOperation(op, method, resource, options) {
 	if (op.requestBody) {
 		if (op.requestBody.$ref) {
 			rbType = op.requestBody.$ref.replace('#/components/requestBodies/', '');
+			rbType = '['+rbType+'](#'+common.gfmLink('schema+'+rbType)+')';
 			op.requestBody = jptr.jptr(data.openapi, op.requestBody.$ref);
 		}
 		for (var rb in op.requestBody.content) {
@@ -143,30 +144,37 @@ function processOperation(op, method, resource, options) {
 	var parameters = sharedParameters.concat(opParameters);
 
 	if (op.requestBody) {
-		// fake a version 2-style body parameter for now
+		// fake a version 2-style body parameter
 		var body = {};
 		body.name = 'body';
 		body.in = 'body';
-		body.type = rbType;
 		body.required = op.requestBody.required;
 		body.description = op.requestBody.description ? op.requestBody.description : 'No description';
 		body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
 		if (body.schema && typeof body.schema.$ref === 'string') {
+			rbType = body.schema.$ref.replace('#/components/schemas/','');
+			rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
 			body.schema = common.dereference(body.schema, circles, data.openapi);
 		}
+		body.type = rbType;
 		parameters.push(body);
+		if (body.schema && body.schema.type && body.schema.type === 'object') {
+			common.schemaToArray(body.schema,0,parameters);
+		}
 	}
 
 	for (var p in parameters) {
 		var param = parameters[p];
 		param.required = (param.required ? param.required : false);
 		param.safeType = (param.type || 'object');
+		if (!param.depth) param.depth = 0;
 		if (param.safeType == 'object') {
 			if (param.schema && param.schema.type) {
 				param.safeType = param.schema.type;
 			}
 			if (param.schema && param.schema["$ref"]) {
 				param.safeType = param.schema["$ref"].split('/').pop();
+				param.safeType = '['+param.safeType+'](#'+common.gfmLink('schema'+param.safeType)+')';
 			}
 		}
 		if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items.type) {
@@ -357,24 +365,6 @@ function processOperation(op, method, resource, options) {
 			}
 
 		}
-		data.parameters = parameters; // redundant?
-		data = options.templateCallback('parameters', 'pre', data);
-		if (data.append) { content += data.append; delete data.append; }
-		content += templates.parameters(data);
-		data = options.templateCallback('parameters', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
-
-		if (longDescs) {
-			for (var p in parameters) {
-				var param = parameters[p];
-				var desc = param.description ? param.description : '';
-				var descs = desc.trim().split('\n');
-				if (descs.length > 1) {
-					content += '##### ' + param.name + '\n'; // TODO template
-					content += desc + '\n';
-				}
-			}
-		}
 
 		var paramHeader = false;
 		for (var p in parameters) {
@@ -428,6 +418,25 @@ function processOperation(op, method, resource, options) {
 						content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
 						content += '```\n';
 					}
+				}
+			}
+		}
+
+		data.parameters = parameters; // redundant?
+		data = options.templateCallback('parameters', 'pre', data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.parameters(data);
+		data = options.templateCallback('parameters', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
+
+		if (longDescs) {
+			for (var p in parameters) {
+				var param = parameters[p];
+				var desc = param.description ? param.description : '';
+				var descs = desc.trim().split('\n');
+				if (descs.length > 1) {
+					content += '##### ' + param.name + '\n'; // TODO template
+					content += desc + '\n';
 				}
 			}
 		}
@@ -707,6 +716,57 @@ function convert(openapi, options, callback) {
 				(!method.op.startsWith('x-'))) {
 				processOperation(op, method, resource, options);
 			}
+		}
+	}
+
+	if (openapi.components && openapi.components.schemas && Object.keys(openapi.components.schemas).length>0) {
+		data = options.templateCallback('schema_header', 'pre', data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.schema_header(data) + '\n';
+		data = options.templateCallback('schema_header', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
+
+		for (let s in openapi.components.schemas) {
+			content += '## '+s+'\n\n';
+			content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
+			let schema = openapi.components.schemas[s];
+
+			var obj = schema;
+			if (options.sample) {
+				try {
+					obj = sampler.sample(obj); // skipReadOnly: false
+				}
+				catch (ex) {
+					console.error(ex);
+				}
+			}
+
+			data.schema = obj;
+			data = options.templateCallback('schema_sample', 'pre', data);
+			if (data.append) { content += data.append; delete data.append; }
+			content += templates.schema_sample(data) + '\n';
+			data = options.templateCallback('schema_sample', 'post', data);
+			if (data.append) { content += data.append; delete data.append; }
+
+			data.schema = schema;
+			data.enums = [];
+			data.schemaProperties = [];
+			common.schemaToArray(schema,-1,data.schemaProperties);
+
+			for (let p of data.schemaProperties) {
+				if (p.schema && p.schema.enum) {
+					for (let e of p.schema.enum) {
+						data.enums.push({name:p.name,value:e});
+					}
+				}
+			}
+
+			data = options.templateCallback('schema_properties', 'pre', data);
+			if (data.append) { content += data.append; delete data.append; }
+			content += templates.schema_properties(data) + '\n';
+			data = options.templateCallback('schema_properties', 'post', data);
+			if (data.append) { content += data.append; delete data.append; }
+
 		}
 	}
 
