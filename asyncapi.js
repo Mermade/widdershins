@@ -7,7 +7,6 @@ var common = require('./common.js');
 var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
-var recurseotron = require('openapi_optimise/common.js');
 var circular = require('openapi_optimise/circular.js');
 var sampler = require('openapi-sampler');
 var dot = require('dot');
@@ -224,6 +223,7 @@ function convert(asyncapi, options, callback) {
 					if (data.append) { content += data.append; delete data.append; }
 					data.headers = processObject(msg.headers, options, asyncapi);
 				}
+
 				if (msg.payload) {
 					data = options.templateCallback('heading_example_payloads', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -231,6 +231,7 @@ function convert(asyncapi, options, callback) {
 					data = options.templateCallback('heading_example_payloads', 'post', data);
 					if (data.append) { content += data.append; delete data.append; }
 					data.payload = processObject(msg.payload, options, asyncapi);
+
 				}
 
 				var codeSamples = (options.codeSamples || msg["x-code-samples"]);
@@ -313,6 +314,30 @@ function convert(asyncapi, options, callback) {
 				if (msg.summary) content += '*' + msg.summary + '*\n\n';
 				if (msg.description) content += msg.description + '\n\n';
 
+				if (msg.headers) {
+					data.properties = [];
+					data.enums = [];
+					common.schemaToArray(msg.headers,-1,data.properties);
+
+					data = options.templateCallback('header_properties', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.header_properties(data) + '\n';
+					data = options.templateCallback('header_properties', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+				}
+
+				if (msg.payload) {
+					data.properties = [];
+					data.enums = [];
+					common.schemaToArray(msg.payload,-1,data.properties);
+
+					data = options.templateCallback('payload_properties', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.payload_properties(data) + '\n';
+					data = options.templateCallback('payload_properties', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+				}
+
 				var security = (msg.security ? msg.security : asyncapi.security);
 				if (!security) security = [];
 				if (security.length <= 0) {
@@ -329,11 +354,55 @@ function convert(asyncapi, options, callback) {
 		}
 	}
 
-	data = options.templateCallback('footer', 'pre', data);
-	if (data.append) { content += data.append; delete data.append; }
-	content += templates.footer(data) + '\n';
-	data = options.templateCallback('footer', 'post', data);
-	if (data.append) { content += data.append; delete data.append; }
+    if (asyncapi.components && asyncapi.components.schemas && Object.keys(asyncapi.components.schemas).length>0) {
+        data = options.templateCallback('schema_header', 'pre', data);
+        if (data.append) { content += data.append; delete data.append; }
+        content += templates.schema_header(data) + '\n';
+        data = options.templateCallback('schema_header', 'post', data);
+        if (data.append) { content += data.append; delete data.append; }
+
+        for (let s in asyncapi.components.schemas) {
+            content += '## '+s+'\n\n';
+            content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
+            let schema = asyncapi.components.schemas[s];
+
+            var obj = schema;
+            if (options.sample) {
+	            try {
+		            obj = sampler.sample(obj); // skipReadOnly: false
+				}
+				catch (ex) {
+					console.error(ex);
+				}
+			}
+
+			data.schema = obj;
+			data = options.templateCallback('schema_sample', 'pre', data);
+			if (data.append) { content += data.append; delete data.append; }
+			content += templates.schema_sample(data) + '\n';
+			data = options.templateCallback('schema_sample', 'post', data);
+			if (data.append) { content += data.append; delete data.append; }
+
+			data.schema = schema;
+			data.enums = [];
+			data.schemaProperties = [];
+			common.schemaToArray(schema,-1,data.schemaProperties);
+	
+			for (let p of data.schemaProperties) {
+				if (p.schema && p.schema.enum) {
+					for (let e of p.schema.enum) {
+						data.enums.push({name:p.name,value:e});
+					}
+				}
+			}
+
+			data = options.templateCallback('schema_properties', 'pre', data);
+			if (data.append) { content += data.append; delete data.append; }
+			content += templates.schema_properties(data) + '\n';
+			data = options.templateCallback('schema_properties', 'post', data);
+			if (data.append) { content += data.append; delete data.append; }
+		}
+	}
 
 	if (options.discovery) {
 		data = options.templateCallback('discovery', 'pre', data);
@@ -342,6 +411,12 @@ function convert(asyncapi, options, callback) {
 		data = options.templateCallback('discovery', 'post', data);
 		if (data.append) { content += data.append; delete data.append; }
 	}
+
+	data = options.templateCallback('footer', 'pre', data);
+	if (data.append) { content += data.append; delete data.append; }
+	content += templates.footer(data) + '\n';
+	data = options.templateCallback('footer', 'post', data);
+	if (data.append) { content += data.append; delete data.append; }
 
 	var headerStr = '---\n' + yaml.safeDump(header) + '---\n';
 	// apparently you can insert jekyll front-matter in here for github -- see lord/slate

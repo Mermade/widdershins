@@ -18,6 +18,10 @@ Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/
 
 Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
 
+### News
+
+As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads) by default. You can restore the old behaviour by modifying your parameters template to only output where the `depth` data property is 0. See [the wiki](https://github.com/Mermade/widdershins/wiki/faq).
+
 ### To install
 
 * Clone the git repository, or
