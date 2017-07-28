@@ -1,6 +1,6 @@
 ### Responses
 
-Status|Meaning|Description
----|---|---|
-{{~ data.responses :r}}{{=r.status}}|{{=r.meaning}}|{{=r.description}}
+Status|Meaning|Description|Schema
+---|---|---|---|
+{{~ data.responses :r}}{{=r.status}}|{{=r.meaning}}|{{=r.description}}|{{=r.schema}}
 {{~}}

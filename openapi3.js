@@ -408,7 +408,7 @@ function processOperation(op, method, resource, options) {
 						content += yaml.safeDump(obj) + '\n';
 						content += '```\n';
 					}
-					if (common.doContentType(consumes, common.xmlContentTypes)) {
+					if (common.doContentType(consumes, common.xmlContentTypes) && (typeof obj === 'object')) {
 						content += '```xml\n';
 						if (xmlWrap) {
 							var newObj = {};
@@ -467,8 +467,23 @@ function processOperation(op, method, resource, options) {
 		if (url) response.meaning = '[' + response.meaning + '](' + url + ')';
 		if (!response.description) response.description = 'No description';
 		response.description = response.description.trim();
+
+		response.schema = 'None';
+		if (response.content) {
+			for (let c in response.content) {
+				let mediatype = response.content[c];
+				if (mediatype.schema) {
+					response.schema = 'Inline';
+					if (mediatype.schema.$ref) {
+						let ref = mediatype.schema.$ref.split('/').pop();
+						response.schema = '['+ref+'](#schema'+common.gfmLink(ref)+')';
+					}
+				}
+			}
+		}
 		data.responses.push(response);
 	}
+
 	data = options.templateCallback('responses', 'pre', data);
 	if (data.append) { content += data.append; delete data.append; }
 	content += templates.responses(data);

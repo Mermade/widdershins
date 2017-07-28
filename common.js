@@ -140,7 +140,7 @@ function schemaToArray(schema,depth,lines,trim) {
 
 				prop.required = required;
 				prop.description = (obj[p].description && obj[p].description !== 'undefined') ? obj[p].description : 'No description'; // the actual string 'undefined'
-				if (trim) prop.description = prop.description.split('\n').join(' ');
+				if (trim && typeof prop.description === 'string') prop.description = prop.description.split('\n').join(' ');
 				prop.depth = depth;
 				if (obj[p].enum) prop.schema = {enum:obj[p].enum};
 				lines.push(prop);
