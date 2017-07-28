@@ -8,8 +8,7 @@ before_script:
   - git clone --depth 1 https://github.com/SOM-Research/hapi.git
   - git clone --depth 1 https://github.com/mermade/openapi3-examples.git
 script:
-  - node testRunner openapi-directory/APIs/
-  - node testRunner openapi-definitions/
+  - node testRunner --noschema openapi-directory/APIs/
+  - node testRunner --noschema openapi-definitions/
+  - node testRunner --noschema openapi3-examples/pass/
 #  - node testRunner hapi/APIs/
-  - node testRunner openapi3-examples/pass/
-

@@ -20,7 +20,7 @@ Widdershins supports the use of multiple language tabs with the same language (i
 
 ### News
 
-As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads) by default. You can restore the old behaviour by modifying your parameters template to only output where the `depth` data property is 0. See [the wiki](https://github.com/Mermade/widdershins/wiki/faq).
+As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads) by default. You can restore the old behaviour by using the `--noschema` option.
 
 ### To install
 
@@ -32,18 +32,20 @@ As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / req
 node widdershins [options] {input-spec} [[-o] output markdown]
 
 Options:
-  -h, --help       Show help                                           [boolean]
-  --version        Show version number                                 [boolean]
-  -y, --yaml       Load spec in yaml format, default json              [boolean]
-  -c, --code       Turn generic code samples off                       [boolean]
-  -d, --discovery  Include schema.org WebAPI discovery data            [boolean]
-  -i, --includes   List of files to include, comma separated            [string]
-  -l, --lang       Automatically generate list of languages for code samples
-                                                                       [boolean]
-  -o, --outfile    File to write output markdown to                     [string]
-  -r, --raw        Output raw schemas not example values               [boolean]
-  -s, --search     Whether to enable search, defaults to true          [boolean]
-  -t, --theme      Syntax-highlighter theme to use                      [string]
+  -h, --help            Show help                                      [boolean]
+  --version             Show version number                            [boolean]
+  -y, --yaml            Load spec in yaml format, default json         [boolean]
+  -c, --code            Turn generic code samples off                  [boolean]
+  -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
+  -i, --includes        List of files to include, comma separated       [string]
+  -l, --lang            Automatically generate list of languages for code
+                        samples                                        [boolean]
+  -n, --noschema        Do not expand schema definitions               [boolean]
+  -o, --outfile         File to write output markdown to                [string]
+  -r, --raw             Output raw schemas not example values          [boolean]
+  -s, --search          Whether to enable search or not, default true
+                                                       [boolean] [default: true]
+  -t, --theme           Syntax-highlighter theme to use                 [string]
   -u, --user_templates  directory to load override templates from       [string]
 ```
 

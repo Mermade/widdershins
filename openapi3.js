@@ -158,7 +158,7 @@ function processOperation(op, method, resource, options) {
 		}
 		body.type = rbType;
 		parameters.push(body);
-		if (body.schema && body.schema.type && body.schema.type === 'object') {
+		if (options.schema && body.schema && body.schema.type && body.schema.type === 'object') {
 			common.schemaToArray(body.schema,0,parameters);
 		}
 	}
@@ -342,8 +342,8 @@ function processOperation(op, method, resource, options) {
 		var longDescs = false;
 		for (var p in parameters) {
 			param = parameters[p];
-			param.shortDesc = param.description ? param.description.split('\n')[0] : 'No description';
-			if (param.description && (param.description.trim().split('\n').length > 1)) longDescs = true;
+			param.shortDesc = (typeof param.description === 'string') ? param.description.split('\n')[0] : 'No description';
+			if ((typeof param.description === 'string') && (param.description.trim().split('\n').length > 1)) longDescs = true;
 			param.originalType = param.type;
 			param.type = param.safeType;
 
@@ -607,6 +607,7 @@ function convert(openapi, options, callback) {
 	defaults.discovery = false;
 	defaults.includes = [];
 	defaults.templateCallback = function (templateName, stage, data) { return data; };
+	defaults.schema = true;
 
 	options = Object.assign({}, defaults, options);
 	if (!options.codeSamples) options.language_tabs = [];
@@ -719,7 +720,7 @@ function convert(openapi, options, callback) {
 		}
 	}
 
-	if (openapi.components && openapi.components.schemas && Object.keys(openapi.components.schemas).length>0) {
+	if (options.schema && openapi.components && openapi.components.schemas && Object.keys(openapi.components.schemas).length>0) {
 		data = options.templateCallback('schema_header', 'pre', data);
 		if (data.append) { content += data.append; delete data.append; }
 		content += templates.schema_header(data) + '\n';

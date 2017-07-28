@@ -8,6 +8,9 @@ var widdershins = require('./index.js');
 
 var argv = require('yargs')
 	.usage('testRunner [options] [{path-to-specs}]')
+	.boolean('noschema')
+	.alias('n','noschema')
+	.describe('noschema','Set widdershins --noschema option')
 	.boolean('raw')
 	.alias('r','raw')
 	.describe('raw','Set widdershins --raw option')
@@ -35,6 +38,7 @@ var pathspec = argv._.length>0 ? argv._[0] : '../openapi-directory/APIs/';
 var options = argv;
 var widdershinsOptions = {};
 if (options.raw) widdershinsOptions.sample = false;
+if (options.noschema) widdershinsOptions.schema = false;
 
 function handleResult(file, result) {
 	if (result) {
