@@ -124,6 +124,7 @@ function convert(asyncapi, options, callback) {
 	defaults.discovery = false;
 	defaults.includes = [];
 	defaults.templateCallback = function (templateName, stage, data) { return data; };
+	defaults.schema = true;
 
 	options = Object.assign({}, defaults, options);
 	if (!options.codeSamples) defaults.language_tabs = [];
@@ -314,10 +315,10 @@ function convert(asyncapi, options, callback) {
 				if (msg.summary) content += '*' + msg.summary + '*\n\n';
 				if (msg.description) content += msg.description + '\n\n';
 
-				if (msg.headers) {
+				if (msg.headers && options.schema) {
 					data.properties = [];
 					data.enums = [];
-					common.schemaToArray(msg.headers,-1,data.properties);
+					common.schemaToArray(msg.headers,-1,data.properties,true);
 
 					data = options.templateCallback('header_properties', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -326,10 +327,10 @@ function convert(asyncapi, options, callback) {
 					if (data.append) { content += data.append; delete data.append; }
 				}
 
-				if (msg.payload) {
+				if (msg.payload && options.schema) {
 					data.properties = [];
 					data.enums = [];
-					common.schemaToArray(msg.payload,-1,data.properties);
+					common.schemaToArray(msg.payload,-1,data.properties,true);
 
 					data = options.templateCallback('payload_properties', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -354,7 +355,7 @@ function convert(asyncapi, options, callback) {
 		}
 	}
 
-    if (asyncapi.components && asyncapi.components.schemas && Object.keys(asyncapi.components.schemas).length>0) {
+    if (options.schema && asyncapi.components && asyncapi.components.schemas && Object.keys(asyncapi.components.schemas).length>0) {
         data = options.templateCallback('schema_header', 'pre', data);
         if (data.append) { content += data.append; delete data.append; }
         content += templates.schema_header(data) + '\n';
@@ -386,7 +387,7 @@ function convert(asyncapi, options, callback) {
 			data.schema = schema;
 			data.enums = [];
 			data.schemaProperties = [];
-			common.schemaToArray(schema,-1,data.schemaProperties);
+			common.schemaToArray(schema,-1,data.schemaProperties,true);
 	
 			for (let p of data.schemaProperties) {
 				if (p.schema && p.schema.enum) {

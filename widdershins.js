@@ -74,6 +74,7 @@ options.sample = !argv.raw;
 options.discovery = argv.discovery;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
+if (argv.noschema) options.schema = false;
 
 converter.convert(api,options,function(err,output){
 	var outfile = argv.outfile||argv._[1];

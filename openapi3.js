@@ -159,7 +159,7 @@ function processOperation(op, method, resource, options) {
 		body.type = rbType;
 		parameters.push(body);
 		if (options.schema && body.schema && body.schema.type && body.schema.type === 'object') {
-			common.schemaToArray(body.schema,0,parameters);
+			common.schemaToArray(body.schema,1,parameters,false);
 		}
 	}
 
@@ -433,7 +433,10 @@ function processOperation(op, method, resource, options) {
 			for (var p in parameters) {
 				var param = parameters[p];
 				var desc = param.description ? param.description : '';
-				var descs = desc.trim().split('\n');
+				var descs = [];
+				if (typeof desc === 'string') {
+					descs = desc.trim().split('\n');
+				}
 				if (descs.length > 1) {
 					content += '##### ' + param.name + '\n'; // TODO template
 					content += desc + '\n';
@@ -752,7 +755,7 @@ function convert(openapi, options, callback) {
 			data.schema = schema;
 			data.enums = [];
 			data.schemaProperties = [];
-			common.schemaToArray(schema,-1,data.schemaProperties);
+			common.schemaToArray(schema,0,data.schemaProperties,true);
 
 			for (let p of data.schemaProperties) {
 				if (p.schema && p.schema.enum) {

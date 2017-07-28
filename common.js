@@ -5,7 +5,7 @@ var recurse = require('openapi_optimise/common.js').recurse;
 var circular = require('openapi_optimise/circular.js');
 var jptr = require('jgexml/jpath.js');
 
-const MAX_SCHEMA_DEPTH=100
+const MAX_SCHEMA_DEPTH=100;
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
@@ -23,15 +23,18 @@ function clone(obj) {
 
 function dereference(obj, circles, api) {
     while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
+		var oRef = obj.$ref;
         obj = jptr.jptr(api, obj["$ref"]);
+		obj["x-old-ref"] = oRef;
     }
     var changes = 1;
     while (changes > 0) {
         changes = 0;
         recurse(obj, {}, function (obj, state) {
             if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
-                state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = jptr.jptr(api, obj);
-                delete state.parent["$ref"];
+				state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = jptr.jptr(api, obj);
+                state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-old-ref"] = obj;
+				delete state.parent["$ref"]; // just in case
                 changes++;
             }
         });
@@ -95,12 +98,13 @@ function extract(o,seen,depth,callback){
 				var already = seen.indexOf(v.properties[p])>=0;
 				if (!already) {
 					let required = false;
-					if (v.required) {
+					if (v.required && Array.isArray(v.required)) {
 						required = v.required.indexOf(p)>=0;
 					}
+					let oldRef = v["x-old-ref"]||'';
 					let newProp = {};
 					newProp[p] = v.properties[p];
-					callback(newProp,depth,required);
+					callback(newProp,depth,required,oldRef);
 					if (depth<MAX_SCHEMA_DEPTH) {
 						extract(v.properties[p],seen,depth+1,callback);
 					}
@@ -115,20 +119,28 @@ function extract(o,seen,depth,callback){
 	});
 }
 
-function schemaToArray(schema,depth,lines) {
+function schemaToArray(schema,depth,lines,trim) {
 
 	let seen = [];
-	extract(schema,seen,0,function(obj,depth,required){
+	extract(schema,seen,depth,function(obj,depth,required,oldRef){
 		let prefix = '»'.repeat(depth);
         for (let p in obj) {
 			if (obj[p]) {
+				if (obj[p]["x-old-ref"]) oldRef = obj[p]["x-old-ref"].split('/').pop();
 				var prop = {};
 				prop.name = prefix+' '+p;
 				prop.in = 'body';
 				prop.type = obj[p].type||'Unknown';
 				if (obj[p].format) prop.type = prop.type+'('+obj[p].format+')';
+
+				if ((prop.type === 'object') && oldRef) {
+					oldRef = oldRef.split('/').pop();
+					prop.type = '['+oldRef+'](#schema'+gfmLink(oldRef)+')';
+				}
+
 				prop.required = required;
-				prop.description = obj[p].description||'No description';
+				prop.description = (obj[p].description && obj[p].description !== 'undefined') ? obj[p].description : 'No description'; // the actual string 'undefined'
+				if (trim) prop.description = prop.description.split('\n').join(' ');
 				prop.depth = depth;
 				if (obj[p].enum) prop.schema = {enum:obj[p].enum};
 				lines.push(prop);
@@ -139,8 +151,10 @@ function schemaToArray(schema,depth,lines) {
 		let prop = {};
 		prop.name = schema.title||'additionalProperties';
 		prop.description = schema.description||'No description';
+		if (trim) prop.description = prop.description.split('\n').join(' ');
 		prop.type = schema.type||'Unknown';
 		prop.required = false;
+		prop.in = 'body';
 		if (schema.format) prop.type = prop.type+'('+schema.format+')';
 		prop.depth = 0;
 		lines.push(prop);
