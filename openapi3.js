@@ -483,6 +483,12 @@ function processOperation(op, method, resource, options) {
 						let ref = mediatype.schema.$ref.split('/').pop();
 						response.schema = '['+ref+'](#schema'+common.gfmLink(ref)+')';
 					}
+					else if ((Object.keys(mediatype.schema).length == 1) && (mediatype.schema.type)) {
+						response.schema = mediatype.schema.type;
+					}
+					else if ((Object.keys(mediatype.schema).length == 2) && (mediatype.schema.type) && (mediatype.schema.format)) {
+						response.schema = mediatype.schema.type+'('+mediatype.schema.format+')';
+					}
 					else {
 						inlineSchemas = true;
 					}
