@@ -450,9 +450,13 @@ function processOperation(op, method, resource, options) {
 	var responseHeaders = false;
 	data.responses = [];
 	for (var resp in op.responses) {
-		var response = op.responses[resp];
+		let response = op.responses[resp];
 		if (response.schema || response.content) responseSchemas = true;
 		if (response.headers) responseHeaders = true;
+	}
+
+	for (var resp in op.responses) {
+		let response = op.responses[resp];
 
 		response.status = resp;
 		response.meaning = (resp == 'default' ? 'Default' : 'Unknown');
@@ -482,37 +486,6 @@ function processOperation(op, method, resource, options) {
 			}
 		}
 		data.responses.push(response);
-	}
-
-	data = options.templateCallback('responses', 'pre', data);
-	if (data.append) { content += data.append; delete data.append; }
-	content += templates.responses(data);
-	data = options.templateCallback('responses', 'post', data);
-	if (data.append) { content += data.append; delete data.append; }
-
-	if (responseHeaders) {
-		data.response_headers = [];
-		for (var resp in op.responses) {
-			var response = op.responses[resp];
-			for (var h in response.headers) {
-				var hdr = response.headers[h];
-				hdr.status = resp;
-				hdr.header = h;
-				if (!hdr.format) hdr.format = '';
-				if (!hdr.description) hdr.description = '';
-				if (!hdr.type && hdr.schema && hdr.schema.type) {
-					hdr.type = hdr.schema.type;
-					hdr.format = hdr.schema.format || '';
-				}
-
-				data.response_headers.push(hdr);
-			}
-		}
-		data = options.templateCallback('response_headers', 'pre', data);
-		content += templates.response_headers(data);
-		if (data.append) { content += data.append; delete data.append; }
-		data = options.templateCallback('response_headers', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
 	}
 
 	if (responseSchemas) {
@@ -553,7 +526,7 @@ function processOperation(op, method, resource, options) {
 							content += '```\n';
 						}
 						if (common.doContentType(cta, common.yamlContentTypes)) {
-							content += '```json\n';
+							content += '```yaml\n';
 							content += yaml.safeDump(obj) + '\n';
 							content += '```\n';
 						}
@@ -571,6 +544,37 @@ function processOperation(op, method, resource, options) {
 				}
 			}
 		}
+	}
+
+	data = options.templateCallback('responses', 'pre', data);
+	if (data.append) { content += data.append; delete data.append; }
+	content += templates.responses(data);
+	data = options.templateCallback('responses', 'post', data);
+	if (data.append) { content += data.append; delete data.append; }
+
+	if (responseHeaders) {
+		data.response_headers = [];
+		for (var resp in op.responses) {
+			var response = op.responses[resp];
+			for (var h in response.headers) {
+				var hdr = response.headers[h];
+				hdr.status = resp;
+				hdr.header = h;
+				if (!hdr.format) hdr.format = '';
+				if (!hdr.description) hdr.description = '';
+				if (!hdr.type && hdr.schema && hdr.schema.type) {
+					hdr.type = hdr.schema.type;
+					hdr.format = hdr.schema.format || '';
+				}
+
+				data.response_headers.push(hdr);
+			}
+		}
+		data = options.templateCallback('response_headers', 'pre', data);
+		content += templates.response_headers(data);
+		if (data.append) { content += data.append; delete data.append; }
+		data = options.templateCallback('response_headers', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
 	}
 
 	var security = (op.security ? op.security : data.openapi.security);
