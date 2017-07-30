@@ -1,0 +1,18 @@
+### Response Schema
+
+Status Code **{{=data.responseStatus}}**
+
+Name|Type|Required|Description
+---|---|---|---|---|
+{{~ data.schemaProperties :p}}{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}
+{{~}}
+
+{{? data.enums.length}}
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+{{~ data.enums :e}}{{=e.name}}|{{=e.value}}|
+{{~}}
+{{?}}
+

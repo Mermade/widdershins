@@ -448,6 +448,7 @@ function processOperation(op, method, resource, options) {
 
 	var responseSchemas = false;
 	var responseHeaders = false;
+	var inlineSchemas = false;
 	data.responses = [];
 	for (var resp in op.responses) {
 		let response = op.responses[resp];
@@ -481,6 +482,9 @@ function processOperation(op, method, resource, options) {
 					if (mediatype.schema.$ref) {
 						let ref = mediatype.schema.$ref.split('/').pop();
 						response.schema = '['+ref+'](#schema'+common.gfmLink(ref)+')';
+					}
+					else {
+						inlineSchemas = true;
 					}
 				}
 			}
@@ -551,6 +555,40 @@ function processOperation(op, method, resource, options) {
 	content += templates.responses(data);
 	data = options.templateCallback('responses', 'post', data);
 	if (data.append) { content += data.append; delete data.append; }
+
+	if (inlineSchemas && options.schema) {
+		for (var resp in op.responses) {
+			var response = op.responses[resp];
+			for (var ct in response.content) {
+				var contentType = response.content[ct];
+				if (contentType.schema && !contentType.schema.$ref) {
+					data.schemaProperties = [];
+					data.responseStatus = resp;
+					data.response = response;
+					common.schemaToArray(contentType.schema,0,data.schemaProperties,true);
+
+					data.enums = [];
+					for (var prop in data.schemaProperties) {
+						if (prop.schema) {
+							for (var e in prop.schema.enum) {
+								var nvp = {};
+								nvp.name = param.name;
+								nvp.value = param.schema.enum[e];
+								data.enums.push(nvp);
+							}
+						}
+					}
+
+					data = options.templateCallback('response_schema', 'pre', data);
+					if (data.append) { content += data.append; delete data.append; }
+					content += templates.response_schema(data);
+					data = options.templateCallback('response_schema', 'post', data);
+					if (data.append) { content += data.append; delete data.append; }
+				}
+				break; // only show one content-type for now
+			}
+		}
+	}
 
 	if (responseHeaders) {
 		data.response_headers = [];
