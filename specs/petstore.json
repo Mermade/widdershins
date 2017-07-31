@@ -847,7 +847,7 @@
 		}
 	},
 	"externalDocs" : {
-		"description" : "Find out more about Swagger",
-		"url" : "http://swagger.io"
+		"description" : "See AsyncAPI example",
+		"url" : "https://mermade.github.io/shins/asyncapi.html"
 	}
 }

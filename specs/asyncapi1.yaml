@@ -8,6 +8,10 @@ schemes:
   - amqp
   - mqtt
 
+externalDocs:
+  description: See OpenAPI example
+  url: https://mermade.github.io/shins/index.html
+
 topics:
   accounts.1.0.action.user.signup:
     publish:

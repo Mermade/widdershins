@@ -63,6 +63,7 @@ options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
 options.search = true;
 options.sample = true; // set false by --raw
+options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
 var str = converter.convert(swaggerObj,options);

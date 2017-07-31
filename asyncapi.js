@@ -226,10 +226,10 @@ function convert(asyncapi, options, callback) {
 				}
 
 				if (msg.payload) {
-					data = options.templateCallback('heading_example_payloads', 'pre', data);
+					data = options.templateCallback('heading_example_payload', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
-					content += templates.heading_example_payloads(data) + '\n';
-					data = options.templateCallback('heading_example_payloads', 'post', data);
+					content += templates.heading_example_payload(data) + '\n';
+					data = options.templateCallback('heading_example_payload', 'post', data);
 					if (data.append) { content += data.append; delete data.append; }
 					data.payload = processObject(msg.payload, options, asyncapi);
 
@@ -318,7 +318,7 @@ function convert(asyncapi, options, callback) {
 				if (msg.headers && options.schema) {
 					data.properties = [];
 					data.enums = [];
-					common.schemaToArray(msg.headers,-1,data.properties,true);
+					common.schemaToArray(msg.headers,0,data.properties,true);
 
 					data = options.templateCallback('header_properties', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -330,7 +330,7 @@ function convert(asyncapi, options, callback) {
 				if (msg.payload && options.schema) {
 					data.properties = [];
 					data.enums = [];
-					common.schemaToArray(msg.payload,-1,data.properties,true);
+					common.schemaToArray(msg.payload,0,data.properties,true);
 
 					data = options.templateCallback('payload_properties', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -387,7 +387,7 @@ function convert(asyncapi, options, callback) {
 			data.schema = schema;
 			data.enums = [];
 			data.schemaProperties = [];
-			common.schemaToArray(schema,-1,data.schemaProperties,true);
+			common.schemaToArray(schema,0,data.schemaProperties,true);
 	
 			for (let p of data.schemaProperties) {
 				if (p.schema && p.schema.enum) {
