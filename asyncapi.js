@@ -116,7 +116,7 @@ function processObject(obj, options, asyncapi) {
 function convert(asyncapi, options, callback) {
 
 	var defaults = {};
-	defaults.language_tabs = [{ 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }, { 'java': 'Java' }, { 'go': 'Go'}];
+	defaults.language_tabs = [{ 'javascript--nodejs': 'Node.JS' },{ 'javascript': 'JavaScript' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }, { 'java': 'Java' }, { 'go': 'Go'}];
 	defaults.codeSamples = true;
 	defaults.theme = 'darkula';
 	defaults.search = true;
@@ -253,21 +253,21 @@ function convert(asyncapi, options, callback) {
 						}
 					}
 					else {
-						if (common.languageCheck('javascript', header.language_tabs, false)) {
-							content += '```javascript\n';
-							data = options.templateCallback('code_javascript', 'pre', data);
-							if (data.append) { content += data.append; delete data.append; }
-							content += templates.code_javascript(data);
-							data = options.templateCallback('code_javascript', 'post', data);
-							if (data.append) { content += data.append; delete data.append; }
-							content += '```\n\n';
-						}
 						if (common.languageCheck('javascript--nodejs', header.language_tabs, false)) {
 							content += '```javascript--nodejs\n';
 							data = options.templateCallback('code_nodejs', 'pre', data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += templates.code_nodejs(data);
 							data = options.templateCallback('code_nodejs', 'post', data);
+							if (data.append) { content += data.append; delete data.append; }
+							content += '```\n\n';
+						}
+						if (common.languageCheck('javascript', header.language_tabs, false)) {
+							content += '```javascript\n';
+							data = options.templateCallback('code_javascript', 'pre', data);
+							if (data.append) { content += data.append; delete data.append; }
+							content += templates.code_javascript(data);
+							data = options.templateCallback('code_javascript', 'post', data);
 							if (data.append) { content += data.append; delete data.append; }
 							content += '```\n\n';
 						}
