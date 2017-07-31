@@ -87,6 +87,7 @@ function check(file) {
 				result = result.split('undefined how').join('x');
 				result = result.split('undefined behavio').join('x');
 				result = result.split('"undefined":').join('x');
+				result = result.split('» undefined').join('x');
 				result = result.split('undefined|').join('x'); // not so happy about this one (google firebaserules)
 				result = result.split('undefinedfault').join('x');
 				if ((result != '') && (result.indexOf('undefined')<0)) {
