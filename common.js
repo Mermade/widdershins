@@ -148,8 +148,14 @@ function schemaToArray(schema,depth,lines,trim) {
 		}
 	});
 	if (!schema.properties) {
+		if (schema.type == 'array') {
+			for (let prop of lines) {
+				prop.depth++;
+				prop.name = '»'+prop.name;
+			}
+		}
 		let prop = {};
-		prop.name = schema.title||'additionalProperties';
+		prop.name = schema.title||(schema.type == 'array' ? 'anonymous' : 'additionalProperties');
 		prop.description = schema.description||'No description';
 		if (trim) prop.description = prop.description.split('\n').join(' ');
 		prop.type = schema.type||'Unknown';
@@ -157,7 +163,7 @@ function schemaToArray(schema,depth,lines,trim) {
 		prop.in = 'body';
 		if (schema.format) prop.type = prop.type+'('+schema.format+')';
 		prop.depth = 0;
-		lines.push(prop);
+		lines.unshift(prop);
 	}
 }
 
