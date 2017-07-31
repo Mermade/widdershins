@@ -96,7 +96,7 @@ function extract(o,parent,seen,depth,callback){
 		if (v && v.properties) {
 			for (let p in v.properties) {
 				var already = seen.indexOf(v.properties[p])>=0;
-				if (v.properties[p].type === 'array') already = true; // array processing
+				if (v.properties[p] && v.properties[p].type === 'array') already = true; // array processing
 				if (!already) {
 					let required = false;
 					if (v.required && Array.isArray(v.required)) {
