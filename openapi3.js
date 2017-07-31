@@ -202,7 +202,7 @@ function processOperation(op, method, resource, options) {
 			console.error(ex);
 			param.exampleValues.json = '...';
 		}
-		if (param.in == 'body') {
+		if ((param.in == 'body') && (!data.bodyParameter)) { // ignore expanded lines
 			data.bodyParameter = param;
 		}
 		if (param.in == 'header') {
@@ -369,7 +369,7 @@ function processOperation(op, method, resource, options) {
 		var paramHeader = false;
 		for (var p in parameters) {
 			param = parameters[p];
-			if (param.in === 'body') {
+			if ((param.in === 'body') && (param.depth == 0)) {
 				var xmlWrap = '';
 				var obj = common.dereference(param.schema, circles, data.openapi);
 				if (obj && !paramHeader) {

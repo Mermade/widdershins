@@ -91,11 +91,12 @@ function gfmLink(text) {
     return text;
 }
 
-function extract(o,seen,depth,callback){
+function extract(o,parent,seen,depth,callback){
 	JSON.stringify(o,function(k,v){
 		if (v && v.properties) {
 			for (let p in v.properties) {
 				var already = seen.indexOf(v.properties[p])>=0;
+				if (v.properties[p].type === 'array') already = true; // array processing
 				if (!already) {
 					let required = false;
 					if (v.required && Array.isArray(v.required)) {
@@ -106,7 +107,7 @@ function extract(o,seen,depth,callback){
 					newProp[p] = v.properties[p];
 					callback(newProp,depth,required,oldRef);
 					if (depth<MAX_SCHEMA_DEPTH) {
-						extract(v.properties[p],seen,depth+1,callback);
+						extract(v.properties[p],p,seen,depth+1,callback);
 					}
 					else {
 						throw new Error('Max schema depth exceeded');
@@ -115,6 +116,14 @@ function extract(o,seen,depth,callback){
 				 }
 			}
 		}
+		if (v && v.items) { // array processing
+			var name = parent||k||'anonymous';
+			var dummy = {};
+			dummy.properties = {};
+			dummy.properties[name] = v.items;
+			dummy.properties[name].isArray = true;
+			extract(dummy,k,seen,depth,callback);
+		}
 		return v;
 	});
 }
@@ -122,13 +131,13 @@ function extract(o,seen,depth,callback){
 function schemaToArray(schema,depth,lines,trim) {
 
 	let seen = [];
-	extract(schema,seen,depth,function(obj,depth,required,oldRef){
+	extract(schema,'',seen,depth,function(obj,depth,required,oldRef){
 		let prefix = '»'.repeat(depth);
         for (let p in obj) {
 			if (obj[p]) {
 				if (obj[p]["x-old-ref"]) oldRef = obj[p]["x-old-ref"].split('/').pop();
 				var prop = {};
-				prop.name = prefix+' '+p;
+				prop.name = (prefix+' '+p).trim();
 				prop.in = 'body';
 				prop.type = obj[p].type||'Unknown';
 				if (obj[p].format) prop.type = prop.type+'('+obj[p].format+')';
@@ -136,6 +145,10 @@ function schemaToArray(schema,depth,lines,trim) {
 				if ((prop.type === 'object') && oldRef) {
 					oldRef = oldRef.split('/').pop();
 					prop.type = '['+oldRef+'](#schema'+gfmLink(oldRef)+')';
+				}
+
+				if (obj[p].isArray) {
+					prop.type = '['+prop.type+']';
 				}
 
 				prop.required = required;
