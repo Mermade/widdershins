@@ -102,7 +102,7 @@ function extract(o,parent,seen,depth,callback){
 					if (v.required && Array.isArray(v.required)) {
 						required = v.required.indexOf(p)>=0;
 					}
-					let oldRef = v["x-old-ref"]||'';
+					let oldRef = v.properties[p]["x-old-ref"]||v.properties[p].$ref||'';
 					let newProp = {};
 					newProp[p] = v.properties[p];
 					callback(newProp,depth,required,oldRef);
@@ -117,11 +117,11 @@ function extract(o,parent,seen,depth,callback){
 			}
 		}
 		if (v && v.items) { // array processing
-			var name = parent||k||'anonymous';
+			var name = k||'anonymous';
 			var dummy = {};
 			dummy.properties = {};
 			dummy.properties[name] = v.items;
-			dummy.properties[name].isArray = true;
+			dummy.properties[name]["x-isArray"] = true;
 			extract(dummy,k,seen,depth,callback);
 		}
 		return v;
@@ -135,19 +135,18 @@ function schemaToArray(schema,depth,lines,trim) {
 		let prefix = '»'.repeat(depth);
         for (let p in obj) {
 			if (obj[p]) {
-				if (obj[p]["x-old-ref"]) oldRef = obj[p]["x-old-ref"].split('/').pop();
 				var prop = {};
 				prop.name = (prefix+' '+p).trim();
 				prop.in = 'body';
 				prop.type = obj[p].type||'Unknown';
 				if (obj[p].format) prop.type = prop.type+'('+obj[p].format+')';
 
-				if ((prop.type === 'object') && oldRef) {
+				if (((prop.type === 'object') || (prop.type === 'Unknown')) && oldRef) {
 					oldRef = oldRef.split('/').pop();
 					prop.type = '['+oldRef+'](#schema'+gfmLink(oldRef)+')';
 				}
 
-				if (obj[p].isArray) {
+				if (obj[p]["x-isArray"]) {
 					prop.type = '['+prop.type+']';
 				}
 
@@ -160,15 +159,12 @@ function schemaToArray(schema,depth,lines,trim) {
 			}
 		}
 	});
-	if (!schema.properties) {
-		if (schema.type == 'array') {
-			for (let prop of lines) {
-				prop.depth++;
-				prop.name = '»'+prop.name;
-			}
-		}
+	if (!schema.properties && !schema.items) {
 		let prop = {};
-		prop.name = schema.title||(schema.type == 'array' ? 'anonymous' : 'additionalProperties');
+		prop.name = schema.title;
+		if (!prop.name && schema.type && schema.type !== 'object') prop.name = 'simple';
+		if (!prop.name && schema.additionalProperties) prop.name = 'additionalProperties';
+		if (!prop.name && schema.patternProperties) prop.name = 'patternProperties';
 		prop.description = schema.description||'No description';
 		if (trim) prop.description = prop.description.split('\n').join(' ');
 		prop.type = schema.type||'Unknown';
