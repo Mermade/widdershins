@@ -102,7 +102,10 @@ function extract(o,parent,seen,depth,callback){
 					if (v.required && Array.isArray(v.required)) {
 						required = v.required.indexOf(p)>=0;
 					}
-					let oldRef = v.properties[p]["x-old-ref"]||v.properties[p].$ref||'';
+					let oldRef = '';
+					if (v.properties[p]) {
+						oldRef = v.properties[p]["x-old-ref"]||v.properties[p].$ref||'';
+					}
 					let newProp = {};
 					newProp[p] = v.properties[p];
 					callback(newProp,depth,required,oldRef);
