@@ -60,20 +60,6 @@ function convertToToc(source) {
 	return apiInfo;
 }
 
-function convertServers(asyncapi, options) {
-	var result = common.clone(asyncapi);
-	result.servers = [];
-	var u = up.parse(options.loadedFrom ? options.loadedFrom : '/');
-	var schemes = asyncapi.schemes || [];
-	if (!schemes.length) {
-		schemes.push((u.protocol ? u.protocol : 'http').split(':')[0]);
-	}
-	for (var scheme of schemes) {
-		result.servers.push({url:scheme+'://'+(asyncapi.host ? asyncapi.host : (u.host ? u.host : 'example.com'))+(asyncapi.basePath ? asyncapi.basePath : (u.path ? u.path : '/'))});
-	}
-	return result;
-}
-
 function processObject(obj, options, asyncapi) {
 	obj = common.dereference(obj, circles, asyncapi);
 
@@ -154,8 +140,6 @@ function convert(asyncapi, options, callback) {
 	header.search = options.search;
 	header.highlight_theme = options.theme;
 
-	asyncapi = convertServers(asyncapi, options);
-
 	var data = {};
 	data.api = data.asyncapi = data.openapi = asyncapi;
 	data.baseTopic = asyncapi.baseTopic;
@@ -184,12 +168,12 @@ function convert(asyncapi, options, callback) {
 	var apiInfo = convertToToc(asyncapi);
 
 	for (var r in apiInfo.resources) {
-		content += '# ' + r + '\n\n';
+		content += '# ' + r + '\n\n'; // TODO template
 		var resource = apiInfo.resources[r]
 		if (resource.description) content += resource.description + '\n\n';
 
 		if (resource.externalDocs) {
-			if (resource.externalDocs.url) {
+			if (resource.externalDocs.url) { // TODO template
 				content += '<a href="' + resource.externalDocs.url + '">' + (resource.externalDocs.description ? resource.externalDocs.description : 'External docs') + '</a>\n';
 			}
 		}
@@ -201,7 +185,15 @@ function convert(asyncapi, options, callback) {
 			if (!message.message.startsWith('x-')) {
 
 				var opName = subtitle;
-				content += '## ' + opName + '\n\n';
+				content += '## ' + opName + '\n\n'; // TODO template
+
+				if (msg.$ref) {
+					msg = common.dereference(msg, circles, asyncapi);
+				}
+
+				if (msg.deprecated) {
+					content += 'Note: **Deprecated**\n\n'; // TODO template
+				}
 
 				var topic = data.baseTopic + '.' + message.topic;
 
@@ -211,10 +203,6 @@ function convert(asyncapi, options, callback) {
 				data.tags = asyncapi.topics[message.topic][message.message].tags;
 				data.security = asyncapi.topics[message.topic][message.message].security;
 				data.resource = resource;
-
-				if (msg.$ref) {
-					msg = common.dereference(msg, circles, asyncapi);
-				}
 
 				if (msg.headers) {
 					data = options.templateCallback('heading_example_headers', 'pre', data);
@@ -312,7 +300,7 @@ function convert(asyncapi, options, callback) {
 
 				if (subtitle != opName) content += '`' + subtitle + '`\n\n';
 
-				if (msg.summary) content += '*' + msg.summary + '*\n\n';
+				if (msg.summary) content += '*' + msg.summary + '*\n\n'; // TODO template
 				if (msg.description) content += msg.description + '\n\n';
 
 				if (msg.headers && options.schema) {

@@ -6,7 +6,16 @@
 
 Base URLs:
 {{~data.servers :s}}
-* <a href="{{=s.url}}">{{=s.url}}</a>{{~}}
+* <a href="{{=s.url}}">{{=s.url}}</a>
+{{ for(var v in s.variables) { }}
+    * **{{=v}}** - {{=s.variables[v].description||''}} Default: {{=s.variables[v].default}}
+{{? s.variables[v].enum}}
+{{~ s.variables[v].enum :e}}
+        * {{= e}}
+{{~}}
+{{?}}
+{{ } }}
+{{~}}
 
 {{? data.openapi.info.termsOfService}}<a href="{{=data.openapi.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.openapi.info.contact}}{{? data.openapi.info.contact.email}}Email: <a href="mailto:{{=data.openapi.info.contact.email}}">{{=data.contactName}}</a> {{?}}{{? data.openapi.info.contact.url}}Web: <a href="{{=data.openapi.info.contact.url}}">{{=data.contactName}}</a> {{?}}{{?}}
