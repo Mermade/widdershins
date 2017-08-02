@@ -1,3 +1,5 @@
+'use strict';
+
 var openapi3 = require('./openapi3.js');
 var swagger2openapi = require('swagger2openapi');
 

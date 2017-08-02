@@ -1,3 +1,5 @@
+'use strict';
+
 var up = require('url');
 var path = require('path');
 var util = require('util');
