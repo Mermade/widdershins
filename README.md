@@ -105,7 +105,7 @@ The test harness currently expects `.yaml` or `.json` files and has been tested 
 
 ### Comparison between this and other OpenAPI / Swagger to Slate tools
 
-[Blog posting](http://mikeralphson.github.io/openapi/2016/12/19/oa2s-comparison) by the author of Widdershins
+[Blog posting](https://dev.to/mikeralphson/comparison-of-various-openapiswagger-to-slate-conversion-tools) by the author of Widdershins.
 
 ### Acknowledgements
 
