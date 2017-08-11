@@ -192,11 +192,11 @@ function processOperation(op, method, resource, options) {
 		param.exampleValues.object = {};
 		try {
 			var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true });
-			var t = obj[param.name] || obj; // FIXME - always obj?
+			var t = obj;
 			if (typeof t == 'string') t = "'" + t + "'";
 			if (typeof t == 'object') t = JSON.stringify(t, null, 2);
 			param.exampleValues.json = t;
-			param.exampleValues.object = obj[param.name] || obj; // FIXME - always obj?
+			param.exampleValues.object = obj;
 		}
 		catch (ex) {
 			console.error(ex);
@@ -209,16 +209,18 @@ function processOperation(op, method, resource, options) {
 			data.headerParameters.push(param);
 		}
 		if (param.in == 'query') {
-			var temp = param.exampleValues.object;
+			let temp = param.exampleValues.object;
 			if (Array.isArray(temp)) {
 				temp = '...';
 			}
+			if (!param.allowReserved) {
+				temp = encodeURIComponent(temp);
+			}
 			data.queryParameters.push(param);
-			data.queryString += (data.queryString ? '&' : '?') +
-				param.name + '=' + encodeURIComponent(temp); // TODO make encoding optional
+			data.queryString += (data.queryString ? '&' : '?') + param.name + '=' + temp;
 			if (param.required) {
 				data.requiredQueryString += (data.requiredQueryString ?
-					'&' : '?') + param.name + '=' + encodeURIComponent(temp); // TODO make encoding optional
+					'&' : '?') + param.name + '=' + temp;
 				data.requiredParameters.push(param);
 			}
 		}
