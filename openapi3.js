@@ -854,7 +854,8 @@ function convert(openapi, options, callback) {
 	}
 
 	var headerStr = '---\n' + yaml.safeDump(header) + '---\n';
-	// apparently you can insert jekyll front-matter in here for github -- see lord/slate
+	// apparently you can insert jekyll front-matter in here for github
+	// see https://github.com/lord/slate/issues/702
 	var result = (headerStr + '\n' + content.split('\n\n\n').join('\n\n'));
 	if (callback) callback(null, result);
 	return result;
