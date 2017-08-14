@@ -154,7 +154,7 @@ function processOperation(op, method, resource, options) {
 		if (body.schema && typeof body.schema.$ref === 'string') {
 			rbType = body.schema.$ref.replace('#/components/schemas/','');
 			rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
-			body.schema = common.dereference(body.schema, circles, data.openapi);
+			body.schema = common.dereference(body.schema, circles, data.openapi, common.clone);
 		}
 		body.type = rbType;
 		parameters.push(body);
@@ -373,7 +373,7 @@ function processOperation(op, method, resource, options) {
 			param = parameters[p];
 			if ((param.in === 'body') && (param.depth == 0)) {
 				var xmlWrap = '';
-				var obj = common.dereference(param.schema, circles, data.openapi);
+				var obj = common.dereference(param.schema, circles, data.openapi, common.clone);
 				if (obj && !paramHeader) {
 					data = options.templateCallback('heading_body_parameter', 'pre', data);
 					if (data.append) { content += data.append; delete data.append; }
@@ -515,7 +515,7 @@ function processOperation(op, method, resource, options) {
 					var xmlWrap = '';
 					var obj = {};
 					try {
-						obj = common.dereference(contentType.schema, circles, data.openapi);
+						obj = common.dereference(contentType.schema, circles, data.openapi, common.clone);
 					}
 					catch (ex) {
 						console.error(ex.message);
@@ -799,6 +799,7 @@ function convert(openapi, options, callback) {
 			content += '## '+s+'\n\n';
 			content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
 			let schema = openapi.components.schemas[s];
+			schema = common.dereference(schema, circles, openapi, common.clone)
 
 			var obj = schema;
 			if (options.sample) {

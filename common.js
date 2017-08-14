@@ -21,10 +21,15 @@ function clone(obj) {
     return JSON.parse(JSON.stringify(obj));
 }
 
-function dereference(obj, circles, api) {
+function nop(obj) {
+	return obj;
+}
+
+function dereference(obj, circles, api, cloneFunc) {
+	if (!cloneFunc) cloneFunc = nop;
     while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
 		var oRef = obj.$ref;
-        obj = jptr.jptr(api, obj["$ref"]);
+        obj = cloneFunc(jptr.jptr(api, obj["$ref"]));
 		obj["x-old-ref"] = oRef;
     }
     var changes = 1;
@@ -32,7 +37,7 @@ function dereference(obj, circles, api) {
         changes = 0;
         recurse(obj, {}, function (obj, state) {
             if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
-				state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = jptr.jptr(api, obj);
+				state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = cloneFunc(jptr.jptr(api, obj));
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-old-ref"] = obj;
 				delete state.parent["$ref"]; // just in case
                 changes++;

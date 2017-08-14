@@ -29,7 +29,7 @@ function convertToToc(source) {
 		for (var m in apiInfo.topics[t]) {
 			var sMessage = apiInfo.topics[t][m];
 			if (sMessage.$ref) {
-				sMessage = common.dereference(sMessage, circles, source);
+				sMessage = common.dereference(sMessage, circles, source, common.clone);
 			}
 			var ioMessage = {};
 			ioMessage.topic = t;
@@ -63,7 +63,7 @@ function convertToToc(source) {
 }
 
 function processObject(obj, options, asyncapi) {
-	obj = common.dereference(obj, circles, asyncapi);
+	obj = common.dereference(obj, circles, asyncapi, common.clone);
 
 	var xmlWrap = '';
 	if (obj && obj.xml && obj.xml.name) {
@@ -190,7 +190,7 @@ function convert(asyncapi, options, callback) {
 				content += '## ' + opName + '\n\n'; // TODO template
 
 				if (msg.$ref) {
-					msg = common.dereference(msg, circles, asyncapi);
+					msg = common.dereference(msg, circles, asyncapi, common.clone);
 				}
 
 				if (msg.deprecated) {
@@ -356,6 +356,7 @@ function convert(asyncapi, options, callback) {
             content += '## '+s+'\n\n';
             content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
             let schema = asyncapi.components.schemas[s];
+			schema = common.dereference(schema, circles, asyncapi, common.clone);
 
             var obj = schema;
             if (options.sample) {
