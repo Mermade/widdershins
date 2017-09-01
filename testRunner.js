@@ -82,6 +82,7 @@ function check(file) {
 		try {
 	        widdershins.convert(src, widdershinsOptions, function(err, result){
 				result = result.split('is undefined').join('x');
+				result = result.split('be undefined').join('x');
 				result = result.split('undefined to').join('x');
 				result = result.split('undefined in').join('x');
 				result = result.split('undefined how').join('x');
