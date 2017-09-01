@@ -14,10 +14,6 @@ OpenApi / Swagger / AsyncAPI definition to [Slate](https://github.com/lord/slate
 
 ![Widdershins screenshot](https://github.com/Mermade/oa2s-comparison/blob/master/docs/widdershins.png?raw=true)
 
-Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory, or override them using the `user_templates` option to specify a directory containing your templates.
-
-Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
-
 ### News
 
 As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads) by default. You can restore the old behaviour by using the `--noschema` option.
@@ -69,15 +65,26 @@ options.includes = [];
 var str = converter.convert(swaggerObj,options);
 ```
 
-`loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host,
-and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
+To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
+
+```javascript
+options.language_tabs = [{ 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
+```
+
+The `loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host, and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
 
 Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
 
-Schema.org WebAPI discovery data is included if the options above are set. See the W3C [WebAPI Discovery Community Group](https://www.w3.org/community/web-api-discovery/) for more information.
+Schema.org WebAPI discovery data is included if the `discovery` option above is set `true`. See the W3C [WebAPI Discovery Community Group](https://www.w3.org/community/web-api-discovery/) for more information.
+
+## Language tabs
+
+Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory, or override them using the `user_templates` option to specify a directory containing your templates.
+
+Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
 
 ## Template parameters
 
@@ -109,8 +116,8 @@ The test harness currently expects `.yaml` or `.json` files and has been tested 
 
 ### Acknowledgements
 
-Thanks to @latgeek for the logo
+Thanks to [@latgeek](https://github.com/LatGeek) for the logo.
 
 ### Widdershins in the wild
 
-Please feel free to add a link to your API documentation here
+Please feel free to add a link to your API documentation here.
