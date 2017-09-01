@@ -62,7 +62,9 @@ options.sample = true; // set false by --raw
 options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
-var str = converter.convert(swaggerObj,options);
+converter.convert(swaggerObj,options,function(err,str){
+  // str contains the converted markdown
+});
 ```
 
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
