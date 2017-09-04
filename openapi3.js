@@ -249,6 +249,11 @@ function processOperation(op, method, resource, options) {
 		data.allHeaders.push(accept);
 	}
 
+	// TODO template?
+	if (data.subtitle != opName) content += '`' + data.subtitle + '`\n\n';
+	if (op.summary) content += '*' + op.summary + '*\n\n';
+	if (op.description) content += op.description + '\n\n';
+
 	var codeSamples = (options.codeSamples || op["x-code-samples"]);
 	if (codeSamples) {
 		data = options.templateCallback('heading_code_samples', 'pre', data);
@@ -332,11 +337,6 @@ function processOperation(op, method, resource, options) {
 			}
 		}
 	}
-
-	// TODO template?
-	if (data.subtitle != opName) content += '`' + data.subtitle + '`\n\n';
-	if (op.summary) content += '*' + op.summary + '*\n\n';
-	if (op.description) content += op.description + '\n\n';
 
 	data.enums = [];
 
