@@ -254,97 +254,6 @@ function processOperation(op, method, resource, options) {
 	if (op.summary) content += '*' + op.summary + '*\n\n';
 	if (op.description) content += op.description + '\n\n';
 
-	var codeSamples = (options.codeSamples || op["x-code-samples"]);
-	if (codeSamples) {
-		data = options.templateCallback('heading_code_samples', 'pre', data);
-		if (data.append) { content += data.append; delete data.append; }
-		content += templates.heading_code_samples(data);
-		data = options.templateCallback('heading_code_samples', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
-
-		if (op["x-code-samples"]) {
-			for (var s in op["x-code-samples"]) {
-				var sample = op["x-code-samples"][s];
-				var lang = common.languageCheck(sample.lang, header.language_tabs, true);
-				content += '```' + lang + '\n';
-				content += sample.source;
-				content += '\n```\n';
-			}
-		}
-		else {
-			if (common.languageCheck('shell', header.language_tabs, false)) {
-				content += '#### Shell\n';
-				content += '```shell\n';
-				data = options.templateCallback('code_shell', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_shell(data);
-				data = options.templateCallback('code_shell', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('http', header.language_tabs, false)) {
-				content += '#### HTTP\n';
-				content += '```http\n';
-				data = options.templateCallback('code_http', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_http(data);
-				data = options.templateCallback('code_http', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('javascript', header.language_tabs, false)) {
-				content += '#### JavaScript\n';
-				content += '```javascript\n';
-				data = options.templateCallback('code_javascript', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_javascript(data);
-				data = options.templateCallback('code_javascript', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('javascript--nodejs', header.language_tabs, false)) {
-				content += '#### Node\n';
-				content += '```javascript--nodejs\n';
-				data = options.templateCallback('code_nodejs', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_nodejs(data);
-				data = options.templateCallback('code_nodejs', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('ruby', header.language_tabs, false)) {
-				content += '#### Ruby\n';
-				content += '```ruby\n';
-				data = options.templateCallback('code_ruby', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_ruby(data);
-				data = options.templateCallback('code_ruby', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('python', header.language_tabs, false)) {
-				content += '#### Python\n';
-				content += '```python\n';
-				data = options.templateCallback('code_python', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_python(data);
-				data = options.templateCallback('code_python', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('java', header.language_tabs, false)) {
-				content += '#### Java\n';
-				content += '```java\n';
-				data = options.templateCallback('code_java', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_java(data);
-				data = options.templateCallback('code_java', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-		}
-	}
-
 	data.enums = [];
 
 	if (parameters.length > 0) {
@@ -453,6 +362,97 @@ function processOperation(op, method, resource, options) {
 			}
 		}
 
+	}
+
+	var codeSamples = (options.codeSamples || op["x-code-samples"]);
+	if (codeSamples) {
+		data = options.templateCallback('heading_code_samples', 'pre', data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.heading_code_samples(data);
+		data = options.templateCallback('heading_code_samples', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
+
+		if (op["x-code-samples"]) {
+			for (var s in op["x-code-samples"]) {
+				var sample = op["x-code-samples"][s];
+				var lang = common.languageCheck(sample.lang, header.language_tabs, true);
+				content += '```' + lang + '\n';
+				content += sample.source;
+				content += '\n```\n';
+			}
+		}
+		else {
+			if (common.languageCheck('shell', header.language_tabs, false)) {
+				content += '#### Shell\n';
+				content += '```shell\n';
+				data = options.templateCallback('code_shell', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_shell(data);
+				data = options.templateCallback('code_shell', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('http', header.language_tabs, false)) {
+				content += '#### HTTP\n';
+				content += '```http\n';
+				data = options.templateCallback('code_http', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_http(data);
+				data = options.templateCallback('code_http', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('javascript', header.language_tabs, false)) {
+				content += '#### JavaScript\n';
+				content += '```javascript\n';
+				data = options.templateCallback('code_javascript', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_javascript(data);
+				data = options.templateCallback('code_javascript', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('javascript--nodejs', header.language_tabs, false)) {
+				content += '#### Node\n';
+				content += '```javascript--nodejs\n';
+				data = options.templateCallback('code_nodejs', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_nodejs(data);
+				data = options.templateCallback('code_nodejs', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('ruby', header.language_tabs, false)) {
+				content += '#### Ruby\n';
+				content += '```ruby\n';
+				data = options.templateCallback('code_ruby', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_ruby(data);
+				data = options.templateCallback('code_ruby', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('python', header.language_tabs, false)) {
+				content += '#### Python\n';
+				content += '```python\n';
+				data = options.templateCallback('code_python', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_python(data);
+				data = options.templateCallback('code_python', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+			if (common.languageCheck('java', header.language_tabs, false)) {
+				content += '#### Java\n';
+				content += '```java\n';
+				data = options.templateCallback('code_java', 'pre', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += templates.code_java(data);
+				data = options.templateCallback('code_java', 'post', data);
+				if (data.append) { content += data.append; delete data.append; }
+				content += '```\n\n';
+			}
+		}
 	}
 
 	var responseSchemas = false;
