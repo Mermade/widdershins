@@ -347,7 +347,7 @@ function processOperation(op, method, resource, options) {
 		data = options.templateCallback('parameters', 'post', data);
 		if (data.append) { content += data.append; delete data.append; }
 
-		if (longDescs) {
+		/*if (longDescs) {
 			for (var p in parameters) {
 				var param = parameters[p];
 				var desc = param.description ? param.description : '';
@@ -360,7 +360,7 @@ function processOperation(op, method, resource, options) {
 					content += desc + '\n';
 				}
 			}
-		}
+		}*/
 
 	}
 
