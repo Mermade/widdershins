@@ -254,6 +254,41 @@ function processOperation(op, method, resource, options) {
 	if (op.summary) content += '*' + op.summary + '*\n\n';
 	if (op.description) content += op.description + '\n\n';
 
+	var security = (op.security ? op.security : data.openapi.security);
+	if (!security) security = [];
+	if (security.length <= 0) {
+		data = options.templateCallback('authentication_none', 'pre', data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.authentication_none(data);
+		data = options.templateCallback('authentication_none', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
+	}
+	else {
+		data.securityDefinitions = [];
+		var list = '';
+		for (var s in security) {
+			var link;
+			link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
+			var secDef = jptr.jptr(data.openapi, link);
+			data.securityDefinitions.push(secDef);
+			list += (list ? ', ' : '') + (secDef ? secDef.type : 'None');
+			var scopes = security[s][Object.keys(security[s])[0]];
+			if (Array.isArray(scopes) && (scopes.length > 0)) {
+				list += ' ( Scopes: ';
+				for (var scope in scopes) {
+					list += scopes[scope] + ' ';
+				}
+				list += ')';
+			}
+		}
+		data.authenticationStr = list;
+		data = options.templateCallback('authentication', 'pre', data);
+		if (data.append) { content += data.append; delete data.append; }
+		content += templates.authentication(data);
+		data = options.templateCallback('authentication', 'post', data);
+		if (data.append) { content += data.append; delete data.append; }
+	}
+
 	data.enums = [];
 
 	if (parameters.length > 0) {
@@ -627,41 +662,6 @@ function processOperation(op, method, resource, options) {
 		content += templates.response_headers(data);
 		if (data.append) { content += data.append; delete data.append; }
 		data = options.templateCallback('response_headers', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
-	}
-
-	var security = (op.security ? op.security : data.openapi.security);
-	if (!security) security = [];
-	if (security.length <= 0) {
-		data = options.templateCallback('authentication_none', 'pre', data);
-		if (data.append) { content += data.append; delete data.append; }
-		content += templates.authentication_none(data);
-		data = options.templateCallback('authentication_none', 'post', data);
-		if (data.append) { content += data.append; delete data.append; }
-	}
-	else {
-		data.securityDefinitions = [];
-		var list = '';
-		for (var s in security) {
-			var link;
-			link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
-			var secDef = jptr.jptr(data.openapi, link);
-			data.securityDefinitions.push(secDef);
-			list += (list ? ', ' : '') + (secDef ? secDef.type : 'None');
-			var scopes = security[s][Object.keys(security[s])[0]];
-			if (Array.isArray(scopes) && (scopes.length > 0)) {
-				list += ' ( Scopes: ';
-				for (var scope in scopes) {
-					list += scopes[scope] + ' ';
-				}
-				list += ')';
-			}
-		}
-		data.authenticationStr = list;
-		data = options.templateCallback('authentication', 'pre', data);
-		if (data.append) { content += data.append; delete data.append; }
-		content += templates.authentication(data);
-		data = options.templateCallback('authentication', 'post', data);
 		if (data.append) { content += data.append; delete data.append; }
 	}
 
