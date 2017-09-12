@@ -243,24 +243,24 @@ function convert(asyncapi, options, callback) {
 						}
 					}
 					else {
-                        for (var l in header.language_tabs) {
+						for (var l in header.language_tabs) {
 
-                            var target = header.language_tabs[l];
-                            if (typeof target === 'object') {
-                                l = Object.keys(target)[0];
-                            }
-                            var lcLang = common.languageCheck(l, header.language_tabs, false);
-                            if (lcLang) {
-                                content += '```' + lcLang + '\n';
-                                var langSuffixForTemplate = lcLang.substring(lcLang.lastIndexOf('-') + 1);
-                                data = options.templateCallback('code_' + langSuffixForTemplate, 'pre', data);
-                                if (data.append) { content += data.append; delete data.append; }
-                                content += templates['code_' + langSuffixForTemplate](data);
-                                data = options.templateCallback('code_' + langSuffixForTemplate, 'post', data);
-                                if (data.append) { content += data.append; delete data.append; }
-                                content += '```\n\n';
-                            }
-                        }
+							var target = header.language_tabs[l];
+							if (typeof target === 'object') {
+								l = Object.keys(target)[0];
+							}
+							var lcLang = common.languageCheck(l, header.language_tabs, false);
+							if (lcLang) {
+								content += '```' + lcLang + '\n';
+								var langSuffixForTemplate = lcLang.substring(lcLang.lastIndexOf('-') + 1);
+								data = options.templateCallback('code_' + langSuffixForTemplate, 'pre', data);
+								if (data.append) { content += data.append; delete data.append; }
+								content += templates['code_' + langSuffixForTemplate](data);
+								data = options.templateCallback('code_' + langSuffixForTemplate, 'post', data);
+								if (data.append) { content += data.append; delete data.append; }
+								content += '```\n\n';
+							}
+						}
 					}
 				}
 
