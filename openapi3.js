@@ -275,14 +275,17 @@ function processOperation(op, method, resource, options) {
 				}
 				var lcLang = common.languageCheck(l, header.language_tabs, false);
 				if (lcLang) {
-					content += '```' + lcLang + '\n';
-					var langSuffixForTemplate = lcLang.substring(lcLang.lastIndexOf('-') + 1);
-					data = options.templateCallback('code_' + langSuffixForTemplate, 'pre', data);
-					if (data.append) { content += data.append; delete data.append; }
-					content += templates['code_' + langSuffixForTemplate](data);
-					data = options.templateCallback('code_' + langSuffixForTemplate, 'post', data);
-					if (data.append) { content += data.append; delete data.append; }
-					content += '```\n\n';
+					var templateName = 'code_'+lcLang.substring(lcLang.lastIndexOf('-') + 1);
+                    var templateFunc = templates[templateName];
+                    if (templateFunc) {
+                        content += '```' + lcLang + '\n';
+                        data = options.templateCallback(templateName, 'pre', data);
+                        if (data.append) { content += data.append; delete data.append; }
+                        content += templateFunc(data);
+                        data = options.templateCallback(templateName, 'post', data);
+                        if (data.append) { content += data.append; delete data.append; }
+                        content += '```\n\n';
+                    }
 				}
 			}
 		}
@@ -622,7 +625,7 @@ function processOperation(op, method, resource, options) {
 function convert(openapi, options, callback) {
 
 	var defaults = {};
-	defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }, { 'java': 'Java' }];
+	defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }];
 	defaults.codeSamples = true;
 	defaults.theme = 'darkula';
 	defaults.search = true;

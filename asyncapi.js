@@ -104,7 +104,7 @@ function processObject(obj, options, asyncapi) {
 function convert(asyncapi, options, callback) {
 
 	var defaults = {};
-	defaults.language_tabs = [{ 'javascript--nodejs': 'Node.JS' },{ 'javascript': 'JavaScript' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }, { 'java': 'Java' }, { 'go': 'Go'}];
+	defaults.language_tabs = [{ 'javascript--nodejs': 'Node.JS' },{ 'javascript': 'JavaScript' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go'}];
 	defaults.codeSamples = true;
 	defaults.theme = 'darkula';
 	defaults.search = true;
@@ -251,14 +251,17 @@ function convert(asyncapi, options, callback) {
 							}
 							var lcLang = common.languageCheck(l, header.language_tabs, false);
 							if (lcLang) {
-								content += '```' + lcLang + '\n';
-								var langSuffixForTemplate = lcLang.substring(lcLang.lastIndexOf('-') + 1);
-								data = options.templateCallback('code_' + langSuffixForTemplate, 'pre', data);
-								if (data.append) { content += data.append; delete data.append; }
-								content += templates['code_' + langSuffixForTemplate](data);
-								data = options.templateCallback('code_' + langSuffixForTemplate, 'post', data);
-								if (data.append) { content += data.append; delete data.append; }
-								content += '```\n\n';
+                                var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') + 1);
+                                var templateFunc = templates[templateName];
+                                if (templateFunc) {
+                                    content += '```' + lcLang + '\n';
+                                    data = options.templateCallback(templateName, 'pre', data);
+                                    if (data.append) { content += data.append; delete data.append; }
+                                    content += templateFunc(data);
+                                    data = options.templateCallback(templateName, 'post', data);
+                                    if (data.append) { content += data.append; delete data.append; }
+                                    content += '```\n\n';
+                                }
 							}
 						}
 					}
