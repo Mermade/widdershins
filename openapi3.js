@@ -267,69 +267,24 @@ function processOperation(op, method, resource, options) {
 			}
 		}
 		else {
-			if (common.languageCheck('shell', header.language_tabs, false)) {
-				content += '```shell\n';
-				data = options.templateCallback('code_shell', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_shell(data);
-				data = options.templateCallback('code_shell', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('http', header.language_tabs, false)) {
-				content += '```http\n';
-				data = options.templateCallback('code_http', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_http(data);
-				data = options.templateCallback('code_http', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('javascript', header.language_tabs, false)) {
-				content += '```javascript\n';
-				data = options.templateCallback('code_javascript', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_javascript(data);
-				data = options.templateCallback('code_javascript', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('javascript--nodejs', header.language_tabs, false)) {
-				content += '```javascript--nodejs\n';
-				data = options.templateCallback('code_nodejs', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_nodejs(data);
-				data = options.templateCallback('code_nodejs', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('ruby', header.language_tabs, false)) {
-				content += '```ruby\n';
-				data = options.templateCallback('code_ruby', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_ruby(data);
-				data = options.templateCallback('code_ruby', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('python', header.language_tabs, false)) {
-				content += '```python\n';
-				data = options.templateCallback('code_python', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_python(data);
-				data = options.templateCallback('code_python', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
-			if (common.languageCheck('java', header.language_tabs, false)) {
-				content += '```java\n';
-				data = options.templateCallback('code_java', 'pre', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += templates.code_java(data);
-				data = options.templateCallback('code_java', 'post', data);
-				if (data.append) { content += data.append; delete data.append; }
-				content += '```\n\n';
-			}
+            for (var l in header.language_tabs) {
+
+                var target = header.language_tabs[l];
+                if (typeof target === 'object') {
+                    l = Object.keys(target)[0];
+                }
+                var lcLang = common.languageCheck(l, header.language_tabs, false);
+                if (lcLang) {
+                    content += '```' + lcLang + '\n';
+                    var langSuffixForTemplate = lcLang.substring(lcLang.lastIndexOf('-') + 1);
+                    data = options.templateCallback('code_' + langSuffixForTemplate, 'pre', data);
+                    if (data.append) { content += data.append; delete data.append; }
+                    content += templates['code_' + langSuffixForTemplate](data);
+                    data = options.templateCallback('code_' + langSuffixForTemplate, 'post', data);
+                    if (data.append) { content += data.append; delete data.append; }
+                    content += '```\n\n';
+                }
+            }
 		}
 	}
 
