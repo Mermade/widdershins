@@ -186,7 +186,12 @@ function processOperation(op, method, resource, options) {
 		if (param.schema && param.schema.format) {
 			param.safeType = param.safeType + '(' + param.schema.format + ')';
 		}
-		param.exampleSchema = param.schema || {};
+		if (param.schema && param.schema["$ref"]) {
+			param.exampleSchema = jptr.jptr(data.openapi, param.schema["$ref"]);
+		}
+		else {
+			param.exampleSchema = param.schema || {};
+		}
 		param.exampleValues = {};
 		param.exampleValues.json = '{}';
 		param.exampleValues.object = {};
