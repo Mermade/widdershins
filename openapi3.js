@@ -418,7 +418,6 @@ function processOperation(op, method, resource, options) {
 		}
 		else {
 			if (common.languageCheck('shell', header.language_tabs, false)) {
-				content += '#### Shell\n';
 				content += '```shell\n';
 				data = options.templateCallback('code_shell', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -428,7 +427,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('http', header.language_tabs, false)) {
-				content += '#### HTTP\n';
 				content += '```http\n';
 				data = options.templateCallback('code_http', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -438,7 +436,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('javascript', header.language_tabs, false)) {
-				content += '#### JavaScript\n';
 				content += '```javascript\n';
 				data = options.templateCallback('code_javascript', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -448,7 +445,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('javascript--nodejs', header.language_tabs, false)) {
-				content += '#### Node\n';
 				content += '```javascript--nodejs\n';
 				data = options.templateCallback('code_nodejs', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -458,7 +454,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('ruby', header.language_tabs, false)) {
-				content += '#### Ruby\n';
 				content += '```ruby\n';
 				data = options.templateCallback('code_ruby', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -468,7 +463,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('python', header.language_tabs, false)) {
-				content += '#### Python\n';
 				content += '```python\n';
 				data = options.templateCallback('code_python', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
@@ -478,7 +472,6 @@ function processOperation(op, method, resource, options) {
 				content += '```\n\n';
 			}
 			if (common.languageCheck('java', header.language_tabs, false)) {
-				content += '#### Java\n';
 				content += '```java\n';
 				data = options.templateCallback('code_java', 'pre', data);
 				if (data.append) { content += data.append; delete data.append; }
