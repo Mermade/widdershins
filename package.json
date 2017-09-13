@@ -43,6 +43,6 @@
     "yargs": "^5.0.0"
   },
   "devDependencies": {
-    "recursive-readdir": "^2.0.0"
+    "node-readfiles": "^0.2.0"
   }
 }
