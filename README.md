@@ -33,6 +33,7 @@ Options:
   -y, --yaml            Load spec in yaml format, default json         [boolean]
   -c, --code            Turn generic code samples off                  [boolean]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
+  -e, --environment     Load config/override options from file          [string]
   -i, --includes        List of files to include, comma separated       [string]
   -l, --lang            Automatically generate list of languages for code
                         samples                                        [boolean]
