@@ -498,11 +498,11 @@ function processOperation(op, method, resource, options) {
 
 		response.status = resp;
 		response.meaning = (resp == 'default' ? 'Default' : 'Unknown');
-		var url = '';
+		var url = undefined;
 		for (var s in common.statusCodes) {
 			if (common.statusCodes[s].code == resp) {
 				response.meaning = common.statusCodes[s].phrase;
-				url = common.statusCodes[s].spec_href;
+				//url = common.statusCodes[s].spec_href;
 				break;
 			}
 		}
