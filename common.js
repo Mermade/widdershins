@@ -139,6 +139,10 @@ function extract(o,parent,seen,depth,callback){
 function schemaToArray(schema,depth,lines,trim) {
 
 	let seen = [];
+  // this is to prevent child fields being displayed in the docs
+  if (depth > 0) {
+    return;
+  }
 	extract(schema,'',seen,depth,function(obj,depth,required,oldRef){
 		let prefix = '»'.repeat(depth);
         for (let p in obj) {
