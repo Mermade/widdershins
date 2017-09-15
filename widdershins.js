@@ -62,6 +62,8 @@ try {
     api = yaml.safeLoad(s,{json:true});
 }
 catch(ex) {
+    console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
+    console.error(ex.message);
     api = s;
 }
 
