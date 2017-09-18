@@ -51,9 +51,7 @@ var argv = require('yargs')
     .describe('user_templates','directory to load override templates from')
     .help('h')
     .alias('h', 'help')
-    .version(function() {
-        return require('./package.json').version;
-    })
+    .version()
     .argv;
 
 var api = {};
