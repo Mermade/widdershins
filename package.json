@@ -40,7 +40,7 @@
     "openapi-sampler": "^0.3.3",
     "openapi_optimise": "latest",
     "swagger2openapi": "^2.6.1",
-    "yargs": "^5.0.0"
+    "yargs": "^9.0.1"
   },
   "devDependencies": {
     "node-readfiles": "^0.2.0"
