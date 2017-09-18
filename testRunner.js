@@ -22,9 +22,7 @@ var argv = require('yargs')
     .help('h')
     .alias('h', 'help')
     .strict()
-    .version(function() {
-        return require('../package.json').version;
-    })
+    .version()
     .argv;
 
 var red = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[31m';
