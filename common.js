@@ -129,6 +129,7 @@ function extract(o,parent,seen,depth,callback){
 			var dummy = {};
 			dummy.properties = {};
 			dummy.properties[name] = v.items;
+			dummy.properties[name]["description"] = v.description;
 			dummy.properties[name]["x-isArray"] = true;
 			extract(dummy,k,seen,depth,callback);
 		}
