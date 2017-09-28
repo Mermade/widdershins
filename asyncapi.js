@@ -247,9 +247,9 @@ function convert(asyncapi, options, callback) {
 
                             var target = header.language_tabs[l];
                             if (typeof target === 'object') {
-                                l = Object.keys(target)[0];
+                                target = Object.keys(target)[0];
                             }
-                            var lcLang = common.languageCheck(l, header.language_tabs, false);
+                            var lcLang = common.languageCheck(target, header.language_tabs, false);
                             if (lcLang) {
                                 var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') + 1);
                                 var templateFunc = templates[templateName];
@@ -346,7 +346,7 @@ function convert(asyncapi, options, callback) {
             data.enums = [];
             data.schemaProperties = [];
             common.schemaToArray(schema,0,data.schemaProperties,true);
-    
+
             for (let p of data.schemaProperties) {
                 if (p.schema && p.schema.enum) {
                     for (let e of p.schema.enum) {

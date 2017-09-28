@@ -276,9 +276,9 @@ function processOperation(op, method, resource, options) {
 
                 var target = header.language_tabs[l];
                 if (typeof target === 'object') {
-                    l = Object.keys(target)[0];
+                    target = Object.keys(target)[0];
                 }
-                var lcLang = common.languageCheck(l, header.language_tabs, false);
+                var lcLang = common.languageCheck(target, header.language_tabs, false);
                 if (lcLang) {
                     var templateName = 'code_'+lcLang.substring(lcLang.lastIndexOf('-') + 1);
                     var templateFunc = templates[templateName];

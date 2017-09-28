@@ -1,5 +1,5 @@
 # widdershins
-OpenApi / Swagger / AsyncAPI definition to [Slate](https://github.com/lord/slate) / 
+OpenApi / Swagger / AsyncAPI definition to [Slate](https://github.com/lord/slate) /
 [Shins](https://github.com/mermade/shins) compatible markdown
 
 ![Build](https://img.shields.io/travis/Mermade/widdershins/master.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-419-brightgreen.svg)](https://github.com/mermade/openapi_specifications)
@@ -73,6 +73,8 @@ To only include a subset of the pre-defined language-tabs, or to rename their di
 ```javascript
 options.language_tabs = [{ 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
 ```
+
+If you need to support a version of Slate \<v1.5.0 (or a renderer which also doesn't support display-names for language-tabs, such as `node-slate`, `slate-node` or `whiteboard`), you can use the `--environment` option with the included `whiteboard_env.json` file to simply achieve this.
 
 The `loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host, and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
