@@ -124,3 +124,5 @@ Thanks to [@latgeek](https://github.com/LatGeek) for the logo.
 ### Widdershins in the wild
 
 Please feel free to add a link to your API documentation here.
+
+* [GOV.UK Content API v1.0.0](https://content-api.publishing.service.gov.uk/reference.html)
