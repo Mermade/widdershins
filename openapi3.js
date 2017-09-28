@@ -374,12 +374,12 @@ function processOperation(op, method, resource, options) {
                         content += '```\n';
                     }
                     if (common.doContentType(consumes, common.xmlContentTypes) && (typeof obj === 'object')) {
-                        content += '```xml\n';
                         if (xmlWrap) {
                             var newObj = {};
                             newObj[xmlWrap] = obj;
                             obj = newObj;
                         }
+                        content += '```xml\n';
                         content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
                         content += '```\n';
                     }
@@ -495,6 +495,7 @@ function processOperation(op, method, resource, options) {
                                 console.error(ex);
                             }
                         }
+                        // TODO support embedded/reffed examples
                         if (common.doContentType(cta, common.jsonContentTypes)) {
                             content += '```json\n';
                             content += JSON.stringify(obj, null, 2) + '\n';
