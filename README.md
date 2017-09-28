@@ -81,7 +81,7 @@ the definition was loaded from.
 
 Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
 
-To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/)
+To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/).
 
 Schema.org WebAPI discovery data is included if the `discovery` option above is set `true`. See the W3C [WebAPI Discovery Community Group](https://www.w3.org/community/web-api-discovery/) for more information.
 
