@@ -114,13 +114,13 @@ function extract(o,parent,seen,depth,callback){
                     let newProp = {};
                     newProp[p] = v.properties[p];
                     callback(newProp,depth,required,oldRef);
+                    seen.push(v.properties[p]);
                     if (depth<MAX_SCHEMA_DEPTH) {
                         extract(v.properties[p],p,seen,depth+1,callback);
                     }
                     else {
                         throw new Error('Max schema depth exceeded');
                     }
-                    seen.push(v.properties[p]);
                  }
             }
         }
