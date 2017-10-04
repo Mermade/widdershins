@@ -763,7 +763,7 @@ function convert(openapi, options, callback) {
             content += '## '+s+'\n\n';
             content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
             let schema = openapi.components.schemas[s];
-            schema = common.dereference(schema, circles, openapi, common.clone)
+            schema = common.dereference(schema, circles, openapi, common.clone);
 
             var obj = schema;
             if (options.sample) {
