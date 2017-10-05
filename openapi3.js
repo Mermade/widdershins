@@ -356,6 +356,9 @@ function processOperation(op, method, resource, options) {
                         console.error(ex);
                     }
                 }
+                else {
+                    obj = common.clean(obj);
+                }
                 if (obj && obj.properties) obj = obj.properties;
                 if (obj) {
                     if (common.doContentType(consumes, common.jsonContentTypes)) {
@@ -494,6 +497,9 @@ function processOperation(op, method, resource, options) {
                             catch (ex) {
                                 console.error(ex);
                             }
+                        }
+                        else {
+                            obj = common.clean(obj);
                         }
                         // TODO support embedded/reffed examples
                         if (common.doContentType(cta, common.jsonContentTypes)) {
@@ -773,6 +779,9 @@ function convert(openapi, options, callback) {
                 catch (ex) {
                     console.error(ex);
                 }
+            }
+            else {
+                obj = common.clean(obj);
             }
 
             data.schema = obj;

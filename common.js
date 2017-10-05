@@ -30,7 +30,7 @@ function dereference(obj, circles, api, cloneFunc) {
     while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
         var oRef = obj.$ref;
         obj = cloneFunc(jptr.jptr(api, obj["$ref"]));
-        obj["x-old-ref"] = oRef;
+        obj["x-widdershins-oldRef"] = oRef;
     }
     var changes = 1;
     while (changes > 0) {
@@ -38,7 +38,7 @@ function dereference(obj, circles, api, cloneFunc) {
         recurse(obj, {}, function (obj, state) {
             if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = cloneFunc(jptr.jptr(api, obj));
-                state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-old-ref"] = obj;
+                state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-widdershins-oldRef"] = obj;
                 delete state.parent["$ref"]; // just in case
                 changes++;
             }
@@ -109,7 +109,7 @@ function extract(o,parent,seen,depth,callback){
                     }
                     let oldRef = '';
                     if (v.properties[p]) {
-                        oldRef = v.properties[p]["x-old-ref"]||v.properties[p].$ref||'';
+                        oldRef = v.properties[p]["x-widdershins-oldRef"]||v.properties[p].$ref||'';
                     }
                     let newProp = {};
                     newProp[p] = v.properties[p];
@@ -130,7 +130,7 @@ function extract(o,parent,seen,depth,callback){
             dummy.properties = {};
             dummy.properties[name] = v.items;
             dummy.properties[name].description = v.description;
-            dummy.properties[name]["x-isArray"] = true;
+            dummy.properties[name]["x-widdershins-isArray"] = true;
             extract(dummy,k,seen,depth,callback);
         }
         return v;
@@ -155,7 +155,7 @@ function schemaToArray(schema,depth,lines,trim) {
                     prop.type = '['+oldRef+'](#schema'+gfmLink(oldRef)+')';
                 }
 
-                if (obj[p]["x-isArray"]) {
+                if (obj[p]["x-widdershins-isArray"]) {
                     prop.type = '['+prop.type+']';
                 }
 
@@ -185,6 +185,14 @@ function schemaToArray(schema,depth,lines,trim) {
     }
 }
 
+function clean(obj) {
+    if (!obj) return {};
+    return JSON.parse(JSON.stringify(obj,function(k,v){
+        if (k.startsWith('x-widdershins')) return;
+        return v;
+    }));
+}
+
 module.exports = {
     statusCodes : statusCodes,
     xmlContentTypes : xmlContentTypes,
@@ -195,6 +203,7 @@ module.exports = {
     doContentType : doContentType,
     languageCheck : languageCheck,
     clone : clone,
+    clean : clean,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray
 };

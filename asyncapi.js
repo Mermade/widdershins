@@ -79,6 +79,9 @@ function processObject(obj, options, asyncapi) {
                 console.log('# ' + ex);
             }
         }
+        else {
+            obj = common.clean(obj);
+        }
         content += '```json\n';
         content += JSON.stringify(obj, null, 2) + '\n';
         content += '```\n';
@@ -333,6 +336,9 @@ function convert(asyncapi, options, callback) {
                 catch (ex) {
                     console.error(ex);
                 }
+            }
+            else {
+                obj = common.clean(obj);
             }
 
             data.schema = obj;
