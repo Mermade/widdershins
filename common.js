@@ -124,7 +124,7 @@ function extract(o,parent,seen,depth,callback){
                  }
             }
         }
-        if (v && v.items) { // array processing
+        if (v && v.type && v.type === 'array' && v.items) { // array processing
             var name = k||'anonymous';
             var dummy = {};
             dummy.properties = {};
