@@ -15,6 +15,9 @@ var argv = require('yargs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Load spec in yaml format, default json')
+    .boolean('aggressive')
+    .alias('a','aggressive')
+    .describe('aggressive','Use alternative dereffing logic')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
@@ -75,6 +78,7 @@ options.user_templates = argv.user_templates;
 options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
+options.aggressive = argv.aggressive;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.noschema) options.schema = false;

@@ -25,8 +25,10 @@ function nop(obj) {
     return obj;
 }
 
-function dereference(obj, circles, api, cloneFunc) {
+function dereference(obj, circles, api, cloneFunc, aggressive) {
     if (!cloneFunc) cloneFunc = nop;
+    let circFunc = circular.hasCircles;
+    if (aggressive) circFunc = circular.isCircular;
     while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
         var oRef = obj.$ref;
         obj = cloneFunc(jptr.jptr(api, obj["$ref"]));
@@ -36,7 +38,7 @@ function dereference(obj, circles, api, cloneFunc) {
     while (changes > 0) {
         changes = 0;
         recurse(obj, {}, function (obj, state) {
-            if ((state.key === '$ref') && (typeof obj === 'string') && (!circular.isCircular(circles, obj))) {
+            if ((state.key === '$ref') && (typeof obj === 'string') && (!circFunc(circles, obj))) {
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = cloneFunc(jptr.jptr(api, obj));
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-widdershins-oldRef"] = obj;
                 delete state.parent["$ref"]; // just in case
