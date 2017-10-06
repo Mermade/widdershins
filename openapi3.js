@@ -196,7 +196,7 @@ function processOperation(op, method, resource, options) {
         param.exampleValues.json = '{}';
         param.exampleValues.object = {};
         try {
-            var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true });
+            var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true }, data.openapi);
             var t = obj;
             if (typeof t == 'string') t = "'" + t + "'";
             if (typeof t == 'object') t = JSON.stringify(t, null, 2);
@@ -350,7 +350,7 @@ function processOperation(op, method, resource, options) {
                 }
                 if (obj && options.sample) {
                     try {
-                        obj = sampler.sample(obj, { skipReadOnly: true });
+                        obj = sampler.sample(obj, { skipReadOnly: true }, data.openapi);
                     }
                     catch (ex) {
                         console.error(ex);
@@ -492,7 +492,7 @@ function processOperation(op, method, resource, options) {
                     if (Object.keys(obj).length > 0) {
                         if (options.sample) {
                             try {
-                                obj = sampler.sample(obj); // skipReadOnly: false
+                                obj = sampler.sample(obj,{},data.openapi); // skipReadOnly: false
                             }
                             catch (ex) {
                                 console.error(ex);
@@ -774,7 +774,7 @@ function convert(openapi, options, callback) {
             var obj = schema;
             if (options.sample) {
                 try {
-                    obj = sampler.sample(obj); // skipReadOnly: false
+                    obj = sampler.sample(obj,{},data.openapi); // skipReadOnly: false
                 }
                 catch (ex) {
                     console.error(ex);

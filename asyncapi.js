@@ -73,7 +73,7 @@ function processObject(obj, options, asyncapi) {
 
         if (options.sample) {
             try {
-                obj = sampler.sample(obj); // skipReadOnly: false
+                obj = sampler.sample(obj,{},data.asyncapi); // skipReadOnly: false
             }
             catch (ex) {
                 console.log('# ' + ex);
@@ -331,7 +331,7 @@ function convert(asyncapi, options, callback) {
             var obj = schema;
             if (options.sample) {
                 try {
-                    obj = sampler.sample(obj); // skipReadOnly: false
+                    obj = sampler.sample(obj,{},data.asyncapi); // skipReadOnly: false
                 }
                 catch (ex) {
                     console.error(ex);
