@@ -32,7 +32,8 @@ function dereference(obj, circles, api, cloneFunc, aggressive) {
     if (aggressive) circFunc = circular.isCircular;
     while (obj && obj["$ref"] && !circular.isCircular(circles, obj.$ref)) {
         var oRef = obj.$ref;
-        obj = cloneFunc(jptr.jptr(api, obj["$ref"]));
+        obj = cloneFunc(jptr.jptr(api, oRef));
+        if (obj === false) console.error('Error dereferencing '+oRef);
         obj["x-widdershins-oldRef"] = oRef;
     }
     var changes = 1;
@@ -42,6 +43,7 @@ function dereference(obj, circles, api, cloneFunc, aggressive) {
             if ((state.key === '$ref') && (typeof obj === 'string') && (!circFunc(circles, obj))) {
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] = cloneFunc(jptr.jptr(api, obj));
                 state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]]["x-widdershins-oldRef"] = obj;
+                if (state.parents[state.parents.length - 2][state.keys[state.keys.length - 2]] === false) console.error('Error dereferencing '+obj);
                 delete state.parent["$ref"]; // just in case
                 changes++;
             }
@@ -197,13 +199,16 @@ function clean(obj) {
 }
 
 function getSample(obj,options,samplerOptions,api){
-    if (options.sample) {
+    if (options.sample && obj) {
         try {
             var sample = sampler.sample(obj,samplerOptions,api);
             if (typeof sample !== 'undefined') return sample;
         }
         catch (ex) {
-            console.log('# ' + ex);
+            console.error('# ' + ex);
+            if (options.verbose) {
+                console.error(ex);
+            }
         }
     }
     return clean(obj);

@@ -204,7 +204,8 @@ function processOperation(op, method, resource, options) {
             param.exampleValues.object = obj;
         }
         catch (ex) {
-            console.error(ex);
+            console.error('# '+ex);
+            if (options.verbose) console.error(ex);
             param.exampleValues.json = '...';
         }
         if ((param.in == 'body') && (!data.bodyParameter)) { // ignore expanded lines
