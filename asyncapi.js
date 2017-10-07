@@ -10,7 +10,6 @@ var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
 var circular = require('openapi_optimise/circular.js');
-var sampler = require('openapi-sampler');
 var dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
@@ -71,17 +70,8 @@ function processObject(obj, options, asyncapi) {
     }
     if (Object.keys(obj).length > 0) {
 
-        if (options.sample) {
-            try {
-                obj = sampler.sample(obj,{},data.asyncapi); // skipReadOnly: false
-            }
-            catch (ex) {
-                console.log('# ' + ex);
-            }
-        }
-        else {
-            obj = common.clean(obj);
-        }
+        obj = common.getSample(obj,options,{},data.asyncapi);
+
         content += '```json\n';
         content += JSON.stringify(obj, null, 2) + '\n';
         content += '```\n';
@@ -328,18 +318,7 @@ function convert(asyncapi, options, callback) {
             let schema = asyncapi.components.schemas[s];
             schema = common.dereference(schema, circles, asyncapi, common.clone, options.aggressive);
 
-            var obj = schema;
-            if (options.sample) {
-                try {
-                    obj = sampler.sample(obj,{},data.asyncapi); // skipReadOnly: false
-                }
-                catch (ex) {
-                    console.error(ex);
-                }
-            }
-            else {
-                obj = common.clean(obj);
-            }
+            var obj = common.getSample(schema,options,{},data.asyncapi);
 
             data.schema = obj;
             data = options.templateCallback('schema_sample', 'pre', data);

@@ -348,17 +348,7 @@ function processOperation(op, method, resource, options) {
                 if (obj && obj.xml && obj.xml.name) {
                     xmlWrap = obj.xml.name;
                 }
-                if (obj && options.sample) {
-                    try {
-                        obj = sampler.sample(obj, { skipReadOnly: true }, data.openapi);
-                    }
-                    catch (ex) {
-                        console.error(ex);
-                    }
-                }
-                else {
-                    obj = common.clean(obj);
-                }
+                obj = common.getSample(obj, options, {skipReadOnly:true}, data.openapi);
                 if (obj && obj.properties) obj = obj.properties;
                 if (obj) {
                     if (common.doContentType(consumes, common.jsonContentTypes)) {
@@ -490,17 +480,7 @@ function processOperation(op, method, resource, options) {
                         xmlWrap = obj.xml.name;
                     }
                     if (Object.keys(obj).length > 0) {
-                        if (options.sample) {
-                            try {
-                                obj = sampler.sample(obj,{},data.openapi); // skipReadOnly: false
-                            }
-                            catch (ex) {
-                                console.error(ex);
-                            }
-                        }
-                        else {
-                            obj = common.clean(obj);
-                        }
+                        obj = common.getSample(obj,options,{},data.openapi);
                         // TODO support embedded/reffed examples
                         if (common.doContentType(cta, common.jsonContentTypes)) {
                             content += '```json\n';
@@ -771,18 +751,7 @@ function convert(openapi, options, callback) {
             let schema = openapi.components.schemas[s];
             schema = common.dereference(schema, circles, openapi, common.clone, options.aggressive);
 
-            var obj = schema;
-            if (options.sample) {
-                try {
-                    obj = sampler.sample(obj,{},data.openapi); // skipReadOnly: false
-                }
-                catch (ex) {
-                    console.error(ex);
-                }
-            }
-            else {
-                obj = common.clean(obj);
-            }
+            var obj = common.getSample(schema,options,{},data.openapi);
 
             data.schema = obj;
             data = options.templateCallback('schema_sample', 'pre', data);

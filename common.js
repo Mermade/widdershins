@@ -4,6 +4,7 @@ var util = require('util');
 var recurse = require('openapi_optimise/common.js').recurse;
 var circular = require('openapi_optimise/circular.js');
 var jptr = require('jgexml/jpath.js');
+var sampler = require('openapi-sampler');
 
 const MAX_SCHEMA_DEPTH=100;
 
@@ -195,6 +196,19 @@ function clean(obj) {
     }));
 }
 
+function getSample(obj,options,samplerOptions,api){
+    if (options.sample) {
+        try {
+            var sample = sampler.sample(obj,samplerOptions,api);
+            if (typeof sample !== 'undefined') return sample;
+        }
+        catch (ex) {
+            console.log('# ' + ex);
+        }
+    }
+    return clean(obj);
+}
+
 module.exports = {
     statusCodes : statusCodes,
     xmlContentTypes : xmlContentTypes,
@@ -206,6 +220,7 @@ module.exports = {
     languageCheck : languageCheck,
     clone : clone,
     clean : clean,
+    getSample : getSample,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray
 };
