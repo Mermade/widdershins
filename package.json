@@ -37,7 +37,7 @@
     "dot": "^1.0.3",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
-    "openapi-sampler": "^1.0.0-beta.2",
+    "openapi-sampler": "^1.0.0-beta.5",
     "openapi_optimise": "^1.0.4",
     "swagger2openapi": "^2.6.1",
     "yargs": "^9.0.1"
