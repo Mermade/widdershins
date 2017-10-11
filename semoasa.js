@@ -42,8 +42,6 @@ function convert(api, options, callback) {
     header.search = options.search;
     header.highlight_theme = options.theme;
 
-    let content = '';
-
     if (typeof templates === 'undefined') {
         templates = dot.process({ path: path.join(__dirname, 'templates', 'semoasa') });
     }
@@ -66,9 +64,8 @@ function convert(api, options, callback) {
         return s[0].toLowerCase()+s.substr(1);
     };
 
-    content += templates.main(data);
-
-    content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+content;
+    let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
+        templates.main(data);
 
     callback(null,content);
 }

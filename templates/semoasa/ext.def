@@ -1,7 +1,7 @@
 
 {{ for (var ext in data.ns) {
    var x = data.ns[ext];
-   var sample = data.utils.getSample(x.schema,data.options,{},data.api);
+   var sample = x.example||data.utils.getSample(x.schema,data.options,{},data.api);
 }}
 
 ## {{=ext}}
@@ -13,8 +13,8 @@
 {{=data.utils.yaml.safeDump(sample)}}
 ```
 
-{{ if (x.provider !== data.defaultProvider) { }}
-Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}</a>
+{{ if (x.provider && x.provider !== data.defaultProvider) { }}
+Provider: <a href="{{=x.provider.url}}">{{=x.provider.name}}</a>
 {{ } }}
 
 {{? x.deprecated }}
@@ -23,9 +23,9 @@ This extension is deprecated and should be transitioned out of use.
 </aside>
 {{?}}
 
-*{{=x.summary}}*
+{{?x.summary}}*{{=x.summary}}*{{?}}
 
-{{=x.description}}
+{{=x.description||''}}
 
 {{ var props = [];
    data.utils.schemaToArray(x.schema,0,props,true);
@@ -36,7 +36,7 @@ This extension is deprecated and should be transitioned out of use.
 {{?}}
 
 {{?x.location}}
-<a href="{{=x.externalDocs.url}}">Authoritative definition</a>
+<a href="{{=x.location}}">Authoritative definition</a>
 {{?}}
 
 |Property|Type|Required|Description

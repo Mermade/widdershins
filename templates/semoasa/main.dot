@@ -5,7 +5,7 @@
 This documentation was automatically generated from a v{{=data.api.openapiExtensionFormat}} [SEMOASA](https://github.com/RepreZen/SEMOASA) file.
 
 {{ for(var ns in data.api) { }}
-  {{ if (ns !== 'openapiExtensionFormat') { }}
+  {{ if ((ns !== 'openapiExtensionFormat') && (ns !== 'components')) { }}
   {{ data.ns = data.api[ns]; }}
 # {{=ns}}
 
@@ -13,7 +13,9 @@ This documentation was automatically generated from a v{{=data.api.openapiExtens
    data.defaultProvider = data.ns[first].provider;
 }}
 
+{{? data.defaultProvider }}
 Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}</a>
+{{?}}
 
 {{#def.ext}}
   {{ } }}

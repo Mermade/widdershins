@@ -9,7 +9,6 @@ The extension may only be used in the following objects:
 {{~}}
 {{?}}
 
-
 {{? data.usage.usage === 'unrestricted' }}
 <aside class="success">
 The extension may be used in any object which allows specification extensions.
