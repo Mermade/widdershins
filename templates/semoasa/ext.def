@@ -17,6 +17,12 @@
 Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}</a>
 {{ } }}
 
+{{? x.deprecated }}
+<aside class="warning">
+This extension is deprecated and should be transitioned out of use.
+</aside>
+{{?}}
+
 *{{=x.summary}}*
 
 {{=x.description}}
