@@ -1,11 +1,14 @@
-var openapi2 = require('./openapi2.js');
-var openapi3 = require('./openapi3.js');
-var asyncapi = require('./asyncapi.js');
+'use strict';
+
+const openapi2 = require('./openapi2.js');
+const openapi3 = require('./openapi3.js');
+const asyncapi = require('./asyncapi.js');
+const semoasa = require('./semoasa.js');
 
 function convert(api, options, callback) {
 
     if (typeof api === 'string') {
-        var apiblueprint = require('./apiblueprint.js');
+        let apiblueprint = require('./apiblueprint.js');
         apiblueprint.convert(api, options, callback);
     }
     else if (api.swagger) {
@@ -16,6 +19,9 @@ function convert(api, options, callback) {
     }
     else if (api.asyncapi) {
         asyncapi.convert(api, options, callback);
+    }
+    else if (api.openapiExtensionFormat) {
+        semoasa.convert(api, options, callback);
     }
     else {
         callback(new Error('Unrecognised input format'));

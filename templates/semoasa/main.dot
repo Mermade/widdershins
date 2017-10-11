@@ -1,0 +1,20 @@
+# OpenAPI Extensions Documentation
+
+{{? data.header.language_tabs.length}}> Scroll down for schema examples. Select a format for examples from the tabs above or the mobile navigation menu.{{?}}
+
+This documentation was automatically generated from a v{{=data.api.openapiExtensionFormat}} [SEMOASA](https://github.com/RepreZen/SEMOASA) file.
+
+{{ for(var ns in data.api) { }}
+  {{ if (ns !== 'openapiExtensionFormat') { }}
+  {{ data.ns = data.api[ns]; }}
+# {{=ns}}
+
+{{ var first = Object.keys(data.ns)[0];
+   data.defaultProvider = data.ns[first].provider;
+}}
+
+Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}</a>
+
+{{#def.ext}}
+  {{ } }}
+{{ } }}
