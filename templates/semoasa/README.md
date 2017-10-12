@@ -1,6 +1,8 @@
 ## Semoasa 0.1.0 template parameters
 
-### 'main' templates
+<abbr title="Specification Extension Metadata for OAS Annotations">Semoasa</abbr> is a machine-readable format for extensions to Swagger/OpenAPI 2.0 and 3.0 specifications. 
+
+### 'main' template
 
 * `api` - the top-level Semoasa document
 * `header` - the front-matter of the Slate/Shins markdown document
