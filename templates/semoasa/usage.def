@@ -5,7 +5,7 @@ The extension may only be used in the following objects:
 
 |Object|Description|
 |---|---|
-{{~ data.usage.objectTypes :ot}}|<a href="{{=data.linkBase}}#{{=data.utils.linkCase(ot)}}">{{=ot}}</a>|{{=data.descs[data.utils.linkCase(ot)]}}|
+{{~ data.usage.objectTypes :ot}}|<a href="{{=data.linkBase}}#{{=data.utils.linkCase(ot)}}">{{=ot}}</a>|{{=data.descs[data.utils.linkCase(ot)]||'Description not found'}}|
 {{~}}
 {{?}}
 
