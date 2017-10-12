@@ -1,8 +1,8 @@
-## SEMOASA 0.1.0 template parameters
+## Semoasa 0.1.0 template parameters
 
 ### 'main' templates
 
-* `api` - the top-level SEMOASA document
+* `api` - the top-level Semoasa document
 * `header` - the front-matter of the Slate/Shins markdown document
 * `options` - the options passed to the renderer, includes defaults
 * `templates` - the doT templates object

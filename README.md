@@ -1,5 +1,5 @@
 # widdershins
-OpenApi / Swagger / AsyncAPI / SEMOASA definition to [Slate](https://github.com/lord/slate) /
+OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/lord/slate) /
 [Shins](https://github.com/mermade/shins) compatible markdown
 
 ![Build](https://img.shields.io/travis/Mermade/widdershins/master.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-419-brightgreen.svg)](https://github.com/mermade/openapi_specifications)
@@ -10,13 +10,13 @@ OpenApi / Swagger / AsyncAPI / SEMOASA definition to [Slate](https://github.com/
 ### Widdershins *adverb*:
 * In a direction contrary to the sun's course;
 * anticlockwise;
-* helping you produce static documentation from your OpenApi 3.0 / Swagger 2.0 / AsyncAPI 1.x / SEMOASA 0.1.0 definition
+* helping you produce static documentation from your OpenApi 3.0 / Swagger 2.0 / AsyncAPI 1.x / Semoasa 0.1.0 definition
 
 ![Widdershins screenshot](https://github.com/Mermade/oa2s-comparison/blob/master/docs/widdershins.png?raw=true)
 
 ### News
 
-As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads, SEMOASA schemas) by default. You can restore the old behaviour by using the `--noschema` option.
+As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads, Semoasa schemas) by default. You can restore the old behaviour by using the `--noschema` option.
 
 ### To install
 
@@ -103,7 +103,7 @@ If you specify an `options.templateCallback` function, it will be called before 
 
 * [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
 * [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
-* [SEMOASA 0.1.0 template parameters](/templates/semoasa/README.md)
+* [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
 ## Tests
 

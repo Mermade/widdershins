@@ -28,7 +28,7 @@ function convert(api, options, callback) {
     options = Object.assign({},defaults,options);
 
     let header = {};
-    header.title = (api.info ? api.info.title : 'SEMOASA documentation');
+    header.title = (api.info ? api.info.title : 'Semoasa documentation');
 
     header.language_tabs = ['json','yaml'];
 
