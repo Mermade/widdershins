@@ -1,5 +1,8 @@
 ## Swagger / OpenAPI 2 and OpenAPI 3 template parameters
 
+Note that properties of OpenAPI objects will be in OpenAPI 3.0 form, as
+Swagger / OpenAPI 2.0 definitions are converted automatically.
+
 ### Code templates
 
 * `method` - the HTTP method of the operation (in lower-case)
@@ -22,7 +25,7 @@
 
 ### Parameter template
 
-* `parameters[]` - an array of parameters, including the following pseudo-properties
+* `parameters[]` - an array of [parameters](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#parameterObject), including the following pseudo-properties
     * `shortDesc` - a truncated version of the parameter description
     * `safeType` - a computed version of the parameter type, including Body and schema names
     * `originalType` - the original type of the parameter
@@ -34,12 +37,12 @@
 
 ### Responses template
 
-* `responses[]` - an array of responses, including `status` and `meaning` properties
+* `responses[]` - an array of [responses](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#responseObject), including `status` and `meaning` properties
 
 ### Authentication template
 
 * `authenticationStr` - a simple string of methods (and scopes where appropriate)
-* `securityDefinitions[]` - an array of applicable securityDefinitions
+* `securityDefinitions[]` - an array of applicable [securityDefinitions](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/3.0.0.md#securityRequirementObject)
 
 ### Schema Property template
 
