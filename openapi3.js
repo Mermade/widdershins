@@ -187,7 +187,8 @@ function processOperation(op, method, resource, options) {
             param.safeType = param.safeType + '(' + param.schema.format + ')';
         }
         if (param.schema && param.schema["$ref"]) {
-            param.exampleSchema = jptr.jptr(data.openapi, param.schema["$ref"]);
+            param.schema = common.dereference(param.schema,circles,data.openapi);
+            param.exampleSchema = param.schema;
         }
         else {
             param.exampleSchema = param.schema || {};
