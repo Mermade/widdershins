@@ -67,7 +67,7 @@ function processOperation(op, method, resource, options) {
     var opName = (op.operationId ? op.operationId : data.subtitle);
     content += '## ' + opName + '\n\n'; // TODO template?
 
-    var url = data.servers[0].url + method.path;
+    var url = (data.servers[0].url + method.path).replace(/([^:]\/)\/+/g,'$1');
     var produces = [];
     var consumes = [];
 
