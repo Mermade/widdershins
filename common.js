@@ -14,7 +14,7 @@ var statusCodes = require('./statusCodes.json');
 
 // could change these to be regexes...
 var xmlContentTypes = ['application/xml', 'text/xml', 'image/svg+xml', 'application/rss+xml', 'application/rdf+xml', 'application/atom+xml', 'application/mathml+xml', 'application/hal+xml'];
-var jsonContentTypes = ['application/json', 'text/json', 'application/hal+json', 'application/ld+json', 'application/json-patch+json'];
+var jsonContentTypes = ['application/json; charset=utf-8','application/json', 'text/json', 'application/hal+json', 'application/ld+json', 'application/json-patch+json'];
 var yamlContentTypes = ['application/x-yaml', 'text/x-yaml'];
 var formContentTypes = ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'];
 
