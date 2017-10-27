@@ -43,6 +43,7 @@ Options:
   -r, --raw             Output raw schemas not example values          [boolean]
   -s, --search          Whether to enable search or not, default true
                                                        [boolean] [default: true]
+  --summary             Use summary instead of operationId in TOC      [boolean]
   -t, --theme           Syntax-highlighter theme to use                 [string]
   -u, --user_templates  directory to load override templates from       [string]
 ```
@@ -64,7 +65,8 @@ options.sample = true; // set false by --raw
 options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
-optiona.aggressive = false;
+options.aggressive = false;
+options.summary = false;
 converter.convert(swaggerObj,options,function(err,str){
   // str contains the converted markdown
 });

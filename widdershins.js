@@ -46,6 +46,8 @@ var argv = require('yargs')
     .alias('s','search')
     .default('search',true)
     .describe('search','Whether to enable search or not, default true')
+    .boolean('summary')
+    .describe('summary','Use summary instead of operationId for TOC')
     .string('theme')
     .alias('t','theme')
     .describe('theme','Syntax-highlighter theme to use')
@@ -82,6 +84,7 @@ options.sample = !argv.raw;
 options.discovery = argv.discovery;
 options.aggressive = argv.aggressive;
 options.verbose = argv.verbose;
+options.tocSummary = argv.summary;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.noschema) options.schema = false;
