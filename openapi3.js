@@ -301,7 +301,7 @@ function processOperation(op, method, resource, options) {
 
     // TODO template?
     if (data.subtitle != opName) content += '`' + data.subtitle + '`\n\n';
-    if (op.summary) content += '*' + op.summary + '*\n\n';
+    if (op.summary && !options.tocSummary) content += '*' + op.summary + '*\n\n';
     if (op.description) content += op.description + '\n\n';
 
     data.enums = [];
