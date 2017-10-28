@@ -1,12 +1,14 @@
 #!/usr/bin/env node
 
 'use strict';
-var fs = require('fs');
-var path = require('path');
+const fs = require('fs');
+const path = require('path');
+const url = require('url');
 
-var yaml = require('js-yaml');
+const yaml = require('js-yaml');
+const fetch = require('node-fetch');
 
-var converter = require('./index.js');
+const converter = require('./index.js');
 
 var argv = require('yargs')
     .usage('widdershins [options] {input-spec} [[-o] output markdown]')
@@ -61,18 +63,30 @@ var argv = require('yargs')
     .version()
     .argv;
 
-var api = {};
-var s = fs.readFileSync(path.resolve(argv._[0]),'utf8');
-try {
-    api = yaml.safeLoad(s,{json:true});
-}
-catch(ex) {
-    console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
-    console.error(ex.message);
-    api = s;
+var options = {};
+
+function doit(s) {
+    var api = {};
+    try {
+        api = yaml.safeLoad(s,{json:true});
+    }
+    catch(ex) {
+        console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
+        console.error(ex.message);
+        api = s;
+    }
+
+    converter.convert(api,options,function(err,output){
+        var outfile = argv.outfile||argv._[1];
+        if (outfile) {
+            fs.writeFileSync(path.resolve(outfile),output,'utf8');
+        }
+        else {
+            console.log(output);
+        }
+    });
 }
 
-var options = {};
 options.codeSamples = !argv.code;
 if (argv.lang) {
     options.language_tabs = [];
@@ -101,12 +115,20 @@ if (argv.environment) {
     options = Object.assign({},options,env);
 }
 
-converter.convert(api,options,function(err,output){
-    var outfile = argv.outfile||argv._[1];
-    if (outfile) {
-        fs.writeFileSync(path.resolve(outfile),output,'utf8');
-    }
-    else {
-        console.log(output);
-    }
-});
+var input = process.argv[2];
+var up = url.parse(input);
+if (up.protocol && up.protocol.startsWith('http')) {
+    fetch(input)
+    .then(function (res) {
+        return res.text();
+    }).then(function (body) {
+        doit(body);
+    }).catch(function (err) {
+        console.error(err.message);
+    });
+}
+else {
+    let s = fs.readFileSync(input,'utf8');
+    doit(s);
+}
+
