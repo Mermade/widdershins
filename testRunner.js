@@ -83,7 +83,7 @@ function* check(file) {
             return true;
         }
 
-        if (!src.swagger && !src.openapi && !src.asyncapi) {
+        if (!src.swagger && !src.openapi && !src.asyncapi && !src.openapiExtensionFormat) {
             console.log(normal+file);
             console.log('Not a known API definition');
             genStackNext();
@@ -105,8 +105,15 @@ function* check(file) {
                 result = result.split('undefinedfault').join('x');
                 if ((result != '') && (result.indexOf('undefined')<0)) {
                     console.log(normal+file);
-                    console.log(green+'  %s %s',src.info.title,src.info.version);
-                    console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
+                    if (src.info) {
+                        console.log(green+'  %s %s',src.info.title,src.info.version);
+                        console.log('  %s',src.host||(src.servers && src.servers.length ? src.servers[0].url : null)||'localhost');
+                    }
+                    else {
+                        if (src.openapiExtensionFormat) {
+                            console.log(green+'  Semoasa v'+src.openapiExtensionFormat);
+                        }
+                    }
                     result = true;
                 }
                 else {

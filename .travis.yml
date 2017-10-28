@@ -12,4 +12,5 @@ script:
   - node testRunner openapi-directory/APIs/
   - node testRunner openapi-definitions/
   - node testRunner openapi3-examples/pass/
+  - node testRunner specs/
 #  - node testRunner hapi/APIs/
