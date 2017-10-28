@@ -11,7 +11,7 @@ const fetch = require('node-fetch');
 const converter = require('./index.js');
 
 var argv = require('yargs')
-    .usage('widdershins [options] {input-spec} [[-o] output markdown]')
+    .usage('widdershins [options] {input-file|url} [[-o] output markdown]')
     .demand(1)
     .strict()
     .boolean('yaml')

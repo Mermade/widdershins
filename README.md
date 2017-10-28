@@ -25,7 +25,7 @@ As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / req
 * `yarn global add widdershins`
 
 ```
-node widdershins [options] {input-spec} [[-o] output markdown]
+node widdershins [options] {input-file|url} [[-o] output markdown]
 
 Options:
   -h, --help            Show help                                      [boolean]
@@ -67,7 +67,7 @@ options.discovery = false;
 options.includes = [];
 options.aggressive = false;
 options.summary = false;
-converter.convert(swaggerObj,options,function(err,str){
+converter.convert(apiObj,options,function(err,str){
   // str contains the converted markdown
 });
 ```
