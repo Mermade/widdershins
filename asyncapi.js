@@ -70,7 +70,7 @@ function processObject(obj, options, asyncapi) {
     }
     if (Object.keys(obj).length > 0) {
 
-        obj = common.getSample(obj,options,{},data.asyncapi);
+        obj = common.getSample(obj,options,{},asyncapi);
 
         content += '```json\n';
         content += JSON.stringify(obj, null, 2) + '\n';
