@@ -12,6 +12,7 @@ Swagger / OpenAPI 2.0 definitions are converted automatically.
 * `produces[]` - an array of MIME-types the operation produces
 * `operation` - the current operation object
 * `operationId` - the current operation id
+* `opName` - the operationId if set, otherwise the method + path
 * `tags[]` - the full list of tags applying to the operation
 * `security` - the security definitions applying to the operation
 * `resource` - the current tag/path object

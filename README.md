@@ -35,6 +35,7 @@ Options:
   -c, --code            Turn generic code samples off                  [boolean]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
   -e, --environment     Load config/override options from file          [string]
+  --headings            Level of headings to expand in TOC [number] [default: 2]
   -i, --includes        List of files to include, comma separated       [string]
   -l, --lang            Automatically generate list of languages for code
                         samples                                        [boolean]
@@ -67,6 +68,7 @@ options.discovery = false;
 options.includes = [];
 options.aggressive = false;
 options.summary = false;
+options.headings = 2;
 converter.convert(apiObj,options,function(err,str){
   // str contains the converted markdown
 });

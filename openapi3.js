@@ -100,6 +100,7 @@ function processOperation(op, method, resource, options) {
     data.url = url;
     data.operation = method;
     data.operationId = op.operationId;
+    data.opName = opName.split(' ').join('-');
     data.tags = op.tags;
     data.security = op.security;
     data.resource = resource; // TODO for callbacks?
@@ -657,6 +658,7 @@ function convert(openapi, options, callback) {
     header.includes = options.includes;
     header.search = options.search;
     header.highlight_theme = options.theme;
+    header.headingLevel = options.headings;
 
     data = {};
     data.api = data.openapi = openapi;

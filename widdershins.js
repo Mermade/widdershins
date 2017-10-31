@@ -29,7 +29,10 @@ var argv = require('yargs')
     .describe('discovery','Include schema.org WebAPI discovery data')
     .string('environment')
     .alias('e','environment')
-    .describe('environment','load config/override options from file')
+    .describe('environment','Load config/override options from file')
+    .number('headings')
+    .describe('Levels of headings to expand in TOC')
+    .default('headings','2')
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
@@ -99,6 +102,7 @@ options.discovery = argv.discovery;
 options.aggressive = argv.aggressive;
 options.verbose = argv.verbose;
 options.tocSummary = argv.summary;
+options.headings = argv.headings;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.noschema) options.schema = false;
