@@ -119,7 +119,7 @@ if (argv.environment) {
     options = Object.assign({},options,env);
 }
 
-var input = process.argv[2];
+var input = argv._[0];
 var up = url.parse(input);
 if (up.protocol && up.protocol.startsWith('http')) {
     fetch(input)
