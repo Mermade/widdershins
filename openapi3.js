@@ -630,6 +630,7 @@ function convert(openapi, options, callback) {
     defaults.includes = [];
     defaults.templateCallback = function (templateName, stage, data) { return data; };
     defaults.schema = true;
+    defaults.headings = 2;
 
     options = Object.assign({}, defaults, options);
     if (!options.codeSamples) options.language_tabs = [];
