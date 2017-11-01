@@ -14,12 +14,6 @@ var argv = require('yargs')
     .usage('widdershins [options] {input-file|url} [[-o] output markdown]')
     .demand(1)
     .strict()
-    .boolean('yaml')
-    .alias('y','yaml')
-    .describe('yaml','Load spec in yaml format, default json')
-    .boolean('aggressive')
-    .alias('a','aggressive')
-    .describe('aggressive','Use alternative dereffing logic')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
@@ -32,7 +26,7 @@ var argv = require('yargs')
     .describe('environment','Load config/override options from file')
     .number('headings')
     .describe('Levels of headings to expand in TOC')
-    .default('headings','2')
+    .default('headings',2)
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
@@ -61,6 +55,9 @@ var argv = require('yargs')
     .describe('user_templates','directory to load override templates from')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
+    .boolean('experimental')
+    .alias('x','experimental')
+    .describe('experimental','Use experimental template mode')
     .help('h')
     .alias('h', 'help')
     .version()
@@ -103,6 +100,7 @@ options.aggressive = argv.aggressive;
 options.verbose = argv.verbose;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
+options.experimental = argv.experimental;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.noschema) options.schema = false;

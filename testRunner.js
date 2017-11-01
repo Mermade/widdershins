@@ -19,6 +19,9 @@ var argv = require('yargs')
     .count('verbose')
     .alias('v','verbose')
     .describe('verbose','Increase verbosity')
+    .boolean('experimental')
+    .alias('x','experimental')
+    .describe('experimental','Use experimental v3 templates')
     .help('h')
     .alias('h', 'help')
     .strict()
@@ -41,6 +44,8 @@ var options = argv;
 var widdershinsOptions = {};
 if (options.raw) widdershinsOptions.sample = false;
 if (options.noschema) widdershinsOptions.schema = false;
+widdershinsOptions.experimental = options.experimental;
+widdershinsOptions.headings = 2;
 
 function genStackNext() {
     if (!genStack.length) return false;

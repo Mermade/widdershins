@@ -1,8 +1,8 @@
 ### Properties
 
-Name|Type|Required|Description
----|---|---|---|
-{{~ data.schemaProperties :p}}{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}
+|Name|Type|Required|Description|
+|---|---|---|---|
+{{~ data.schemaProperties :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
 {{~}}
 
 {{? data.enums.length}}
@@ -10,6 +10,6 @@ Name|Type|Required|Description
 
 |Property|Value|
 |---|---|
-{{~ data.enums :e}}{{=e.name}}|{{=e.value}}|
+{{~ data.enums :e}}|{{=e.name}}|{{=e.value}}|
 {{~}}
 {{?}}

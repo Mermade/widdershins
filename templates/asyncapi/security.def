@@ -1,0 +1,34 @@
+# Authentication
+
+{{ for (var s in data.api.components.securitySchemes) { }}
+
+{{ var sd = data.api.components.securitySchemes[s]; }}
+
+"userPassword", "apiKey", "X509", "symmetricEncryption", "asymmetricEncryption", "httpApiKey", "http".
+
+{{? sd.type == 'apiKey' }}
+* API Key
+    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
+{{?}}
+{{? sd.type == 'httpApiKey' }}
+* API Key
+    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
+{{?}}
+{{? sd.type == 'http'}}
+* HTTP Authentication. {{=sd.description}}
+{{?}}
+{{? sd.type == 'userPassword'}}
+* Password Authentication. {{=sd.description}}
+{{?}}
+{{? sd.type == 'X509'}}
+* X509 Authentication. {{=sd.description}}
+{{?}}
+{{? sd.type == 'symmetricEncryption'}}
+* Symmetric encryption. {{=sd.description}}
+{{?}}
+{{? sd.type == 'asymmetricEncryption'}}
+* Asymmetric encryption. {{=sd.description}}
+{{?}}
+
+{{ } /* of securitySchemes */ }}
+

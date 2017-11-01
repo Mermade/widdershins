@@ -1,0 +1,53 @@
+{{ data.responses = data.utils.getResponses(data); }}
+{{ data.responseSchemas = false; }}
+{{~ data.responses :response }}
+{{ if (response.content) data.responseSchemas = true; }}
+{{~}}
+
+{{? data.responseSchemas }}
+> Example responses
+
+{{= data.utils.getResponseExamples(data) }}
+{{?}}
+
+<h3 id="{{=data.operationUniqueName}}-responses">Responses</h3>
+
+|Status|Meaning|Description|Schema|
+|---|---|---|---|
+{{~ data.responses :r}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'No description'}}|{{=r.schema}}|
+{{~}}
+
+{{ data.responseSchemas = false; }}
+{{~ data.responses :response }}
+{{ if (response.content && !response.$ref && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
+{{~}}
+{{? data.responseSchemas }}
+<h3 id="{{=data.operationUniqueName}}-responseschema">Response Schema</h3>
+{{~ data.responses :response}}
+{{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
+{{ var responseSchema = Object.values(response.content)[0].schema; }}
+{{ var props = []; }}
+{{ data.utils.schemaToArray(responseSchema,0,props,true); }}
+
+Status Code **{{=response.status}}**
+
+|Name|Type|Required|Description|
+|---|---|---|---|
+{{~props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~}}
+
+{{?}}
+{{~}}
+{{?}}
+
+{{ data.responseHeaders = data.utils.getResponseHeaders(data); }}
+{{? data.responseHeaders.length }}
+
+### Response Headers
+
+|Status|Header|Type|Format|Description|
+|---|---|---|---|---|
+{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format}}|{{=h.description}}|
+{{~}}
+
+{{?}}

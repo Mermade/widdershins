@@ -1,8 +1,8 @@
 <h3 id="{{=data.opName}}-parameters">Parameters</h3>
 
-Parameter|In|Type|Required|Description
----|---|---|---|---|
-{{~ data.parameters :p}}{{=p.name}}|{{=p.in}}|{{=p.type}}|{{=p.required}}|{{=p.shortDesc}}
+|Parameter|In|Type|Required|Description|
+|---|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}|{{=p.in}}|{{=p.type}}|{{=p.required}}|{{=p.shortDesc}}|
 {{~}}
 
 {{? data.enums.length}}
@@ -10,6 +10,6 @@ Parameter|In|Type|Required|Description
 
 |Parameter|Value|
 |---|---|
-{{~ data.enums :e}}{{=e.name}}|{{=e.value}}|
+{{~ data.enums :e}}|{{=e.name}}|{{=e.value}}|
 {{~}}
 {{?}}

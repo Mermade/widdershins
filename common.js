@@ -85,6 +85,24 @@ function languageCheck(language, language_tabs, mutate) {
     return false;
 }
 
+function getCodeSamples(data) {
+    let s = '';
+    for (let lang of data.header.language_tabs) {
+        let target = lang;
+        if (typeof lang === 'object') target = Object.keys(target)[0];
+        let lcLang = languageCheck(target,data.header.language_tabs,false);
+        var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') +
+1);
+        var templateFunc = data.templates[templateName];
+        if (templateFunc) {
+            s += '```'+lcLang+'\n';
+            s += templateFunc(data)+'\n';
+            s += '```\n\n';
+        }
+    }
+    return s;
+}
+
 function gfmLink(text) {
     text = text.trim().toLowerCase();
     text = text.split("'").join('');
@@ -144,6 +162,7 @@ function extract(o,parent,seen,depth,callback){
 
 function schemaToArray(schema,depth,lines,trim) {
 
+    if (!schema) schema = {};
     let seen = [];
     extract(schema,'',seen,depth,function(obj,depth,required,oldRef){
         let prefix = '»'.repeat(depth);
@@ -223,6 +242,7 @@ module.exports = {
     dereference : dereference,
     doContentType : doContentType,
     languageCheck : languageCheck,
+    getCodeSamples : getCodeSamples,
     clone : clone,
     clean : clean,
     getSample : getSample,

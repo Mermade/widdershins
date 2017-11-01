@@ -76,7 +76,7 @@ function processOperation(op, method, resource, options) {
     if (op.requestBody) {
         if (op.requestBody.$ref) {
             rbType = op.requestBody.$ref.replace('#/components/requestBodies/', '');
-            rbType = '['+rbType+'](#'+common.gfmLink('schema+'+rbType)+')';
+            rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
             op.requestBody = jptr.jptr(data.openapi, op.requestBody.$ref);
         }
         for (var rb in op.requestBody.content) {
@@ -805,7 +805,8 @@ function convert(openapi, options, callback) {
     var headerStr = '---\n' + yaml.safeDump(header) + '---\n';
     // apparently you can insert jekyll front-matter in here for github
     // see https://github.com/lord/slate/issues/702
-    var result = (headerStr + '\n' + content.split('\n\n\n').join('\n\n'));
+    content = content.replace(/^\s*[\r\n]/gm,'\n\n');
+    var result = (headerStr + '\n' + content);
     if (callback) callback(null, result);
     return result;
 }

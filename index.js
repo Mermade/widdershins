@@ -2,6 +2,7 @@
 
 const openapi2 = require('./openapi2.js');
 const openapi3 = require('./openapi3.js');
+const openapix = require('./openapix.js');
 const asyncapi = require('./asyncapi.js');
 const semoasa = require('./semoasa.js');
 
@@ -15,7 +16,12 @@ function convert(api, options, callback) {
         openapi2.convert(api, options, callback);
     }
     else if (api.openapi) {
-        openapi3.convert(api, options, callback);
+        if (options.experimental) {
+            openapix.convert(api, options, callback);
+        }
+        else {
+            openapi3.convert(api, options, callback);
+        }
     }
     else if (api.asyncapi) {
         asyncapi.convert(api, options, callback);
