@@ -723,7 +723,12 @@ function convert(openapi, options, callback) {
     var apiInfo = convertToToc(openapi);
 
     for (var r in apiInfo.resources) {
-        content += '# ' + r + '\n\n';
+        if (r === 'Default') {
+            content += '<h1 id="'+data.openapi.info.title.split(' ').join('-')+'-default">Default</h1>\n\n';
+        }
+        else {
+            content += '# ' + r + '\n\n';
+        }
         var resource = apiInfo.resources[r]
         if (resource.description) content += resource.description + '\n\n';
 
