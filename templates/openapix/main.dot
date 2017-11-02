@@ -56,7 +56,7 @@ Base URLs:
 <a name="schema{{=s.toLowerCase()}}"></a>
 
 ```json
-{{=JSON.stringify(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+{{=data.utils.safejson(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
 ```
 
 {{ var props = []; }}

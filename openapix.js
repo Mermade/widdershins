@@ -5,6 +5,7 @@ const util = require('util');
 const up = require('url');
 
 const yaml = require('js-yaml');
+const safejson = require('safe-json-stringify');
 const dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
@@ -13,6 +14,7 @@ const xml = require('jgexml/json2xml.js');
 const jptr = require('jgexml/jpath.js').jptr;
 
 const common = require('./common.js');
+const dereference = require('reftools/lib/dereference.js').dereference;
 
 let templates;
 
@@ -74,7 +76,7 @@ function fakeProdCons(data) {
                 data.bodyParameter.schema = op.requestBody.content[rb].schema;
                 data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{},data.api);
                 if (typeof data.bodyParameter.exampleValues.object === 'object') {
-                    data.bodyParameter.exampleValues.json = JSON.stringify(data.bodyParameter.exampleValues.object,null,2);
+                    data.bodyParameter.exampleValues.json = safejson(data.bodyParameter.exampleValues.object,null,2);
                 }
                 else {
                     data.bodyParameter.exampleValues.json = data.bodyParameter.exampleValues.object;
@@ -137,7 +139,7 @@ function getCodeSamples(data) {
             if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
             param.exampleValues.object = common.getSample(param.schema,data.options,{},data.api);
             if (typeof param.exampleValues.object === 'object') {
-                param.exampleValues.json = JSON.stringify(param.exampleValues.object,null,2);
+                param.exampleValues.json = safejson(param.exampleValues.object,null,2);
                 temp = param.exampleValues.json;
             }
             else {
@@ -172,12 +174,12 @@ function getBodyParameterExamples(data) {
     let obj = data.bodyParameter.exampleValues.object;
     let content = '';
     let xmlWrap = false;
-    if (data.bodyParameter.schema.xml) {
+    if (data.bodyParameter.schema && data.bodyParameter.schema.xml) {
         xmlWrap = data.bodyParameter.schema.xml.name;
     }
     if (common.doContentType(data.consumes, common.jsonContentTypes)) {
         content += '```json\n';
-        content += JSON.stringify(obj, null, 2) + '\n';
+        content += safejson(obj,null,2) + '\n';
         content += '```\n';
     }
     if (common.doContentType(data.consumes, common.yamlContentTypes)) {
@@ -298,7 +300,7 @@ function getResponseExamples(data) {
                     // TODO support embedded examples
                     if (common.doContentType(cta, common.jsonContentTypes)) {
                         content += '```json\n';
-                        content += JSON.stringify(obj, null, 2) + '\n';
+                        content += safejson(obj, null, 2) + '\n';
                         content += '```\n';
                     }
                     if (common.doContentType(cta, common.yamlContentTypes)) {
@@ -380,7 +382,8 @@ function convert(api, options, callback) {
     options = Object.assign({},defaults,options);
 
     let data = {};
-    data.api = common.dereference(api,[],api);
+    data.api = dereference(api,api,{verbose:false,$ref:'x-widdershins-oldRef'});
+
     data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
     let header = {};
@@ -427,6 +430,7 @@ function convert(api, options, callback) {
     data.utils = {};
     data.utils.yaml = yaml;
     data.utils.inspect = util.inspect;
+    data.utils.safejson = safejson;
     data.utils.isPrimitive = function(t) { return ((t !== 'object') && (t !== 'array')) };
     data.utils.getSample = common.getSample;
     data.utils.schemaToArray = common.schemaToArray;

@@ -98,6 +98,7 @@ function* check(file) {
         widdershinsOptions.source = file;
         try {
             widdershins.convert(src, widdershinsOptions, function(err, result){
+                let ok = !!result;
                 result = result.split('is undefined').join('x');
                 result = result.split('be undefined').join('x');
                 result = result.split('undefined to').join('x');
@@ -108,6 +109,9 @@ function* check(file) {
                 result = result.split('» undefined').join('x');
                 result = result.split('undefined|').join('x'); // not so happy about this one (google firebaserules)
                 result = result.split('undefinedfault').join('x');
+                if (ok && result.indexOf('undefined')>=0) {
+                    console.warn('Ok except for undefined references');
+                }
                 if ((result != '') && (result.indexOf('undefined')<0)) {
                     console.log(normal+file);
                     if (src.info) {

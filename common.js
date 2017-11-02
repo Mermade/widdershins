@@ -5,6 +5,9 @@ var recurse = require('openapi_optimise/common.js').recurse;
 var circular = require('openapi_optimise/circular.js');
 var jptr = require('jgexml/jpath.js');
 var sampler = require('openapi-sampler');
+const visit = require('reftools/lib/visit.js').visit;
+const clone = require('reftools/lib/clone.js').clone;
+const circularClone = require('reftools/lib/clone.js').circularClone;
 
 const MAX_SCHEMA_DEPTH=100;
 
@@ -17,10 +20,6 @@ var xmlContentTypes = ['application/xml', 'text/xml', 'image/svg+xml', 'applicat
 var jsonContentTypes = ['application/json; charset=utf-8','application/json', 'text/json', 'application/hal+json', 'application/ld+json', 'application/json-patch+json'];
 var yamlContentTypes = ['application/x-yaml', 'text/x-yaml'];
 var formContentTypes = ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'];
-
-function clone(obj) {
-    return JSON.parse(JSON.stringify(obj));
-}
 
 function nop(obj) {
     return obj;
@@ -211,10 +210,11 @@ function schemaToArray(schema,depth,lines,trim) {
 
 function clean(obj) {
     if (!obj) return {};
-    return JSON.parse(JSON.stringify(obj,function(k,v){
-        if (k.startsWith('x-widdershins')) return;
-        return v;
-    }));
+    obj = circularClone(obj);
+    visit(obj,{},{filter:function(obj,key,state){
+        if (!key.startsWith('x-widdershins')) return obj[key];
+    }});
+    return obj;
 }
 
 function getSample(obj,options,samplerOptions,api){
