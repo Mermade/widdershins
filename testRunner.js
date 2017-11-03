@@ -42,6 +42,7 @@ var pathspec = argv._.length>0 ? argv._[0] : '../openapi-directory/APIs/';
 
 var options = argv;
 var widdershinsOptions = {};
+widdershinsOptions.sample = true;
 if (options.raw) widdershinsOptions.sample = false;
 if (options.noschema) widdershinsOptions.schema = false;
 widdershinsOptions.experimental = options.experimental;
@@ -114,6 +115,7 @@ function* check(file) {
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
+                    console.warn(result);
                 }
                 if (ok && result.indexOf('x-widdershins-')>=0) {
                     message = 'Ok except for x-widdershins- references';

@@ -164,6 +164,9 @@ function schemaToArray(schema,offset,lines,trim) {
         if (trim && typeof entry.description === 'string') {
             entry.description = entry.description.trim();
         }
+        if (entry.description === 'undefined') { // yes, the string
+            entry.description = '';
+        }
         entry.type = schema.type;
         entry.format = schema.format;
 
