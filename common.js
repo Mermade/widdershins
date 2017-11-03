@@ -218,14 +218,15 @@ function clean(obj) {
 
 function getSample(orig,options,samplerOptions,api){
     let obj = circularClone(orig);
+    let refs = Object.assign({},api,orig);
     if (options.sample && obj) {
         try {
             obj = reref(obj,{});
-            var sample = sampler.sample(obj,samplerOptions,obj); // was api
-            if (typeof sample.$ref !== 'undefined') {
-                console.warn(util.inspect(obj));
+            var sample = sampler.sample(obj,samplerOptions,refs); // was api
+            if (sample && typeof sample.$ref !== 'undefined') {
+                //console.warn(util.inspect(obj));
                 obj = JSON.parse(safejson(orig));
-                sample = sampler.sample(obj,samplerOptions,obj);
+                sample = sampler.sample(obj,samplerOptions,refs);
             }
             if (typeof sample !== 'undefined') return clean(sample);
         }

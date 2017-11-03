@@ -8,6 +8,7 @@ dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
 
 const common = require('./common.js');
+const dereference = require('reftools/lib/dereference.js').dereference;
 const oas_descs = require('./resources/oas_descs.js');
 
 let templates = {};
@@ -50,7 +51,9 @@ function convert(api, options, callback) {
     }
 
     let data = {};
-    data.api = common.dereference(api,[],api);
+    if (options.verbose) console.log('starting deref',api.info.title);
+    data.api = dereference(api,api,{bail:true,verbose:options.verbose,$ref:'x-widdershins-oldRef'});
+    if (options.verbose) console.log('finished deref');
     data.options = options;
     data.header = header;
     data.templates = templates;

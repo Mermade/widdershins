@@ -25,7 +25,8 @@
 <h3 id="{{=data.operationUniqueName}}-responseschema">Response Schema</h3>
 {{~ data.responses :response}}
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
-{{ var responseSchema = Object.values(response.content)[0].schema; }}
+{{ var responseKey = Object.keys(response.content)[0]; }}
+{{ var responseSchema = response.content[responseKey].schema; }}
 {{ var props = []; }}
 {{ data.utils.schemaToArray(responseSchema,0,props,true); }}
 
