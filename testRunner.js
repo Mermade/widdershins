@@ -46,6 +46,7 @@ if (options.raw) widdershinsOptions.sample = false;
 if (options.noschema) widdershinsOptions.schema = false;
 widdershinsOptions.experimental = options.experimental;
 widdershinsOptions.headings = 2;
+widdershinsOptions.verbose = options.verbose;
 
 function genStackNext() {
     if (!genStack.length) return false;
@@ -99,6 +100,7 @@ function* check(file) {
         try {
             widdershins.convert(src, widdershinsOptions, function(err, result){
                 let ok = !!result;
+                let message = '';
                 result = result.split('is undefined').join('x');
                 result = result.split('be undefined').join('x');
                 result = result.split('undefined to').join('x');
@@ -106,13 +108,18 @@ function* check(file) {
                 result = result.split('undefined how').join('x');
                 result = result.split('undefined behavio').join('x');
                 result = result.split('"undefined":').join('x');
-                result = result.split('» undefined').join('x');
+                result = result.split('» undefined').join('x'); // TODO revisit
                 result = result.split('undefined|').join('x'); // not so happy about this one (google firebaserules)
                 result = result.split('undefinedfault').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
-                    console.warn('Ok except for undefined references');
+                    message = 'Ok except for undefined references';
+                    ok = false;
                 }
-                if ((result != '') && (result.indexOf('undefined')<0)) {
+                if (ok && result.indexOf('x-widdershins-')>=0) {
+                    message = 'Ok except for x-widdershins- references';
+                    ok = false;
+                }
+                if ((result != '') && ok) {
                     console.log(normal+file);
                     if (src.info) {
                         console.log(green+'  %s %s',src.info.title,src.info.version);
@@ -126,7 +133,8 @@ function* check(file) {
                     result = true;
                 }
                 else {
-                    console.log(red+file);
+                    console.warn(red+file);
+                    if (message) console.warn(message);
                     result = false;
                 }
                 handleResult(file, result);

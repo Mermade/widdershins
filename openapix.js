@@ -120,22 +120,30 @@ function getCodeSamples(data) {
         data.allHeaders.push(accept);
     }
 
+    if (!Array.isArray(data.parameters)) data.parameters = [];
     for (let param of data.parameters) {
         var temp = '';
         param.exampleValues = {};
+        if (!param.required) param.required = false;
         if (param.schema && !param.safeType) {
-            param.safeType = param.schema.type || 'Unknown';
+            param.safeType = param.schema.type || common.inferType(param.schema);
             if (param.schema.format) {
                 param.safeType = param.safeType+'('+param.schema.format+')';
             }
             if ((param.safeType === 'array') && (param.schema.items)) {
-                param.safeType = 'array['+param.schema.items.type+']';
+                let itemsType = param.schema.items.type;
+                if (!itemsType) {
+                    itemsType = common.inferType(param.schema.items);
+                }
+                param.safeType = 'array['+itemsType+']';
             }
             if (param.schema["x-widdershins-oldRef"]) {
                 let schemaName = param.schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 param.safeType = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
             }
             if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
+        }
+        if (param.schema) {
             param.exampleValues.object = common.getSample(param.schema,data.options,{},data.api);
             if (typeof param.exampleValues.object === 'object') {
                 param.exampleValues.json = safejson(param.exampleValues.object,null,2);
@@ -151,6 +159,9 @@ function getCodeSamples(data) {
             if (!param.allowReserved) {
                 temp = encodeURIComponent(temp);
             }
+        }
+        if (param.description === 'undefined') { // yes, the string
+            param.description = '';
         }
         if (param.in === 'header') {
             data.headerParameters.push(param);
@@ -198,7 +209,7 @@ function getBodyParameterExamples(data) {
             obj = newObj;
         }
         content += '```xml\n';
-        content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+        content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
         content += '```\n';
     }
     return content;
@@ -239,6 +250,7 @@ function fakeBodyParameter(data) {
 
 function mergePathParameters(data) {
     if (!data.parameters) data.parameters = [];
+    //TODO
 }
 
 function getResponses(data) {
@@ -269,7 +281,7 @@ function getResponses(data) {
                 entry.$ref = true;
             }
             else {
-                if (contentType.schema && (contentType.schema.type !== 'object') && (contentType.schema.type !== 'array')) {
+                if (contentType.schema && contentType.schema.type && (contentType.schema.type !== 'object') && (contentType.schema.type !== 'array')) {
                     entry.schema = contentType.schema.type;
                 }
             }
@@ -313,7 +325,7 @@ function getResponseExamples(data) {
                     }
                     if ((typeof obj === 'object') && common.doContentType(cta, common.xmlContentTypes)) {
                         content += '```xml\n';
-                        content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
+                        content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
                         content += '```\n';
                     }
                 }
@@ -380,7 +392,13 @@ function convert(api, options, callback) {
     options = Object.assign({},defaults,options);
 
     let data = {};
-    data.api = dereference(api,api,{verbose:false,$ref:'x-widdershins-oldRef'});
+    if (options.verbose) console.log('starting deref',api.info.title);
+    data.api = dereference(api,api,{bail:true,verbose:options.verbose,$ref:'x-widdershins-oldRef'});
+    if (options.verbose) console.log('finished deref');
+
+    if (data.api.components && data.api.components.schemas && data.api.components.schemas["x-widdershins-oldRef"]) {
+        delete data.api.components.schemas["x-widdershins-oldRef"];
+    }
 
     data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
