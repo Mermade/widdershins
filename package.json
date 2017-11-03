@@ -42,7 +42,7 @@
     "openapi_optimise": "^1.0.4",
     "reftools": "0.0.11",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
-    "swagger2openapi": "^2.6.1",
+    "swagger2openapi": "^2.10.3",
     "yargs": "^9.0.1"
   },
   "devDependencies": {

@@ -123,13 +123,12 @@ function getCodeSamples(data) {
     for (let param of data.parameters) {
         var temp = '';
         param.exampleValues = {};
-        param.safeType = 'Unknown';
-        if (param.schema) {
-            param.safeType = param.schema.type;
+        if (param.schema && !param.safeType) {
+            param.safeType = param.schema.type || 'Unknown';
             if (param.schema.format) {
                 param.safeType = param.safeType+'('+param.schema.format+')';
             }
-            if (param.safeType === 'array') {
+            if ((param.safeType === 'array') && (param.schema.items)) {
                 param.safeType = 'array['+param.schema.items.type+']';
             }
             if (param.schema["x-widdershins-oldRef"]) {
@@ -220,17 +219,16 @@ function fakeBodyParameter(data) {
 
         if (param.schema.type === 'object') {
             let props = [];
-            common.schemaToArray(data.bodyParameter.schema,1,props,true);
+            common.schemaToArray(data.bodyParameter.schema,0,props,true);
 
             for (let prop of props) {
                 let param = {};
                 param.in = 'body';
-                param.schema = {};
-                param.schema.type = prop.type;
-                param.schema.enum = (prop.schema ? prop.schema.enum : undefined);
-                param.name = prop.name;
+                param.schema = prop.schema;
+                param.name = prop.displayName;
                 param.required = prop.required;
                 param.description = prop.description;
+                param.safeType = prop.safeType;
                 bodyParams.push(param);
             }
         }

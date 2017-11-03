@@ -33,7 +33,7 @@ Status Code **{{=response.status}}**
 
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~props :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 
 {{?}}

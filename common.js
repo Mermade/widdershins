@@ -8,6 +8,7 @@ var sampler = require('openapi-sampler');
 const visit = require('reftools/lib/visit.js').visit;
 const clone = require('reftools/lib/clone.js').clone;
 const circularClone = require('reftools/lib/clone.js').circularClone;
+const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 
 const MAX_SCHEMA_DEPTH=100;
 
@@ -159,7 +160,7 @@ function extract(o,parent,seen,depth,callback){
     });
 }
 
-function schemaToArray(schema,depth,lines,trim) {
+function schemaToArrayOld(schema,depth,lines,trim) {
 
     if (!schema) schema = {};
     let seen = [];
@@ -206,6 +207,76 @@ function schemaToArray(schema,depth,lines,trim) {
         prop.depth = 0;
         lines.unshift(prop);
     }
+}
+
+function schemaToArray(schema,offset,lines,trim) {
+    let iDepth = 0;
+    let oDepth = 0;
+    walkSchema(schema,{},{},function(schema,parent,state){
+        let entry = {};
+        entry.schema = schema;
+        if (state.property && state.property.indexOf('/')) {
+            entry.name = state.property.split('/')[1];
+        }
+        else if (!state.top) console.warn(state.property);
+        if (!entry.name && schema.title) entry.name = schema.title;
+
+        if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
+            entry.name = 'anonymous';
+            state.top = false; // force it in
+        }
+
+        if (entry.name) {
+        if (state.depth > iDepth) {
+            oDepth++;
+        }
+        if (state.depth < iDepth) {
+            oDepth--;
+            if (oDepth<0) oDepth=0;
+        }
+        iDepth = state.depth;
+        //console.warn('state %s, idepth %s, odepth now %s, offset %s',state.depth,iDepth,oDepth,offset);
+        }
+
+        entry.depth = Math.max(oDepth+offset,0);
+        //entry.depth = Math.max(oDepth-1,0)/2;
+        //if (entry.depth<1) entry.depth = 0;
+        entry.displayName = ('»'.repeat(entry.depth)+' '+entry.name).trim();
+
+        entry.description = schema.description;
+        if (trim && typeof entry.description === 'string') {
+            entry.description = entry.description.trim();
+        }
+        entry.type = schema.type;
+        entry.format = schema.format;
+
+        entry.safeType = entry.type;
+
+        if (schema["x-widdershins-oldRef"]) {
+            entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
+            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+        }
+
+        if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
+        if ((entry.type === 'array') && schema.items && schema.items.type) {
+            let itemsType = schema.items.type;
+            //console.warn(util.inspect(schema));
+            if (schema.items["x-widdershins-oldRef"]) {
+                let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
+                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
+            }
+            entry.safeType = '['+itemsType+']';
+            //console.warn(entry.safeType);
+        }
+
+        entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
+        if (typeof entry.required === 'undefined') entry.required = false;
+
+        if ((!state.top) && (entry.name)) {
+            lines.push(entry);
+        }
+    });
+    return lines;
 }
 
 function clean(obj) {
