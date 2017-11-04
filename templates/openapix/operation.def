@@ -14,7 +14,7 @@
 
 `{{= data.methodUpper}} {{=data.method.path}}`
 
-{{? data.operation.summary}}*{{= data.operation.summary }}*{{?}}
+{{? data.operation.summary && !data.options.tocSummary}}*{{= data.operation.summary }}*{{?}}
 
 {{? data.operation.description}}{{= data.operation.description }}{{?}}
 

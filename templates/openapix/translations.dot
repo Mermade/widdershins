@@ -1,0 +1,7 @@
+{{
+data.translations.defaultTag = 'Default';
+data.translations.responseDefault = 'Default';
+data.translations.responseUnknown = 'Unknown';
+data.translations.schemaInline = 'Inline';
+data.translations.schemaNone = 'None';
+}}

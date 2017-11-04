@@ -18,11 +18,7 @@ const dereference = require('reftools/lib/dereference.js').dereference;
 
 let templates;
 
-function preProcessor(api) {
-    return api;
-}
-
-function convertToToc(source) {
+function convertToToc(source,data) {
     let resources = {};
     for (var p in source.paths) {
         for (var m in source.paths[p]) {
@@ -34,7 +30,10 @@ function convertToToc(source) {
                 method.path = p;
                 var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
                 sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
-                var tagName = 'Default';
+		if (data.options.tocSummary && method.operation.summary) {
+		    sMethodUniqueName = method.operation.summary;
+		}
+                var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
                     tagName = method.operation.tags[0];
                 }
@@ -121,6 +120,7 @@ function getCodeSamples(data) {
     }
 
     if (!Array.isArray(data.parameters)) data.parameters = [];
+    data.longDescs = false;
     for (let param of data.parameters) {
         var temp = '';
         param.exampleValues = {};
@@ -163,6 +163,11 @@ function getCodeSamples(data) {
         if (param.description === 'undefined') { // yes, the string
             param.description = '';
         }
+	if (typeof param.description !== 'undefined') {
+	    param.shortDesc = param.description.split('\n')[0];
+	    if (param.shortDesc !== param.description) data.longDescs = true;
+	}
+	
         if (param.in === 'header') {
             data.headerParameters.push(param);
             data.allHeaders.push(param);
@@ -259,7 +264,7 @@ function getResponses(data) {
         let response = data.operation.responses[r];
         let entry = {};
         entry.status = r;
-        entry.meaning = (r == 'default' ? 'Default' : 'Unknown');
+        entry.meaning = (r == 'default' ? data.translations.responseDefault : data.translations.responseUnknown);
         var url = '';
         for (var s in common.statusCodes) {
             if (common.statusCodes[s].code === r) {
@@ -271,7 +276,7 @@ function getResponses(data) {
         if (url) entry.meaning = '[' + entry.meaning + '](' + url + ')';
         entry.description = response.description;
         entry.description = entry.description.trim();
-        entry.schema = response.content ? 'Inline' : 'None'; // TODO translate?
+        entry.schema = response.content ? data.translations.schemaInline : data.translations.schemaNone;
         for (let ct in response.content) {
             let contentType = response.content[ct];
             if (contentType.schema) entry.type = contentType.schema.type;
@@ -378,8 +383,6 @@ function getAuthenticationStr(data) {
 }
 
 function convert(api, options, callback) {
-    api = preProcessor(api);
-
     let defaults = {};
     defaults.title = 'API';
     defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }];
@@ -426,8 +429,10 @@ function convert(api, options, callback) {
     data.options = options;
     data.header = header;
     data.templates = templates;
-    data.resources = convertToToc(api);
-    //console.warn(util.inspect(data.resources,3));
+    data.translations = {};
+    templates.translations(data);
+    data.resources = convertToToc(api,data);
+    //console.warn(util.inspect(data.resources));
 
     if (data.api.servers && data.api.servers.length) {
         data.servers = data.api.servers;
