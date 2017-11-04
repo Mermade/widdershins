@@ -40,7 +40,7 @@ Base URLs:
 {{ data.operationUniqueName = m; }}
 {{ data.method = data.resource.methods[m]; }}
 {{ data.operation = data.method.operation; }}
-{{#def.operation}}
+{{= data.templates.operation(data) }}
 {{ } /* of methods */ }}
 
 {{ } /* of resources */ }}

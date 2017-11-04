@@ -9,6 +9,7 @@ var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
 var circular = require('openapi_optimise/circular.js');
 var sampler = require('openapi-sampler');
+const dereference2 = require('reftools/lib/dereference.js').dereference;
 var dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
@@ -19,6 +20,15 @@ var common = require('./common.js');
 var data;
 var content;
 var circles = [];
+
+function dereference(obj,refs,options){
+    console.log('dereffing '+util.inspect(obj));
+    options.verbose = true;
+    let o = dereference2(obj,refs,options);
+    options.verbose = false;
+    console.log('done');
+    return o;
+}
 
 /**
 * function to reformat openapi paths object into an iodocs-style resources object, tags-first
@@ -84,11 +94,13 @@ function processOperation(op, method, resource, options) {
         }
     }
     for (var r in op.responses) {
+        console.log(r);
         var response = op.responses[r];
         if (response.$ref) {
             response = jptr.jptr(data.openapi, response.$ref);
         }
         for (var prod in response.content) {
+            console.log(prod);
             produces.push(prod);
         }
     }
@@ -156,17 +168,20 @@ function processOperation(op, method, resource, options) {
         if (body.schema && typeof body.schema.$ref === 'string') {
             rbType = body.schema.$ref.replace('#/components/schemas/','');
             rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
-            body.schema = common.dereference(body.schema, circles, data.openapi, common.clone, options.aggressive);
+            body.schema = dereference(body.schema, data.openapi, {});
         }
         body.type = rbType;
         parameters.push(body);
         if (options.schema && body.schema && body.schema.type && body.schema.type === 'object') {
+            console.log('body parameter schema to array');
             common.schemaToArray(body.schema,1,parameters,false);
+            console.log('done');
         }
     }
 
     for (var p in parameters) {
         var param = parameters[p];
+        console.log(param.name);
         param.required = (param.required ? param.required : false);
         param.safeType = (param.type || 'object');
         if (!param.depth) param.depth = 0;
@@ -189,7 +204,7 @@ function processOperation(op, method, resource, options) {
             param.safeType = param.safeType + '(' + param.schema.format + ')';
         }
         if (param.schema && param.schema["$ref"]) {
-            param.schema = common.dereference(param.schema,circles,data.openapi);
+            param.schema = dereference(param.schema,data.openapi,{});
             param.exampleSchema = param.schema;
         }
         else {
@@ -340,7 +355,7 @@ function processOperation(op, method, resource, options) {
             param = parameters[p];
             if ((param.in === 'body') && (param.depth == 0)) {
                 var xmlWrap = '';
-                var obj = common.dereference(param.schema, circles, data.openapi, common.clone, options.aggressive);
+                var obj = dereference(param.schema, data.openapi, options);
                 if (obj && !paramHeader) {
                     data = options.templateCallback('heading_body_parameter', 'pre', data);
                     if (data.append) { content += data.append; delete data.append; }
@@ -475,7 +490,7 @@ function processOperation(op, method, resource, options) {
                     var xmlWrap = '';
                     var obj = {};
                     try {
-                        obj = common.dereference(contentType.schema, circles, data.openapi, common.clone, options.aggressive);
+                        obj = dereference(contentType.schema, data.api, {});
                     }
                     catch (ex) {
                         console.error(ex.message);
@@ -720,11 +735,14 @@ function convert(openapi, options, callback) {
         if (data.append) { content += data.append; delete data.append; }
     }
 
+    console.warn('Converting to TOC');
     var apiInfo = convertToToc(openapi);
+    console.warn('Converted to TOC');
 
     for (var r in apiInfo.resources) {
         content += '# ' + r + '\n\n';
-        var resource = apiInfo.resources[r]
+        var resource = apiInfo.resources[r];
+        console.log(r);
         if (resource.description) content += resource.description + '\n\n';
 
         if (resource.externalDocs) {
@@ -734,6 +752,7 @@ function convert(openapi, options, callback) {
         }
 
         for (var m in resource.methods) {
+            console.log(m);
             var method = resource.methods[m];
             data.subtitle = method.op.toUpperCase() + ' ' + method.path;
             var op = openapi.paths[method.path][method.op];
@@ -755,7 +774,7 @@ function convert(openapi, options, callback) {
             content += '## '+s+'\n\n';
             content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
             let schema = openapi.components.schemas[s];
-            schema = common.dereference(schema, circles, openapi, common.clone, options.aggressive);
+            schema = dereference(schema, openapi, {});
 
             var obj = common.getSample(schema,options,{},data.openapi);
 

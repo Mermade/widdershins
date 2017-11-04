@@ -41,6 +41,8 @@ var argv = require('yargs')
     .boolean('raw')
     .alias('r','raw')
     .describe('raw','Output raw schemas not example values')
+    .boolean('resolve')
+    .describe('resolve','Resolve external $refs')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
@@ -96,11 +98,11 @@ options.user_templates = argv.user_templates;
 options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
-options.aggressive = argv.aggressive;
 options.verbose = argv.verbose;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
 options.experimental = argv.experimental;
+options.resolve = argv.resolve;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.noschema) options.schema = false;

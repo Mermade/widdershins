@@ -60,7 +60,7 @@ function convert(api, options, callback) {
 
     let data = {};
     if (options.verbose) console.log('starting deref',api.info.title);
-    data.api = dereference(api,api,{bail:true,verbose:options.verbose,$ref:'x-widdershins-oldRef'});
+    data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
     if (options.verbose) console.log('finished deref');
     data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 

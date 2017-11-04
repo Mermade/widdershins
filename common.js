@@ -61,17 +61,29 @@ function languageCheck(language, language_tabs, mutate) {
 
 function getCodeSamples(data) {
     let s = '';
-    for (let lang of data.header.language_tabs) {
-        let target = lang;
-        if (typeof lang === 'object') target = Object.keys(target)[0];
-        let lcLang = languageCheck(target,data.header.language_tabs,false);
-        var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') +
+    let op = data.operation;
+    if (op["x-code-samples"]) {
+        for (var c in op["x-code-samples"]) {
+            var sample = op["x-code-samples"][c];
+            var lang = languageCheck(sample.lang, data.header.language_tabs, true);
+            s += '```' + lang + '\n';
+            s += sample.source;
+            s += '\n```\n';
+        }
+    }
+    else {
+        for (let lang of data.header.language_tabs) {
+            let target = lang;
+            if (typeof lang === 'object') target = Object.keys(target)[0];
+            let lcLang = languageCheck(target,data.header.language_tabs,false);
+            var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') +
 1);
-        var templateFunc = data.templates[templateName];
-        if (templateFunc) {
-            s += '```'+lcLang+'\n';
-            s += templateFunc(data)+'\n';
-            s += '```\n\n';
+            var templateFunc = data.templates[templateName];
+            if (templateFunc) {
+                s += '```'+lcLang+'\n';
+                s += templateFunc(data)+'\n';
+                s += '```\n\n';
+            }
         }
     }
     return s;
@@ -132,6 +144,7 @@ function schemaToArray(schema,offset,lines,trim) {
     walkSchema(schema,{},{},function(schema,parent,state){
         let entry = {};
         entry.schema = schema;
+        entry.in = 'body';
         if (state.property && state.property.indexOf('/')) {
             entry.name = state.property.split('/')[1];
         }
@@ -139,7 +152,7 @@ function schemaToArray(schema,offset,lines,trim) {
         if (!entry.name && schema.title) entry.name = schema.title;
 
         if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
-            entry.name = 'anonymous';
+            entry.name = 'anonymous'; // TODO pass data for translations
             state.top = false; // force it in
         }
 
@@ -236,8 +249,11 @@ function getSample(orig,options,samplerOptions,api){
                 console.error(ex);
             }
             obj = JSON.parse(safejson(orig));
-            sample = sampler.sample(obj,samplerOptions,refs);
-            if (typeof sample !== 'undefined') return clean(sample);
+            try {
+                sample = sampler.sample(obj,samplerOptions,refs);
+                if (typeof sample !== 'undefined') return clean(sample);
+            }
+            catch (ex) {}
         }
     }
     return clean(obj);
