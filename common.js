@@ -235,6 +235,9 @@ function getSample(orig,options,samplerOptions,api){
             if (options.verbose) {
                 console.error(ex);
             }
+            obj = JSON.parse(safejson(orig));
+            sample = sampler.sample(obj,samplerOptions,refs);
+            if (typeof sample !== 'undefined') return clean(sample);
         }
     }
     return clean(obj);
