@@ -5,7 +5,7 @@ var openapix = require('./openapix.js');
 var swagger2openapi = require('swagger2openapi');
 
 function convert(api, options, callback) {
-    swagger2openapi.convertObj(api, {patch:true}, function(err, sOptions) {
+    swagger2openapi.convertObj(api, {patch:true,warnOnly:true}, function(err, sOptions) {
         if (err) {
             console.error(err.message);
         }
