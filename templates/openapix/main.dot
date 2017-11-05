@@ -61,7 +61,7 @@ Base URLs:
 
 {{ var props = []; }}
 {{ var enums = []; }}
-{{ data.utils.schemaToArray(schema,-1,props,true); }}
+{{ data.utils.schemaToArray(schema,-1,props,true,data); }}
 {{ for (var p of props) {
      if (p.schema && p.schema.enum) {
        for (var e of p.schema.enum) {

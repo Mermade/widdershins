@@ -275,7 +275,7 @@ function fakeBodyParameter(data) {
 
         if (param.schema.type === 'object') {
             let props = [];
-            common.schemaToArray(data.bodyParameter.schema,0,props,true);
+            common.schemaToArray(data.bodyParameter.schema,0,props,true,data);
 
             for (let prop of props) {
                 let param = {};

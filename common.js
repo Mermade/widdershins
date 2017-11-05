@@ -138,7 +138,7 @@ function inferType(schema) {
     return 'any';
 }
 
-function schemaToArray(schema,offset,lines,trim) {
+function schemaToArray(schema,offset,lines,trim,data) {
     let iDepth = 0;
     let oDepth = 0;
     walkSchema(schema,{},{},function(schema,parent,state){
@@ -152,7 +152,7 @@ function schemaToArray(schema,offset,lines,trim) {
         if (!entry.name && schema.title) entry.name = schema.title;
 
         if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
-            entry.name = 'anonymous'; // TODO pass data for translations
+            entry.name = data.translations.anonymous;
             state.top = false; // force it in
         }
 

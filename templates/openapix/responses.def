@@ -28,7 +28,7 @@
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
 {{ var props = []; }}
-{{ data.utils.schemaToArray(responseSchema,0,props,true); }}
+{{ data.utils.schemaToArray(responseSchema,0,props,true,data); }}
 
 Status Code **{{=response.status}}**
 
