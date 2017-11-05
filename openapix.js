@@ -6,16 +6,18 @@ const up = require('url');
 
 const yaml = require('js-yaml');
 const safejson = require('safe-json-stringify');
+const uri = require('urijs');
+const URITemplate = require('urijs/src/URITemplate')
 const dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
 
 const xml = require('jgexml/json2xml.js');
 const jptr = require('reftools/lib/jptr.js').jptr;
+const dereference = require('reftools/lib/dereference.js').dereference;
 const swagger2openapi = require('swagger2openapi');
 
 const common = require('./common.js');
-const dereference = require('reftools/lib/dereference.js').dereference;
 
 let templates;
 
@@ -31,9 +33,9 @@ function convertToToc(source,data) {
                 method.path = p;
                 var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
                 sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
-		if (data.options.tocSummary && method.operation.summary) {
-		    sMethodUniqueName = method.operation.summary;
-		}
+                if (data.options.tocSummary && method.operation.summary) {
+                    sMethodUniqueName = method.operation.summary;
+                }
                 var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
                     tagName = method.operation.tags[0];
@@ -43,7 +45,7 @@ function convertToToc(source,data) {
                     if (source.tags) {
                         for (var t in source.tags) {
                             var tag = source.tags[t];
-                            if (tag.name == tagName) {
+                            if (tag.name === tagName) {
                                 resources[tagName].description = tag.description;
                                 resources[tagName].externalDocs = tag.externalDocs;
                             }
@@ -95,9 +97,10 @@ function fakeProdCons(data) {
 function getParameters(data) {
     data.allHeaders = [];
     data.headerParameters = [];
-    data.queryString = '';
-    data.requiredQueryString = '';
     data.requiredParameters = [];
+    let uriTemplateStr = data.method.path;
+    let requiredUriTemplateStr = data.method.path;
+    var templateVars = {};
 
     if (data.consumes.length) {
         var contentType = {};
@@ -122,10 +125,11 @@ function getParameters(data) {
     if (!Array.isArray(data.parameters)) data.parameters = [];
     data.longDescs = false;
     for (let param of data.parameters) {
-        var temp = '';
+        //var temp = '';
         param.exampleValues = {};
         if (!param.required) param.required = false;
         if (param.schema && !param.safeType) {
+            param.originalType = param.schema.type;
             param.safeType = param.schema.type || common.inferType(param.schema);
             if (param.schema.format) {
                 param.safeType = param.safeType+'('+param.schema.format+')';
@@ -144,43 +148,67 @@ function getParameters(data) {
             if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
         }
         if (param.schema) {
-            param.exampleValues.object = common.getSample(param.schema,data.options,{},data.api);
+            param.exampleValues.object = param.example || param.default || common.getSample(param.schema,data.options,{},data.api);
             if (typeof param.exampleValues.object === 'object') {
                 param.exampleValues.json = safejson(param.exampleValues.object,null,2);
-                temp = param.exampleValues.json;
             }
             else {
-                temp = param.exampleValues.object;
                 param.exampleValues.json = "'"+param.exampleValues.object+"'";
-            }
-            if ((Array.isArray(param.exampleValues.object)) && (param.in === 'query')) {
-                temp = '...'; // TODO style and explode
-            }
-            if (!param.allowReserved) {
-                temp = encodeURIComponent(temp);
             }
         }
         if (param.description === 'undefined') { // yes, the string
             param.description = '';
         }
-	if (typeof param.description !== 'undefined') {
-	    param.shortDesc = param.description.split('\n')[0];
-	    if (param.shortDesc !== param.description) data.longDescs = true;
-	}
-	
+        if (typeof param.description !== 'undefined') {
+            param.shortDesc = param.description.split('\n')[0];
+            if (param.shortDesc !== param.description) data.longDescs = true;
+        }
+    
+        if (param.in === 'cookie') {
+            if (!param.style) param.style = 'form';
+            // style prefixes: form
+        }
         if (param.in === 'header') {
+            if (!param.style) param.style = 'simple';
             data.headerParameters.push(param);
             data.allHeaders.push(param);
         }
+        if (param.in === 'path') {
+            let template = param.allowReserved ? '{+' : '{';
+            // style prefixes: matrix, label, simple
+            if (!param.style) param.style = 'simple';
+            if (param.style === 'label') template += '.';
+            if (param.style === 'matrix') template += ';';
+            template += param.name;
+            template += param.explode ? '*}' : '}';
+            data.method.path = data.method.path.split('{'+param.name+'}').join(template);
+        }
         if (param.in === 'query') {
-            data.queryString += (data.queryString ? '&' : '?') + param.name + '=' + temp;
+            let template = param.allowReserved ? '{?+' : '{?';
+            // style prefixes: form, spaceDelimited, pipeDelimited, deepObject
+            if (!param.style) param.style = 'form';
+            template += param.name;
+            template += param.explode ? '*}' : '}';
+            uriTemplateStr += template;
             if (param.required) {
-                data.requiredQueryString += (data.requiredQueryString ?
-                    '&' : '?') + param.name + '=' + temp;
+                requiredUriTemplateStr += template;
                 data.requiredParameters.push(param);
             }
         }
+        templateVars[param.name] = param.exampleValues.object;
     }
+
+    let uriTemplate = new URITemplate(uriTemplateStr);
+    let requiredUriTemplate = new URITemplate(requiredUriTemplateStr);
+    data.uriExample = uriTemplate.expand(templateVars);
+    data.requiredUriExample = requiredUriTemplate.expand(templateVars);
+
+    //TODO deconstruct and reconstruct to cope with spaceDelimited/pipeDelimited
+
+    data.queryString = data.uriExample.substr(data.uriExample.indexOf('?'));
+    if (!data.queryString.startsWith('?')) data.queryString = '';
+    data.requiredQueryString = data.requiredUriExample.substr(data.requiredUriExample.indexOf('?'));
+    if (!data.requiredQueryString.startsWith('?')) data.requiredQueryString = '';
 
 }
 
@@ -254,7 +282,7 @@ function fakeBodyParameter(data) {
 
 function mergePathParameters(data) {
     if (!data.parameters) data.parameters = [];
-    //TODO
+    //TODO merge path parameters
 }
 
 function getResponses(data) {
@@ -291,6 +319,7 @@ function getResponses(data) {
             }
         }
         entry.content = response.content;
+        entry.links = response.links;
         responses.push(entry);
     }
     return responses;

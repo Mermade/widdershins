@@ -37,6 +37,9 @@ Status Code **{{=response.status}}**
 {{~props :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 
+{{ data.response = response; }}
+{{#def.links}}
+
 {{?}}
 {{~}}
 {{?}}

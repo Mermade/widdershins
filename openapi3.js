@@ -7,7 +7,6 @@ var util = require('util');
 var yaml = require('js-yaml');
 var xml = require('jgexml/json2xml.js');
 var jptr = require('jgexml/jpath.js');
-var circular = require('openapi_optimise/circular.js');
 var sampler = require('openapi-sampler');
 const dereference2 = require('reftools/lib/dereference.js').dereference;
 var dot = require('dot');
@@ -19,7 +18,6 @@ var common = require('./common.js');
 
 var data;
 var content;
-var circles = [];
 
 function dereference(obj,refs,options){
     console.log('dereffing '+util.inspect(obj));
@@ -662,8 +660,6 @@ function convert(openapi, options, callback) {
 
     // we always show json / yaml / xml if used in content-types
     header.language_tabs = options.language_tabs;
-
-    circles = circular.getCircularRefs(openapi, options);
 
     header.toc_footers = [];
     if (openapi.externalDocs) {
