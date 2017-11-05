@@ -274,6 +274,7 @@ module.exports = {
     getCodeSamples : getCodeSamples,
     inferType : inferType,
     clone : clone,
+    clean : clean,
     getSample : getSample,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray

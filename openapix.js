@@ -218,8 +218,10 @@ function getParameters(data) {
 
     data.queryString = data.uriExample.substr(data.uriExample.indexOf('?'));
     if (!data.queryString.startsWith('?')) data.queryString = '';
+    data.queryString = data.queryString.split('%25').join('%');
     data.requiredQueryString = data.requiredUriExample.substr(data.requiredUriExample.indexOf('?'));
     if (!data.requiredQueryString.startsWith('?')) data.requiredQueryString = '';
+    data.requiredQueryString = data.requiredQueryString.split('%25').join('%');
 
 }
 
@@ -351,8 +353,16 @@ function getResponseExamples(data) {
                     xmlWrap = obj.xml.name;
                 }
                 if (Object.keys(obj).length > 0) {
-                    obj = common.getSample(obj,data.options,{},data.api);
-                    // TODO support embedded examples
+                    // support embedded examples
+                    if (contentType.examples) {
+                        obj = common.clean(contentType.examples[Object.keys(contentType.examples)[0]]);
+                    }
+                    else if (contentType.example) {
+                        obj = common.clean(contentType.example);
+                    }
+                    else {
+                        obj = common.getSample(obj,data.options,{},data.api);
+                    }
                     if (common.doContentType(cta, common.jsonContentTypes)) {
                         content += '```json\n';
                         content += safejson(obj, null, 2) + '\n';
