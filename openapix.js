@@ -108,8 +108,8 @@ function getParameters(data) {
     data.allHeaders = [];
     data.headerParameters = [];
     data.requiredParameters = [];
-    let uriTemplateStr = data.method.path;
-    let requiredUriTemplateStr = data.method.path;
+    let uriTemplateStr = data.method.path.split('/ /').join('/+/');
+    let requiredUriTemplateStr = uriTemplateStr;
     var templateVars = {};
 
     if (data.consumes.length) {
