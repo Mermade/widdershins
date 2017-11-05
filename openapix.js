@@ -31,6 +31,7 @@ function convertToToc(source,data) {
                 method.pathItem = source.paths[p];
                 method.verb = m;
                 method.path = p;
+                method.pathParameters = source.paths[p].parameters;
                 var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
                 sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
                 if (data.options.tocSummary && method.operation.summary) {
@@ -95,6 +96,14 @@ function fakeProdCons(data) {
 }
 
 function getParameters(data) {
+
+    function stupidity(varname) {
+        let s = encodeURIComponent(varname);
+        s = s.split('-').join('%2D');
+        s = s.split('$').join('%24');
+        return s;
+    }
+
     data.allHeaders = [];
     data.headerParameters = [];
     data.requiredParameters = [];
@@ -179,15 +188,16 @@ function getParameters(data) {
             if (!param.style) param.style = 'simple';
             if (param.style === 'label') template += '.';
             if (param.style === 'matrix') template += ';';
-            template += param.name;
+            template += stupidity(param.name);
             template += param.explode ? '*}' : '}';
-            data.method.path = data.method.path.split('{'+param.name+'}').join(template);
+            uriTemplateStr = uriTemplateStr.split('{'+param.name+'}').join(template);
+            requiredUriTemplateStr = requiredUriTemplateStr.split('{'+param.name+'}').join(template);
         }
         if (param.in === 'query') {
-            let template = param.allowReserved ? '{?+' : '{?';
+            let template = param.allowReserved ? '{?' : '{?'; // FIXME +
             // style prefixes: form, spaceDelimited, pipeDelimited, deepObject
             if (!param.style) param.style = 'form';
-            template += param.name;
+            template += stupidity(param.name);
             template += param.explode ? '*}' : '}';
             uriTemplateStr += template;
             if (param.required) {
@@ -195,7 +205,7 @@ function getParameters(data) {
                 data.requiredParameters.push(param);
             }
         }
-        templateVars[param.name] = param.exampleValues.object;
+        templateVars[stupidity(param.name)] = param.exampleValues.object;
     }
 
     let uriTemplate = new URITemplate(uriTemplateStr);
@@ -282,7 +292,8 @@ function fakeBodyParameter(data) {
 
 function mergePathParameters(data) {
     if (!data.parameters) data.parameters = [];
-    //TODO merge path parameters
+    data.parameters = data.parameters.concat(data.method.pathParameters||[]);
+    //TODO unique parameters on name and in
 }
 
 function getResponses(data) {

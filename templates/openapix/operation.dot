@@ -6,8 +6,8 @@
 {{ data.enums = []; }}
 {{ data.utils.fakeProdCons(data); }}
 {{ data.utils.fakeBodyParameter(data); }}
-{{ data.utils.getParameters(data); }}
 {{ data.utils.mergePathParameters(data); }}
+{{ data.utils.getParameters(data); }}
 
 {{? data.options.codeSamples || data.operation["x-code-samples"] }}
 > Code samples
