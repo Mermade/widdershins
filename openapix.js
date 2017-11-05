@@ -101,6 +101,7 @@ function getParameters(data) {
         let s = encodeURIComponent(varname);
         s = s.split('-').join('%2D');
         s = s.split('$').join('%24');
+        s = s.split('.').join('%2E');
         return s;
     }
 

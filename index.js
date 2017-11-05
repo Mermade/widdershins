@@ -8,6 +8,8 @@ const semoasa = require('./semoasa.js');
 
 function convert(api, options, callback) {
 
+    options.samplerErrors = new Map();
+
     if (typeof api === 'string') {
         let apiblueprint = require('./apiblueprint.js');
         apiblueprint.convert(api, options, callback);

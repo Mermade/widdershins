@@ -230,6 +230,7 @@ function clean(obj) {
 }
 
 function getSample(orig,options,samplerOptions,api){
+    if (!options.samplerErrors) options.samplerErrors = new Map();
     let obj = circularClone(orig);
     let refs = Object.assign({},api,orig);
     if (options.sample && obj) {
@@ -244,7 +245,10 @@ function getSample(orig,options,samplerOptions,api){
             if (typeof sample !== 'undefined') return clean(sample);
         }
         catch (ex) {
-            console.error('# sampler ' + ex);
+            if (!options.samplerErrors.has(ex.message)) {
+                console.error('# sampler ' + ex.message);
+                options.samplerErrors.set(ex.message,true);
+            }
             if (options.verbose) {
                 console.error(ex);
             }
