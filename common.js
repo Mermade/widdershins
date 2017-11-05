@@ -61,8 +61,8 @@ function languageCheck(language, language_tabs, mutate) {
 
 function getCodeSamples(data) {
     let s = '';
-    let op = data.operation;
-    if (op["x-code-samples"]) {
+    let op = data.operation||data.message;
+    if (op && op["x-code-samples"]) {
         for (var c in op["x-code-samples"]) {
             var sample = op["x-code-samples"][c];
             var lang = languageCheck(sample.lang, data.header.language_tabs, true);
