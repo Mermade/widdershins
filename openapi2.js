@@ -5,9 +5,14 @@ const openapix = require('./openapix.js');
 const swagger2openapi = require('swagger2openapi');
 
 function convert(api, options, callback) {
-    swagger2openapi.convertObj(api, {patch:true,warnOnly:true,resolve:options.resolve}, function(err, sOptions) {
+    swagger2openapi.convertObj(api, {patch:true,warnOnly:true,resolve:options.resolve,verbose:options.verbose,source:options.source}, function(err, sOptions) {
         if (err) {
-            console.error(err.message);
+            if (options.verbose) {
+                console.error(err);
+            }
+            else {
+                console.error(err.message);
+            }
         }
         else {
             options.resolve = false; // done now
