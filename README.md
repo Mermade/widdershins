@@ -32,7 +32,6 @@ Options:
   -h, --help            Show help                                      [boolean]
   --version             Show version number                            [boolean]
   -y, --yaml            Load spec in yaml format, default json         [boolean]
-  -a, --aggressive      Use alternative dereffing logic                [boolean]
   -c, --code            Turn generic code samples off                  [boolean]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
   -e, --environment     Load config/override options from file          [string]
@@ -67,7 +66,6 @@ options.sample = true; // set false by --raw
 options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
-options.aggressive = false;
 options.summary = false;
 options.headings = 2;
 converter.convert(apiObj,options,function(err,str){
