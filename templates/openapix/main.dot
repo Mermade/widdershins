@@ -28,7 +28,7 @@ Base URLs:
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
-# {{= r}}
+<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-')}}">{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
