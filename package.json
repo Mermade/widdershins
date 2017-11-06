@@ -43,7 +43,7 @@
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
     "swagger2openapi": "^2.10.5",
     "urijs": "^1.19.0",
-    "yargs": "^9.0.1"
+    "yargs": "^10.0.3"
   },
   "devDependencies": {
     "node-readfiles": "^0.2.0"
