@@ -2,7 +2,7 @@
 
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ data.schemaProperties :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~ data.schemaProperties :p}}|{{=p.displayName||p.name}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 
 {{? data.enums.length}}

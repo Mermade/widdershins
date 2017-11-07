@@ -2,7 +2,7 @@
 
 |Parameter|In|Type|Required|Description|
 |---|---|---|---|---|
-{{~ data.parameters :p}}|{{=p.name}}|{{=p.in}}|{{=p.type}}|{{=p.required}}|{{=p.shortDesc}}|
+{{~ data.parameters :p}}|{{=p.displayName||p.name}}|{{=p.in}}|{{=p.safeType}}|{{=p.required}}|{{=p.shortDesc}}|
 {{~}}
 
 {{? data.enums.length}}
