@@ -2,7 +2,7 @@
 
 ### Callbacks
 
-<div class="well">
+<div class="content well">
 
 {{ data.oldOperation = data.operation; }}
 
