@@ -214,7 +214,7 @@ function getParameters(data) {
     data.uriExample = uriTemplate.expand(templateVars);
     data.requiredUriExample = requiredUriTemplate.expand(templateVars);
 
-    //TODO deconstruct and reconstruct to cope with spaceDelimited/pipeDelimited
+    //TODO deconstruct and reconstruct to cope w/ spaceDelimited/pipeDelimited
 
     data.queryString = data.uriExample.substr(data.uriExample.indexOf('?'));
     if (!data.queryString.startsWith('?')) data.queryString = '';
@@ -296,7 +296,7 @@ function fakeBodyParameter(data) {
 function mergePathParameters(data) {
     if (!data.parameters) data.parameters = [];
     data.parameters = data.parameters.concat(data.method.pathParameters||[]);
-    //TODO unique parameters on name and in
+    data.parameters = data.parameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
 }
 
 function getResponses(data) {
