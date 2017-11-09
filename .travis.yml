@@ -8,9 +8,10 @@ before_script:
   - git clone --depth 1 https://github.com/mermade/openapi-definitions.git
   - git clone --depth 1 https://github.com/mermade/openapi3-examples.git
 #  - git clone --depth 1 https://github.com/SOM-Research/hapi.git
+  - . ./bin/setflags.sh
 script:
-  - node testRunner openapi-directory/APIs/
-  - node testRunner openapi-definitions/
-  - node testRunner openapi3-examples/pass/
-  - node testRunner specs/
-#  - node testRunner hapi/APIs/
+  - node $nflags testRunner openapi-directory/APIs/
+  - node $nflags testRunner openapi-definitions/
+  - node $nflags testRunner openapi3-examples/pass/
+  - node $nflags testRunner specs/
+#  - node testRunner $nflags hapi/APIs/
