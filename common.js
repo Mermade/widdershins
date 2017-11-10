@@ -200,7 +200,7 @@ function schemaToArray(schema,offset,options,data) {
         entry.schema = schema;
         entry.in = 'body';
         if (state.property && state.property.indexOf('/')) {
-            if (isBlock) entry.name = data.translations.anonymous
+            if (isBlock) entry.name = '*'+data.translations.anonymous+'*'
             else entry.name = state.property.split('/')[1];
         }
         else if (!state.top) console.warn(state.property);
@@ -226,7 +226,7 @@ function schemaToArray(schema,offset,options,data) {
             entry.name = '*'+entry.name+'*';
         }
         if (!state.top && !entry.name && !parent.items) {
-            entry.name = data.translations.anonymous;
+            entry.name = '*'+data.translations.anonymous+'*';
         }
 
         // we should be done futzing with entry.name now
@@ -326,16 +326,21 @@ function clean(obj) {
 function getSampleInner(orig,options,samplerOptions,api){
     if (!options.samplerErrors) options.samplerErrors = new Map();
     let obj = circularClone(orig);
-    let refs = api; //Object.assign({},api,orig);
+    let defs = api; //Object.assign({},api,orig);
     if (options.sample && obj) {
         try {
-            var sample = sampler.sample(obj,samplerOptions,refs); // was api
+            var sample = sampler.sample(obj,samplerOptions,defs); // was api
             if (sample && typeof sample.$ref !== 'undefined') {
-                //console.warn(util.inspect(obj));
+                //console.warn(util.inspect(orig));
                 obj = JSON.parse(safejson(orig));
-                sample = sampler.sample(obj,samplerOptions,refs);
+                sample = sampler.sample(obj,samplerOptions,defs);
             }
-            if (typeof sample !== 'undefined') return sample;
+            if (typeof sample !== 'undefined') {
+                if (Object.keys(sample).length) return sample
+                else {
+                    return sampler.sample({ type: 'object', properties: { anonymous: obj}},samplerOptions,defs);
+                }
+            }
         }
         catch (ex) {
             if (!options.samplerErrors.has(ex.message)) {
@@ -348,7 +353,7 @@ function getSampleInner(orig,options,samplerOptions,api){
             }
             obj = JSON.parse(safejson(orig));
             try {
-                sample = sampler.sample(obj,samplerOptions,refs);
+                sample = sampler.sample(obj,samplerOptions,defs);
                 if (typeof sample !== 'undefined') return sample;
             }
             catch (ex) {
