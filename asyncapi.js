@@ -314,7 +314,7 @@ function convert(asyncapi, options, callback) {
 
         for (let s in asyncapi.components.schemas) {
             content += '## '+s+'\n\n';
-            content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
+            content += '<a id="schema'+s.toLowerCase()+'"></a>\n\n';
             let schema = asyncapi.components.schemas[s];
             schema = common.dereference(schema, circles, asyncapi, common.clone, options.aggressive);
 
