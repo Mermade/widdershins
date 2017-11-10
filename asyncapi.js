@@ -90,6 +90,8 @@ function convert(api, options, callback) {
     data.options = options;
     data.header = header;
     data.templates = templates;
+    data.translations = {};
+    templates.translations(data);
     data.resources = convertToToc(data.api);
 
     data.utils = {};
@@ -100,6 +102,7 @@ function convert(api, options, callback) {
 
     let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
         templates.main(data);
+    content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
 
     callback(null,content);
 }

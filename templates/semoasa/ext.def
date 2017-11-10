@@ -40,7 +40,7 @@ This extension is deprecated and should be transitioned out of use.
 {{~ blocks :block}}
 |Property|Type|Required|Description
 |---|---|---|---|
-{{~block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=data.utils.join(p.description||'')}}|
 {{~}}
 {{~}}
 

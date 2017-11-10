@@ -57,6 +57,8 @@ function convert(api, options, callback) {
     data.options = options;
     data.header = header;
     data.templates = templates;
+    data.translations = {};
+    templates.translations(data);
     data.oas2_descs = oas_descs.oas2_descs;
     data.oas3_descs = oas_descs.oas3_descs;
     data.utils = {};
@@ -66,9 +68,13 @@ function convert(api, options, callback) {
     data.utils.linkCase = function(s) {
         return s[0].toLowerCase()+s.substr(1);
     };
+    data.utils.join = function(s) {
+        return s.split('\r').join('').split('\n').join(' ').trim();
+    };
 
     let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
         templates.main(data);
+    content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
 
     callback(null,content);
 }
