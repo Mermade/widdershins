@@ -77,8 +77,8 @@ Base URLs:
 
 {{~ blocks :block}}
 {{? !block.title }}{{??}}*{{= block.title}}*{{= '\n\n'}}{{?}}
-|Name|Type|Required|Description|
-|---|---|---|---|
+{{? block.rows.length}}|Name|Type|Required|Description|
+|---|---|---|---|{{?}}
 {{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}

@@ -176,6 +176,15 @@ function schemaToArray(schema,offset,options,data) {
                 if (components[0] === 'oneOf') components[0] = 'xor';
             }
             block = { title: components[0], rows: [] };
+            let dschema = schema;
+            let prefix = '';
+            if (schema.$ref) {
+                dschema = jptr.jptr(data.api,schema.$ref);
+                prefix = schema.$ref.replace('#/components/schemas/','')+'.';
+            }
+            if (dschema.discriminator) {
+                block.title += ' - discriminator: '+prefix+dschema.discriminator.propertyName;
+            }
             container.push(block);
             blockDepth = state.depth;
         }

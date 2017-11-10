@@ -196,7 +196,7 @@ function getParameters(data) {
             requiredUriTemplateStr = requiredUriTemplateStr.split('{'+param.name+'}').join(template);
         }
         if (param.in === 'query') {
-            let template = param.allowReserved ? '{?' : '{?'; // FIXME +
+            let template = param.allowReserved ? '{?' : '{?'; // RFC6570 doesn't support multiple operators (?+ in this case)
             // style prefixes: form, spaceDelimited, pipeDelimited, deepObject
             if (!param.style) param.style = 'form';
             template += stupidity(param.name);
