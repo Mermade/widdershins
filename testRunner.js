@@ -48,9 +48,9 @@ if (options.noschema) widdershinsOptions.schema = false;
 widdershinsOptions.experimental = options.experimental;
 widdershinsOptions.headings = 2;
 widdershinsOptions.verbose = options.verbose;
-if (process.env.TRAVIS_NODE_VERSION) {
-    widdershinsOptions.maxDepth = 1;
-}
+//if (process.env.TRAVIS_NODE_VERSION) {
+//    widdershinsOptions.maxDepth = 1;
+//}
 
 function genStackNext() {
     if (!genStack.length) return false;
@@ -75,6 +75,13 @@ function* check(file) {
     var filename = components[components.length-1];
 
     if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
+
+        if ((filename.indexOf('bungie')>0) && (process.env.TRAVIS_NODE_VERSION)) {
+            console.log(yellow+file);
+            console.log('Skipping due to size');
+            genStackNext();
+            return true;
+        }
 
         var srcStr = fs.readFileSync(path.resolve(file),'utf8');
         var src;
