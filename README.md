@@ -16,7 +16,9 @@ OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ### News
 
-* As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads, Semoasa schemas) by default. You can restore the old behaviour by using the `--noschema` option.
+* As of v3.0.0 Widdershins no longer expands the definition of OpenAPI body parameters / requestBodies by default, unless they have an inline schema. You can restore the old behaviour by using the `--expandBody` option.
+* You may limit the depth of schema examples using the `--maxDepth` option. The default is 10.
+* To omit schemas entirely, please copy and customise the `main.dot` template.
 * As of v3.x you must use the `--harmony` flag if running on Node.js 4
 
 ### To install
