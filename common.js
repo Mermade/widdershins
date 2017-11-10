@@ -268,7 +268,7 @@ function schemaToArray(schema,offset,options,data) {
 
         if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
         if ((entry.type === 'array') && schema.items) {
-            let itemsType = schema.items.type;
+            let itemsType = schema.items.type||'any';
             //console.warn(util.inspect(schema));
             if (schema.items["x-widdershins-oldRef"]) {
                 let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');

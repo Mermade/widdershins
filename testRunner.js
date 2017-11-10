@@ -48,6 +48,9 @@ if (options.noschema) widdershinsOptions.schema = false;
 widdershinsOptions.experimental = options.experimental;
 widdershinsOptions.headings = 2;
 widdershinsOptions.verbose = options.verbose;
+if (process.env.TRAVIS_NODE_VERSION) {
+    widdershinsOptions.maxDepth = 1;
+}
 
 function genStackNext() {
     if (!genStack.length) return false;
