@@ -758,7 +758,7 @@ function convert(openapi, options, callback) {
 
         for (let s in openapi.components.schemas) {
             content += '## '+s+'\n\n';
-            content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
+            content += '<a id="schema'+s.toLowerCase()+'"></a>\n\n';
             let schema = openapi.components.schemas[s];
             schema = common.dereference(schema, circles, openapi, common.clone, options.aggressive);
 
