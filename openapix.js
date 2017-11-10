@@ -448,7 +448,12 @@ function convertInner(api, options, callback) {
 
     let data = {};
     if (options.verbose) console.log('starting deref',api.info.title);
-    data.components = clone(api.components);
+    if (api.components) {
+        data.components = clone(api.components);
+    }
+    else {
+        data.components = {};
+    }
     data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
     if (options.verbose) console.log('finished deref');
 
