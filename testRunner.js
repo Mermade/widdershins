@@ -29,6 +29,7 @@ var argv = require('yargs')
     .argv;
 
 var red = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[31m';
+var yellow = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[33;1m';
 var green = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[32m';
 var normal = process.env.NODE_DISABLE_COLORS ? '' : '\x1b[0m';
 
@@ -76,7 +77,7 @@ function* check(file) {
 
     if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
 
-        if ((filename.indexOf('bungie')>=0) && (process.env.TRAVIS_NODE_VERSION)) {
+        if ((file.indexOf('bungie')>=0) && (process.env.TRAVIS_NODE_VERSION)) {
             console.log(yellow+file);
             console.log('Skipping due to size');
             genStackNext();
