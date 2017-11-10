@@ -54,7 +54,7 @@ Status Code **{{=response.status}}**
 
 |Status|Header|Type|Format|Description|
 |---|---|---|---|---|
-{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format}}|{{=h.description}}|
+{{~ data.responseHeaders :h}}|{{=h.status}}|{{=h.header}}|{{=h.type}}|{{=h.format||''}}|{{=h.description||'No description'}}|
 {{~}}
 
 {{?}}
