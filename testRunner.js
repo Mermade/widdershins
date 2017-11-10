@@ -76,7 +76,7 @@ function* check(file) {
 
     if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
 
-        if ((filename.indexOf('bungie')>0) && (process.env.TRAVIS_NODE_VERSION)) {
+        if ((filename.indexOf('bungie')>=0) && (process.env.TRAVIS_NODE_VERSION)) {
             console.log(yellow+file);
             console.log('Skipping due to size');
             genStackNext();
