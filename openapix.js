@@ -274,7 +274,7 @@ function fakeBodyParameter(data) {
         param.refName = data.bodyParameter.refName;
         bodyParams.push(param);
 
-        if ((param.schema.type === 'object') && data.options.expandBody) {
+        if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
             let props = common.schemaToArray(data.bodyParameter.schema,0,{trim:true},data);
 
             for (let block of props) {
@@ -519,6 +519,9 @@ function convertInner(api, options, callback) {
     data.utils.getResponseExamples = getResponseExamples;
     data.utils.getResponseHeaders = getResponseHeaders;
     data.utils.getAuthenticationStr = getAuthenticationStr;
+    data.utils.join = function(s) {
+        return s.split('\r').join('').split('\n').join(' ').trim();
+    };
 
     let content = '---\n'+yaml.dump(header)+'\n---\n\n'+
         templates.main(data);
