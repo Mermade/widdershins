@@ -7,6 +7,7 @@ data.translations.schemaNone = 'None';
 data.translations.externalDocs = 'External documentation';
 data.translations.secDefNone = 'None';
 data.translations.secDefScopes = 'Scopes';
-data.translations.anonymous = 'anonymous'; 
+data.translations.anonymous = 'anonymous';
+data.translations.continued = 'continued';
 data.translations.indent = '»';
 }}

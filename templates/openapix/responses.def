@@ -27,7 +27,7 @@
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
-{{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true},data); }}
+{{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true,join:true},data); }}
 
 Status Code **{{=response.status}}**
 

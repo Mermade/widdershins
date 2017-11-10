@@ -1,4 +1,4 @@
-# {{=data.api.info.title}} {{=data.version}}
+<h1 id="{{=data.title_prefix}}">{{=data.api.info.title}} {{=data.version}}</h1>
 
 > Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example requests and responses.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
 
@@ -61,7 +61,7 @@ Base URLs:
 ```
 
 {{ var enums = []; }}
-{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true},data); }}
+{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
 {{ for (var block of blocks) {
      for (var p of block.rows) {
        if (p.schema && p.schema.enum) {

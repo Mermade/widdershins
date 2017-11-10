@@ -19,7 +19,7 @@
 {{? flow.scopes}}
 |Scope|Scope Description|
 |---|---|
-{{ for (var sc in flow.scopes) { }}|{{=sc}}|{{=flow.scopes[sc]}}|
+{{ for (var sc in flow.scopes) { }}|{{=sc}}|{{=data.utils.join(flow.scopes[sc])}}|
 {{ } /* of scopes */ }}
 {{?}}
 {{ } /* of flows */ }}
