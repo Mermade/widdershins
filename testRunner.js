@@ -113,7 +113,7 @@ function* check(file) {
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
-                    console.warn(result);
+                    //console.warn(result);
                 }
                 if (ok && result.indexOf('x-widdershins-')>=0) {
                     message = 'Ok except for x-widdershins- references';
