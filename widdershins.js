@@ -24,6 +24,8 @@ var argv = require('yargs')
     .string('environment')
     .alias('e','environment')
     .describe('environment','Load config/override options from file')
+    .boolean('expandBody')
+    .describe('expandBody','Expand requestBody properties in parameters')
     .number('headings')
     .describe('headings','Levels of headings to expand in TOC')
     .default('headings',2)
@@ -32,9 +34,10 @@ var argv = require('yargs')
     .boolean('lang')
     .alias('l','lang')
     .describe('lang','Automatically generate list of languages for code samples')
-    .boolean('noschema')
-    .alias('n','noschema')
-    .describe('noschema','Do not expand schema definitions')
+    .number('maxLevel')
+    .alias('m','maxDepth')
+    .describe('maxDepth','Maximum depth for schema examples')
+    .default('maxDepth',10)
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','File to write output markdown to')
@@ -103,9 +106,10 @@ options.tocSummary = argv.summary;
 options.headings = argv.headings;
 options.experimental = argv.experimental;
 options.resolve = argv.resolve;
+options.expandBody = argv.expandBody;
+options.maxDepth = argv.maxDepth;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
-if (argv.noschema) options.schema = false;
 
 if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');
