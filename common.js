@@ -4,11 +4,13 @@ const util = require('util');
 const jptr = require('jgexml/jpath.js');
 const sampler = require('openapi-sampler');
 const safejson = require('safe-json-stringify');
+const recurse = require('reftools/lib/recurse.js').recurse;
 const visit = require('reftools/lib/visit.js').visit;
 const clone = require('reftools/lib/clone.js').clone;
 const circularClone = require('reftools/lib/clone.js').circularClone;
 const reref = require('reftools/lib/reref.js').reref;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
+const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 
 const MAX_SCHEMA_DEPTH=100;
 
@@ -138,16 +140,35 @@ function inferType(schema) {
     return 'any';
 }
 
+function strim(obj,maxDepth) {
+    if (maxDepth <= 0) return obj;
+    recurse(obj,{},function(obj,key,state){
+        if (state.depth >= maxDepth) {
+            if (Array.isArray(state.parent[state.pkey])) {
+                state.parent[state.pkey] = [];
+            }
+            else if (typeof state.parent[state.pkey] === 'object') {
+                state.parent[state.pkey] = {};
+            }
+        }
+    });
+    return obj;
+}
+
 function schemaToArray(schema,offset,options,data) {
     let iDepth = 0;
     let oDepth = 0;
+    let blockDepth = 0;
     let container = [];
     let block = { title: '', rows: [] };
     container.push(block);
-    let blockDepth = 0;
-    walkSchema(schema,{},{},function(schema,parent,state){
+    let wsState = wsGetState();
+    wsState.combine = true;
+    walkSchema(schema,{},wsState,function(schema,parent,state){
 
+        let isBlock = false;
         if (state.property && (state.property.startsWith('allOf') || state.property.startsWith('anyOf') || state.property.startsWith('oneOf') || (state.property === 'not'))) {
+            isBlock = true;
             let components = (state.property+'/0').split('/');
             if (components[1] !== '0') {
                 if (components[0] === 'allOf') components[0] = 'and';
@@ -156,11 +177,11 @@ function schemaToArray(schema,offset,options,data) {
             }
             block = { title: components[0], rows: [] };
             container.push(block);
-            blockDepth = iDepth;
+            blockDepth = state.depth;
         }
         else {
-            if (blockDepth && iDepth < blockDepth) {
-                block = { title: 'continued', rows: [] };
+            if (blockDepth && state.depth < blockDepth) {
+                block = { title: data.translations.continued, rows: [] };
                 container.push(block);
                 blockDepth = 0;
             }
@@ -170,15 +191,36 @@ function schemaToArray(schema,offset,options,data) {
         entry.schema = schema;
         entry.in = 'body';
         if (state.property && state.property.indexOf('/')) {
-            entry.name = state.property.split('/')[1];
+            if (isBlock) entry.name = data.translations.anonymous
+            else entry.name = state.property.split('/')[1];
         }
         else if (!state.top) console.warn(state.property);
         if (!entry.name && schema.title) entry.name = schema.title;
 
         if (schema.type === 'array' && schema.items && schema.items["x-widdershins-oldRef"] && !entry.name) {
-            entry.name = data.translations.anonymous;
             state.top = false; // force it in
         }
+        else if (schema.type === 'array' && schema.items && schema.items.$ref && !entry.name) {
+            state.top = false; // force it in, for un-dereferenced schemas
+        }
+        else if (!entry.name && state.top && schema.type && schema.type !== 'object' && schema.type !== 'array') {
+            state.top = false;
+        }
+
+        if (!state.top && !entry.name && state.property === 'additionalProperties') {
+            entry.name = '**additionalProperties**';
+        }
+        if (!state.top && !entry.name && state.property === 'additionalItems') {
+            entry.name = '**additionalItems**';
+        }
+        if (!state.top && !entry.name && state.property && state.property.startsWith('patternProperties')) {
+            entry.name = '*'+entry.name+'*';
+        }
+        if (!state.top && !entry.name && !parent.items) {
+            entry.name = data.translations.anonymous;
+        }
+
+        // we should be done futzing with entry.name now
 
         if (entry.name) {
             if (state.depth > iDepth) {
@@ -195,14 +237,16 @@ function schemaToArray(schema,offset,options,data) {
         entry.depth = Math.max(oDepth+offset,0);
         //entry.depth = Math.max(oDepth-1,0)/2;
         //if (entry.depth<1) entry.depth = 0;
-        entry.displayName = ('»'.repeat(entry.depth)+' '+entry.name).trim();
 
         entry.description = schema.description;
         if (options.trim && typeof entry.description === 'string') {
             entry.description = entry.description.trim();
         }
         if (options.join && typeof entry.description === 'string') {
-            entry.description = entry.description.split('\n').join(' ');
+            entry.description = entry.description.split('\r').join('').split('\n').join(' ');
+        }
+        if (options.truncate && typeof entry.description === 'string') {
+            entry.description = entry.description.split('\r').join('').split('\n')[0];
         }
         if (entry.description === 'undefined') { // yes, the string
             entry.description = '';
@@ -230,10 +274,14 @@ function schemaToArray(schema,offset,options,data) {
                 let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
             }
-            if (schema.items.$ref) {
+            if (schema.items.$ref) { // repeat for un-dereferenced schemas
                 let $ref = schema.items.$ref.replace('#/components/schemas/','');
                 itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
             }
+            if (schema.items.anyOf) itemsType = 'anyOf';
+            if (schema.items.allOf) itemsType = 'allOf';
+            if (schema.items.oneOf) itemsType = 'oneOf';
+            if (schema.items.not) itemsType = 'not';
             entry.safeType = '['+itemsType+']';
             //console.warn(entry.safeType);
         }
@@ -247,8 +295,9 @@ function schemaToArray(schema,offset,options,data) {
         }
 
         if (typeof entry.name === 'string' && entry.name.startsWith('x-widdershins-')) {
-            entry.name = '';
+            entry.name = ''; // reset
         }
+        entry.displayName = (data.translations.indent.repeat(entry.depth)+' '+entry.name).trim();
 
         if ((!state.top || entry.type !== 'object') && (entry.name)) {
             block.rows.push(entry);
@@ -265,7 +314,7 @@ function clean(obj) {
     return obj;
 }
 
-function getSample(orig,options,samplerOptions,api){
+function getSampleInner(orig,options,samplerOptions,api){
     if (!options.samplerErrors) options.samplerErrors = new Map();
     let obj = circularClone(orig);
     let refs = api; //Object.assign({},api,orig);
@@ -277,27 +326,39 @@ function getSample(orig,options,samplerOptions,api){
                 obj = JSON.parse(safejson(orig));
                 sample = sampler.sample(obj,samplerOptions,refs);
             }
-            if (typeof sample !== 'undefined') return clean(sample);
+            if (typeof sample !== 'undefined') return sample;
         }
         catch (ex) {
             if (!options.samplerErrors.has(ex.message)) {
                 console.error('# sampler ' + ex.message);
                 options.samplerErrors.set(ex.message,true);
             }
+            else process.stderr.write('.');
             if (options.verbose) {
                 console.error(ex);
             }
             obj = JSON.parse(safejson(orig));
             try {
                 sample = sampler.sample(obj,samplerOptions,refs);
-                if (typeof sample !== 'undefined') return clean(sample);
+                if (typeof sample !== 'undefined') return sample;
             }
             catch (ex) {
-                console.warn('# sampler 2nd error ' + ex.message);
+                if (!options.samplerErrors.has(ex.message)) {
+                    console.warn('# sampler 2nd error ' + ex.message);
+                    options.samplerErrors.set(ex.message,true);
+                }
+                else process.stderr.write('.');
             }
         }
     }
-    return clean(obj);
+    return obj;
+}
+
+function getSample(orig,options,samplerOptions,api){
+    let result = getSampleInner(orig,options,samplerOptions,api);
+    result = clean(result);
+    result = strim(result,options.maxDepth);
+    return result;
 }
 
 module.exports = {
@@ -312,6 +373,7 @@ module.exports = {
     inferType : inferType,
     clone : clone,
     clean : clean,
+    strim : strim,
     getSample : getSample,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray
