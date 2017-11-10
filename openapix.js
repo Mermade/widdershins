@@ -15,6 +15,7 @@ dot.templateSettings.varname = 'data';
 const xml = require('jgexml/json2xml.js');
 const jptr = require('reftools/lib/jptr.js').jptr;
 const dereference = require('reftools/lib/dereference.js').dereference;
+const clone = require('reftools/lib/clone.js').clone;
 const swagger2openapi = require('swagger2openapi');
 
 const common = require('./common.js');
@@ -173,7 +174,7 @@ function getParameters(data) {
             param.shortDesc = param.description.split('\n')[0];
             if (param.shortDesc !== param.description) data.longDescs = true;
         }
-    
+
         if (param.in === 'cookie') {
             if (!param.style) param.style = 'form';
             // style prefixes: form
@@ -273,19 +274,20 @@ function fakeBodyParameter(data) {
         param.refName = data.bodyParameter.refName;
         bodyParams.push(param);
 
-        if (param.schema.type === 'object') {
-            let props = [];
-            common.schemaToArray(data.bodyParameter.schema,0,props,true,data);
+        if ((param.schema.type === 'object') && data.options.expandBody) {
+            let props = common.schemaToArray(data.bodyParameter.schema,0,{trim:true},data);
 
-            for (let prop of props) {
-                let param = {};
-                param.in = 'body';
-                param.schema = prop.schema;
-                param.name = prop.displayName;
-                param.required = prop.required;
-                param.description = prop.description;
-                param.safeType = prop.safeType;
-                bodyParams.push(param);
+            for (let block of props) {
+                for (let prop of block.rows) {
+                    let param = {};
+                    param.in = 'body';
+                    param.schema = prop.schema;
+                    param.name = prop.displayName;
+                    param.required = prop.required;
+                    param.description = prop.description;
+                    param.safeType = prop.safeType;
+                    bodyParams.push(param);
+                }
             }
         }
 
@@ -446,7 +448,8 @@ function convertInner(api, options, callback) {
 
     let data = {};
     if (options.verbose) console.log('starting deref',api.info.title);
-    data.api = dereference(api,api,{bail:false,verbose:options.verbose,$ref:'x-widdershins-oldRef'});
+    data.components = clone(api.components);
+    data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
     if (options.verbose) console.log('finished deref');
 
     if (data.api.components && data.api.components.schemas && data.api.components.schemas["x-widdershins-oldRef"]) {

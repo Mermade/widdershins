@@ -31,14 +31,18 @@
 {{? data.message.headers }}
 #### Headers
 
-{{ var props = []; }}
-{{ data.utils.schemaToArray(data.message.headers,0,props,true); }}
+{{ var blocks = data.utils.schemaToArray(data.message.headers,0,{trim:true,join:true},data); }}
 
 ##### Properties
 
+{{~ blocks :block }}
+{{? block.title }}
+*{{= block.title}}*
+{{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~}}
 {{~}}
 
 {{?}}
@@ -46,14 +50,18 @@
 {{? data.message.payload }}
 #### Payload
 
-{{ var props = []; }}
-{{ data.utils.schemaToArray(data.message.payload,0,props,true); }}
+{{ var blocks = data.utils.schemaToArray(data.message.payload,0,{trim:true,join:true},data); }}
 
 ##### Properties
 
+{{~ blocks :block }}
+{{? block.title }}
+*{{= block.title}}*
+{{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~}}
 {{~}}
 
 {{?}}

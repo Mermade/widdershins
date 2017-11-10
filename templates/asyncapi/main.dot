@@ -62,13 +62,14 @@ Base URLs:
 {{=JSON.stringify(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
 ```
 
-{{ var props = []; }}
 {{ var enums = []; }}
-{{ data.utils.schemaToArray(schema,0,props,true); }}
-{{ for (var p of props) {
-     if (p.schema && p.schema.enum) {
-       for (var e of p.schema.enum) {
-         enums.push({name:p.name,value:e});
+{{ var blocks = data.utils.schemaToArray(schema,0,{trim:true,join:true},data); }}
+{{ for (var block of blocks) {
+     for (var p of block.rows) {
+       if (p.schema && p.schema.enum) {
+         for (var e of p.schema.enum) {
+           enums.push({name:p.name,value:e});
+         }
        }
      }
    }
@@ -76,9 +77,14 @@ Base URLs:
 
 ### Properties
 
+{{~ blocks :block }}
+{{? block.title }}
+*{{= block.title}}*
+{{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~}}
 {{~}}
 
 {{? enums.length > 0 }}

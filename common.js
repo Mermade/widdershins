@@ -138,10 +138,34 @@ function inferType(schema) {
     return 'any';
 }
 
-function schemaToArray(schema,offset,lines,trim,data) {
+function schemaToArray(schema,offset,options,data) {
     let iDepth = 0;
     let oDepth = 0;
+    let container = [];
+    let block = { title: '', rows: [] };
+    container.push(block);
+    let blockDepth = 0;
     walkSchema(schema,{},{},function(schema,parent,state){
+
+        if (state.property && (state.property.startsWith('allOf') || state.property.startsWith('anyOf') || state.property.startsWith('oneOf') || (state.property === 'not'))) {
+            let components = (state.property+'/0').split('/');
+            if (components[1] !== '0') {
+                if (components[0] === 'allOf') components[0] = 'and';
+                if (components[0] === 'anyOf') components[0] = 'or';
+                if (components[0] === 'oneOf') components[0] = 'xor';
+            }
+            block = { title: components[0], rows: [] };
+            container.push(block);
+            blockDepth = iDepth;
+        }
+        else {
+            if (blockDepth && iDepth < blockDepth) {
+                block = { title: 'continued', rows: [] };
+                container.push(block);
+                blockDepth = 0;
+            }
+        }
+
         let entry = {};
         entry.schema = schema;
         entry.in = 'body';
@@ -157,14 +181,14 @@ function schemaToArray(schema,offset,lines,trim,data) {
         }
 
         if (entry.name) {
-        if (state.depth > iDepth) {
-            oDepth++;
-        }
-        if (state.depth < iDepth) {
-            oDepth--;
-            if (oDepth<0) oDepth=0;
-        }
-        iDepth = state.depth;
+            if (state.depth > iDepth) {
+                oDepth++;
+            }
+            if (state.depth < iDepth) {
+                oDepth--;
+                if (oDepth<0) oDepth=0;
+            }
+            iDepth = state.depth;
         //console.warn('state %s, idepth %s, odepth now %s, offset %s',state.depth,iDepth,oDepth,offset);
         }
 
@@ -174,8 +198,11 @@ function schemaToArray(schema,offset,lines,trim,data) {
         entry.displayName = ('»'.repeat(entry.depth)+' '+entry.name).trim();
 
         entry.description = schema.description;
-        if (trim && typeof entry.description === 'string') {
+        if (options.trim && typeof entry.description === 'string') {
             entry.description = entry.description.trim();
+        }
+        if (options.join && typeof entry.description === 'string') {
+            entry.description = entry.description.split('\n').join(' ');
         }
         if (entry.description === 'undefined') { // yes, the string
             entry.description = '';
@@ -189,13 +216,22 @@ function schemaToArray(schema,offset,lines,trim,data) {
             entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
             entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
         }
+        if (schema.$ref) { // repeat for un-dereferenced schemas
+            entry.$ref = schema.$ref.replace('#/components/schemas/','');
+            entry.type = '$ref';
+            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+        }
 
         if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
-        if ((entry.type === 'array') && schema.items && schema.items.type) {
+        if ((entry.type === 'array') && schema.items) {
             let itemsType = schema.items.type;
             //console.warn(util.inspect(schema));
             if (schema.items["x-widdershins-oldRef"]) {
                 let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
+                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
+            }
+            if (schema.items.$ref) {
+                let $ref = schema.items.$ref.replace('#/components/schemas/','');
                 itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
             }
             entry.safeType = '['+itemsType+']';
@@ -214,11 +250,11 @@ function schemaToArray(schema,offset,lines,trim,data) {
             entry.name = '';
         }
 
-        if ((!state.top) && (entry.name)) {
-            lines.push(entry);
+        if ((!state.top || entry.type !== 'object') && (entry.name)) {
+            block.rows.push(entry);
         }
     });
-    return lines;
+    return container;
 }
 
 function clean(obj) {
@@ -232,10 +268,9 @@ function clean(obj) {
 function getSample(orig,options,samplerOptions,api){
     if (!options.samplerErrors) options.samplerErrors = new Map();
     let obj = circularClone(orig);
-    let refs = Object.assign({},api,orig);
+    let refs = api; //Object.assign({},api,orig);
     if (options.sample && obj) {
         try {
-            obj = reref(obj,{});
             var sample = sampler.sample(obj,samplerOptions,refs); // was api
             if (sample && typeof sample.$ref !== 'undefined') {
                 //console.warn(util.inspect(obj));
@@ -257,7 +292,9 @@ function getSample(orig,options,samplerOptions,api){
                 sample = sampler.sample(obj,samplerOptions,refs);
                 if (typeof sample !== 'undefined') return clean(sample);
             }
-            catch (ex) {}
+            catch (ex) {
+                console.warn('# sampler 2nd error ' + ex.message);
+            }
         }
     }
     return clean(obj);

@@ -169,7 +169,8 @@ function processOperation(op, method, resource, options) {
         body.type = rbType;
         parameters.push(body);
         if (options.schema && body.schema && body.schema.type && body.schema.type === 'object') {
-            common.schemaToArray(body.schema,1,parameters,false);
+            let newParameters = common.schemaToArray(body.schema,1,{trim:false},data);
+            parameters = parameters.concat(newParameters);
         }
     }
 
@@ -532,10 +533,9 @@ function processOperation(op, method, resource, options) {
             for (var ct in response.content) {
                 var contentType = response.content[ct];
                 if (contentType.schema && !contentType.schema.$ref) {
-                    data.schemaProperties = [];
                     data.responseStatus = resp;
                     data.response = response;
-                    common.schemaToArray(contentType.schema,0,data.schemaProperties,true);
+                    data.schemaProperties = common.schemaToArray(contentType.schema,0,{trim:true},data);
 
                     data.enums = [];
                     for (var prop in data.schemaProperties) {
@@ -776,8 +776,7 @@ function convert(openapi, options, callback) {
 
             data.schema = schema;
             data.enums = [];
-            data.schemaProperties = [];
-            common.schemaToArray(schema,0,data.schemaProperties,true);
+            data.schemaProperties = common.schemaToArray(schema,0,{trim:true},data);
 
             for (let p of data.schemaProperties) {
                 if (p.schema && p.schema.enum) {

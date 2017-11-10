@@ -27,14 +27,17 @@
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
-{{ var props = []; }}
-{{ data.utils.schemaToArray(responseSchema,0,props,true,data); }}
+{{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true},data); }}
 
 Status Code **{{=response.status}}**
 
+{{~ blocks :block}}
+{{? !block.title }}
 |Name|Type|Required|Description|
-|---|---|---|---|
-{{~props :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+|---|---|---|---|{{??}}*{{=block.title}}*
+{{?}}
+{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~}}
 {{~}}
 
 {{ data.response = response; }}

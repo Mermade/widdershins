@@ -28,7 +28,7 @@ Base URLs:
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
-<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-')}}">{{= r}}</h1>
+<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-')}}">{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
@@ -48,24 +48,26 @@ Base URLs:
 {{? data.api.components && data.api.components.schemas }}
 # Schemas
 
-{{ for (var s in data.api.components.schemas) { }}
+{{ for (var s in data.components.schemas) { }}
+{{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
 ## {{=s}}
 
-<a name="schema{{=s.toLowerCase()}}"></a>
+<a id="schema{{=s.toLowerCase()}}"></a>
 
 ```json
 {{=data.utils.safejson(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
 ```
 
-{{ var props = []; }}
 {{ var enums = []; }}
-{{ data.utils.schemaToArray(schema,-1,props,true,data); }}
-{{ for (var p of props) {
-     if (p.schema && p.schema.enum) {
-       for (var e of p.schema.enum) {
-         enums.push({name:p.name,value:e});
+{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true},data); }}
+{{ for (var block of blocks) {
+     for (var p of block.rows) {
+       if (p.schema && p.schema.enum) {
+         for (var e of p.schema.enum) {
+           enums.push({name:p.name,value:e});
+         }
        }
      }
    }
@@ -73,9 +75,12 @@ Base URLs:
 
 ### Properties
 
+{{~ blocks :block}}
+{{? !block.title }}{{??}}*{{= block.title}}*{{= '\n\n'}}{{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ props :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~}}
 {{~}}
 
 {{? enums.length > 0 }}
