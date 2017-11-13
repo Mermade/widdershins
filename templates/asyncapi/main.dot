@@ -83,7 +83,7 @@ Base URLs:
 {{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
 

@@ -669,6 +669,8 @@ function convert(openapi, options, callback) {
 
     data = {};
     data.api = data.openapi = openapi;
+    data.translations = {};
+    templates.translations(data);
     data.header = header;
 
     content = '';
