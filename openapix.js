@@ -528,8 +528,13 @@ function convertInner(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
-    let content = '---\n'+yaml.dump(header)+'\n---\n\n'+
-        templates.main(data);
+    let content = '---\n'+yaml.dump(header)+'\n---\n\n';
+    try {
+        content += templates.main(data);
+    }
+    catch (ex) {
+        console.warn(ex);
+    }
     content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
 
     callback(null,content);
