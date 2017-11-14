@@ -12,8 +12,6 @@ const reref = require('reftools/lib/reref.js').reref;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 
-const MAX_SCHEMA_DEPTH=100;
-
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
 var statusCodes = require('./statusCodes.json');

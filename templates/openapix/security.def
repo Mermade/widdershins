@@ -6,8 +6,8 @@
 * API Key
     - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description || ''}}
 {{?}}
-{{? sd.type == 'basic'}}
-- Basic Authentication. {{=sd.description || ''}}
+{{? sd.type == 'http'}}
+- HTTP Authentication, scheme: {{=sd.scheme}} {{=sd.description || ''}}
 {{?}}
 {{? sd.type == 'oauth2'}}
 - oAuth2 authentication. {{=sd.description || ''}}
