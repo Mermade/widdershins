@@ -369,6 +369,7 @@ function getSampleInner(orig,options,samplerOptions,api){
 }
 
 function getSample(orig,options,samplerOptions,api){
+    if (orig.example) return orig.example;
     let result = getSampleInner(orig,options,samplerOptions,api);
     result = clean(result);
     result = strim(result,options.maxDepth);
