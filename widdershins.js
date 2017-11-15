@@ -38,6 +38,8 @@ var argv = require('yargs')
     .alias('m','maxDepth')
     .describe('maxDepth','Maximum depth for schema examples')
     .default('maxDepth',10)
+    .boolean('omitBody')
+    .describe('omitBody','Omit top-level fake body parameter object')
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','File to write output markdown to')
@@ -108,6 +110,7 @@ options.experimental = argv.experimental;
 options.resolve = argv.resolve;
 options.expandBody = argv.expandBody;
 options.maxDepth = argv.maxDepth;
+options.omitBody = argv.omitBody;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

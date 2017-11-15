@@ -272,10 +272,13 @@ function fakeBodyParameter(data) {
         param.required = data.operation.requestBody.required || false;
         param.description = data.operation.requestBody.description;
         param.refName = data.bodyParameter.refName;
-        bodyParams.push(param);
+        if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
+           bodyParams.push(param);
+        }
 
         if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
-            let props = common.schemaToArray(data.bodyParameter.schema,0,{trim:true},data);
+            let offset = (data.options.omitBody ? -1 : 0);
+            let props = common.schemaToArray(data.bodyParameter.schema,offset,{trim:true},data);
 
             for (let block of props) {
                 for (let prop of block.rows) {
