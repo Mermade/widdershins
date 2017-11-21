@@ -320,8 +320,7 @@ function getResponses(data) {
             }
         }
         if (url) entry.meaning = '[' + entry.meaning + '](' + url + ')';
-        entry.description = response.description;
-        entry.description = entry.description.trim();
+        entry.description = (typeof response.description === 'string' ? response.description.trim() : undefined);
         entry.schema = response.content ? data.translations.schemaInline : data.translations.schemaNone;
         for (let ct in response.content) {
             let contentType = response.content[ct];
