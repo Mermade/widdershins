@@ -139,27 +139,31 @@ function getParameters(data) {
         //var temp = '';
         param.exampleValues = {};
         if (!param.required) param.required = false;
-        if (param.schema && !param.safeType) {
-            param.originalType = param.schema.type;
-            param.safeType = param.schema.type || common.inferType(param.schema);
-            if (param.schema.format) {
-                param.safeType = param.safeType+'('+param.schema.format+')';
+        let pSchema = param.schema;
+        if (!pSchema && param.content) {
+            pSchema = Object.values(param.content)[0].schema;
+        }
+        if (pSchema && !param.safeType) {
+            param.originalType = pSchema.type;
+            param.safeType = pSchema.type || common.inferType(pSchema);
+            if (pSchema.format) {
+                param.safeType = param.safeType+'('+pSchema.format+')';
             }
-            if ((param.safeType === 'array') && (param.schema.items)) {
-                let itemsType = param.schema.items.type;
+            if ((param.safeType === 'array') && (pSchema.items)) {
+                let itemsType = pSchema.items.type;
                 if (!itemsType) {
-                    itemsType = common.inferType(param.schema.items);
+                    itemsType = common.inferType(pSchema.items);
                 }
                 param.safeType = 'array['+itemsType+']';
             }
-            if (param.schema["x-widdershins-oldRef"]) {
-                let schemaName = param.schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
+            if (pSchema["x-widdershins-oldRef"]) {
+                let schemaName = pSchema["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 param.safeType = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
             }
             if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
         }
-        if (param.schema) {
-            param.exampleValues.object = param.example || param.default || common.getSample(param.schema,data.options,{},data.api);
+        if (pSchema) {
+            param.exampleValues.object = param.example || param.default || common.getSample(pSchema,data.options,{},data.api);
             if (typeof param.exampleValues.object === 'object') {
                 param.exampleValues.json = safejson(param.exampleValues.object,null,2);
             }
