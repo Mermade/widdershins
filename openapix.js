@@ -422,16 +422,16 @@ function getResponseHeaders(data) {
 }
 
 function getAuthenticationStr(data) {
-    var list = '';
-    for (var s in data.security) {
-        var link;
-        link = '#/components/securitySchemes/' + Object.keys(data.security[s])[0];
-        var secDef = jptr(data.api, link);
-        list += (list ? ', ' : '') + (secDef ? secDef.type : data.translations.secDefNone);
-        var scopes = data.security[s][Object.keys(data.security[s])[0]];
+    let list = '';
+    for (let s in data.security) {
+        let secName = Object.keys(data.security[s])[0];
+        let link = '#/components/securitySchemes/' + secName;
+        let secDef = jptr(data.api, link);
+        list += (list ? ', ' : '') + (secDef ? secName : data.translations.secDefNone);
+        let scopes = data.security[s][secName];
         if (Array.isArray(scopes) && (scopes.length > 0)) {
             list += ' ( '+data.translations.secDefScopes+': ';
-            for (var scope in scopes) {
+            for (let scope in scopes) {
                 list += scopes[scope] + ' ';
             }
             list += ')';
@@ -449,6 +449,7 @@ function convertInner(api, options, callback) {
     defaults.search = true;
     defaults.theme = 'darkula';
     defaults.headingLevel = 2;
+    defaults.templateCallback = function(template,stage,data) { return data; };
 
     options = Object.assign({},defaults,options);
 
@@ -535,12 +536,16 @@ function convertInner(api, options, callback) {
     };
 
     let content = '---\n'+yaml.dump(header)+'\n---\n\n';
+        data = options.templateCallback('main', 'pre', data);
+        if (data.append) { content += data.append; delete data.append; }
     try {
         content += templates.main(data);
     }
     catch (ex) {
         console.warn(ex);
     }
+    data = options.templateCallback('main', 'post', data);
+    if (data.append) { content += data.append; delete data.append; }
     content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
 
     callback(null,content);

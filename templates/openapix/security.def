@@ -3,7 +3,7 @@
 {{ for (var s in data.api.components.securitySchemes) { }}
 {{ var sd = data.api.components.securitySchemes[s]; }}
 {{? sd.type == 'apiKey' }}
-* API Key
+* API Key ({{=s}})
     - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description || ''}}
 {{?}}
 {{? sd.type == 'http'}}
