@@ -5,7 +5,7 @@
 {{ for (var l in data.response.links) { }}
 {{ var link = data.response.links[l]; }}
 
-**{{=l}}** => <a href="#">{{=link.operationId||link.operationRef}}</a> 
+**{{=l}}** => {{?link.operationId}}<a href="#opId{{=link.operationId}}">{{=link.operationId}}</a>{{??}}{{=link.operationRef}}{{?}}
 
 {{? link.parameters }}
 |Parameter|Expression|

@@ -1,5 +1,9 @@
 ## {{= data.operationUniqueName}}
 
+{{? data.operation.operationId}}
+<a id="opId{{=data.operation.operationId}}"></a>
+{{?}}
+
 {{ data.methodUpper = data.method.verb.toUpperCase(); }}
 {{ data.url = data.baseUrl + data.method.path; }}
 {{ data.parameters = data.operation.parameters; }}
