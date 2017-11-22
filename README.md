@@ -110,6 +110,17 @@ If you specify an `options.templateCallback` function, it will be called before 
 * [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
+## User templates
+
+To override a `.dot` template, you need to copy over the child `.def` partials as well.
+
+To override a `.def` partial, you need to copy over the parent `.dot` template as well. For OpenAPI 3 this will be `main.dot`
+except for `parameters`, `responses` and `callbacks`, which are children of the `operation.dot` template.
+
+This means it is usually easiest to copy all `.dot` and `.def` files to your user templates directory. A visual `diff` tool
+which can run across two directories (such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org)) may be useful
+in bringing in changes from Widdershins updates.
+
 ## Tests
 
 To run a test-suite:
