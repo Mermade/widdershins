@@ -38,7 +38,7 @@
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
     "node-fetch": "^1.7.3",
-    "openapi-sampler": "^1.0.0-beta.7",
+    "openapi-sampler": "^1.0.0-beta.8",
     "reftools": "0.0.18",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
     "swagger2openapi": "^2.11.2",
