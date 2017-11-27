@@ -82,6 +82,9 @@ Base URLs:
 {{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
+{{? blocks[0].rows.length === 0 }}
+*None*
+{{?}}
 
 {{? enums.length > 0 }}
 #### Enumerated Values

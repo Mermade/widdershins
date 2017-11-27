@@ -314,7 +314,7 @@ function schemaToArray(schema,offset,options,data) {
 }
 
 function clean(obj) {
-    if (!obj) return {};
+    if (typeof obj === 'undefined') return {};
     visit(obj,{},{filter:function(obj,key,state){
         if (!key.startsWith('x-widdershins')) return obj[key];
     }});
@@ -336,7 +336,7 @@ function getSampleInner(orig,options,samplerOptions,api){
             if (typeof sample !== 'undefined') {
                 if (Object.keys(sample).length) return sample
                 else {
-                    return sampler.sample({ type: 'object', properties: { anonymous: obj}},samplerOptions,defs);
+                    return sampler.sample({ type: 'object', properties: { anonymous: obj}},samplerOptions,defs).anonymous;
                 }
             }
         }
