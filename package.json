@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "2.2.11",
+  "version": "3.0.0-beta0.4",
   "description": "OpenApi / Swagger / AsyncAPI definition to slate / shins compatible markdown",
   "main": "index.js",
   "bin": {
@@ -25,7 +25,8 @@
     "shins",
     "api",
     "docs",
-    "documentation"
+    "documentation",
+    "semoasa"
   ],
   "author": "Mike Ralphson",
   "license": "MIT",
@@ -38,9 +39,11 @@
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
     "node-fetch": "^1.7.3",
-    "openapi-sampler": "^1.0.0-beta.7",
-    "openapi_optimise": "^1.0.4",
-    "swagger2openapi": "^2.6.1",
+    "openapi-sampler": "^1.0.0-beta.8",
+    "reftools": "0.0.18",
+    "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
+    "swagger2openapi": "^2.11.7",
+    "urijs": "^1.19.0",
     "yargs": "^10.0.3"
   },
   "devDependencies": {

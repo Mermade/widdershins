@@ -14,12 +14,6 @@ var argv = require('yargs')
     .usage('widdershins [options] {input-file|url} [[-o] output markdown]')
     .demand(1)
     .strict()
-    .boolean('yaml')
-    .alias('y','yaml')
-    .describe('yaml','Load spec in yaml format, default json')
-    .boolean('aggressive')
-    .alias('a','aggressive')
-    .describe('aggressive','Use alternative dereffing logic')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
@@ -30,23 +24,30 @@ var argv = require('yargs')
     .string('environment')
     .alias('e','environment')
     .describe('environment','Load config/override options from file')
+    .boolean('expandBody')
+    .describe('expandBody','Expand requestBody properties in parameters')
     .number('headings')
-    .describe('Levels of headings to expand in TOC')
+    .describe('headings','Levels of headings to expand in TOC')
     .default('headings',2)
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
     .alias('l','lang')
     .describe('lang','Automatically generate list of languages for code samples')
-    .boolean('noschema')
-    .alias('n','noschema')
-    .describe('noschema','Do not expand schema definitions')
+    .number('maxLevel')
+    .alias('m','maxDepth')
+    .describe('maxDepth','Maximum depth for schema examples')
+    .default('maxDepth',10)
+    .boolean('omitBody')
+    .describe('omitBody','Omit top-level fake body parameter object')
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','File to write output markdown to')
     .boolean('raw')
     .alias('r','raw')
     .describe('raw','Output raw schemas not example values')
+    .boolean('resolve')
+    .describe('resolve','Resolve external $refs')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
@@ -61,6 +62,9 @@ var argv = require('yargs')
     .describe('user_templates','directory to load override templates from')
     .boolean('verbose')
     .describe('verbose','Increase verbosity')
+    .boolean('experimental')
+    .alias('x','experimental')
+    .describe('experimental','For backwards compatibility only, ignored')
     .help('h')
     .alias('h', 'help')
     .version()
@@ -99,13 +103,16 @@ options.user_templates = argv.user_templates;
 options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
-options.aggressive = argv.aggressive;
 options.verbose = argv.verbose;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
+options.experimental = argv.experimental;
+options.resolve = argv.resolve;
+options.expandBody = argv.expandBody;
+options.maxDepth = argv.maxDepth;
+options.omitBody = argv.omitBody;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
-if (argv.noschema) options.schema = false;
 
 if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');
@@ -122,6 +129,7 @@ if (argv.environment) {
 var input = argv._[0];
 var up = url.parse(input);
 if (up.protocol && up.protocol.startsWith('http')) {
+    options.source = input;
     fetch(input)
     .then(function (res) {
         return res.text();

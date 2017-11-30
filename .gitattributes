@@ -1,1 +1,1 @@
-*.dot diff=git
+defs/* linguist-vendored=true

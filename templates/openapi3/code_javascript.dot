@@ -5,7 +5,7 @@
 {{?}}
 $.ajax({
   url: '{{=data.url}}',
-  method: '{{=data.method}}',
+  method: '{{=data.method.verb}}',
 {{?data.requiredQueryString}}  data: '{{=data.requiredQueryString}}',{{?}}
 {{?data.allHeaders.length}}  headers: headers,{{?}}
   success: function(data) {

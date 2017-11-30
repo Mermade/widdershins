@@ -1,6 +1,0 @@
-<h3 id="{{=data.opName}}-responses">Responses</h3>
-
-Status|Meaning|Description|Schema
----|---|---|---|
-{{~ data.responses :r}}{{=r.status}}|{{=r.meaning}}|{{=r.description}}|{{=r.schema}}
-{{~}}
