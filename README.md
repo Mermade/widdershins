@@ -29,26 +29,28 @@ OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ```
 node widdershins [options] {input-file|url} [[-o] output markdown]
-
-Options:
+  --expandBody          Expand requestBody properties in parameters    [boolean]
+  --headings            Levels of headings to expand in TOC[number] [default: 2]
+  --omitBody            Omit top-level fake body parameter object      [boolean]
+  --resolve             Resolve external $refs                         [boolean]
+  --summary             Use summary instead of operationId for TOC     [boolean]
+  --verbose             Increase verbosity                             [boolean]
   -h, --help            Show help                                      [boolean]
   --version             Show version number                            [boolean]
-  -y, --yaml            Load spec in yaml format, default json         [boolean]
   -c, --code            Turn generic code samples off                  [boolean]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
   -e, --environment     Load config/override options from file          [string]
-  --headings            Level of headings to expand in TOC [number] [default: 2]
   -i, --includes        List of files to include, comma separated       [string]
   -l, --lang            Automatically generate list of languages for code
                         samples                                        [boolean]
-  -n, --noschema        Do not expand schema definitions               [boolean]
+  -m, --maxDepth        Maximum depth for schema examples          [default: 10]
   -o, --outfile         File to write output markdown to                [string]
   -r, --raw             Output raw schemas not example values          [boolean]
   -s, --search          Whether to enable search or not, default true
                                                        [boolean] [default: true]
-  --summary             Use summary instead of operationId in TOC      [boolean]
   -t, --theme           Syntax-highlighter theme to use                 [string]
   -u, --user_templates  directory to load override templates from       [string]
+  -x, --experimental    For backwards compatibility only, ignored      [boolean]
 ```
 
 or
