@@ -1,7 +1,6 @@
 'use strict';
 
 const openapi3 = require('./openapi3.js');
-const openapix = require('./openapix.js');
 const swagger2openapi = require('swagger2openapi');
 
 function convert(api, options, callback) {
@@ -16,12 +15,7 @@ function convert(api, options, callback) {
         }
         else {
             options.resolve = false; // done now
-            if (options.experimental) {
-                openapix.convert(sOptions.openapi, options, callback);
-            }
-            else {
-                openapi3.convert(sOptions.openapi, options, callback);
-            }
+            openapi3.convert(sOptions.openapi, options, callback);
         }
     });
 }

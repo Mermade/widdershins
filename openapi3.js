@@ -1,251 +1,118 @@
 'use strict';
 
-var up = require('url');
-var path = require('path');
-var util = require('util');
+const path = require('path');
+const util = require('util');
+const up = require('url');
 
-var yaml = require('js-yaml');
-var xml = require('jgexml/json2xml.js');
-var jptr = require('jgexml/jpath.js');
-var sampler = require('openapi-sampler');
-const dereference2 = require('reftools/lib/dereference.js').dereference;
-var dot = require('dot');
+const yaml = require('js-yaml');
+const safejson = require('safe-json-stringify');
+const uri = require('urijs');
+const URITemplate = require('urijs/src/URITemplate')
+const dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
-var templates;
 
-var common = require('./common.js');
+const xml = require('jgexml/json2xml.js');
+const jptr = require('reftools/lib/jptr.js').jptr;
+const dereference = require('reftools/lib/dereference.js').dereference;
+const clone = require('reftools/lib/clone.js').clone;
+const swagger2openapi = require('swagger2openapi');
 
-var data;
-var content;
+const common = require('./common.js');
 
-function dereference(obj,refs,options){
-    if (options.verbose) console.log('dereffing '+util.inspect(obj));
-    //options.verbose = true;
-    let o = dereference2(obj,refs,options);
-    //options.verbose = false;
-    if (options.verbose) console.log('done');
-    return o;
-}
+let templates;
 
-/**
-* function to reformat openapi paths object into an iodocs-style resources object, tags-first
-*/
-function convertToToc(source) {
-    var apiInfo = common.clone(source, false);
-    apiInfo.resources = {};
-    for (var p in apiInfo.paths) {
-        for (var m in apiInfo.paths[p]) {
-            if (m != 'parameters') {
-                var sMethod = apiInfo.paths[p][m];
-                var ioMethod = {};
-                ioMethod.path = p;
-                ioMethod.op = m;
-                var sMethodUniqueName = (sMethod.operationId ? sMethod.operationId : m + '_' + p).split('/').join('_');
+function convertToToc(source,data) {
+    let resources = {};
+    for (var p in source.paths) {
+        for (var m in source.paths[p]) {
+            if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
+                var method = {};
+                method.operation = source.paths[p][m];
+                method.pathItem = source.paths[p];
+                method.verb = m;
+                method.path = p;
+                method.pathParameters = source.paths[p].parameters;
+                var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
                 sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
-                var tagName = 'Default';
-                if (sMethod.tags && sMethod.tags.length > 0) {
-                    tagName = sMethod.tags[0];
+                if (data.options.tocSummary && method.operation.summary) {
+                    sMethodUniqueName = method.operation.summary;
                 }
-                if (!apiInfo.resources[tagName]) {
-                    apiInfo.resources[tagName] = {};
-                    if (apiInfo.tags) {
-                        for (var t in apiInfo.tags) {
-                            var tag = apiInfo.tags[t];
-                            if (tag.name == tagName) {
-                                apiInfo.resources[tagName].description = tag.description;
-                                apiInfo.resources[tagName].externalDocs = tag.externalDocs;
+                var tagName = data.translations.defaultTag;
+                if (method.operation.tags && method.operation.tags.length > 0) {
+                    tagName = method.operation.tags[0];
+                }
+                if (!resources[tagName]) {
+                    resources[tagName] = {};
+                    if (source.tags) {
+                        for (var t in source.tags) {
+                            var tag = source.tags[t];
+                            if (tag.name === tagName) {
+                                resources[tagName].description = tag.description;
+                                resources[tagName].externalDocs = tag.externalDocs;
                             }
                         }
                     }
                 }
-                if (!apiInfo.resources[tagName].methods) apiInfo.resources[tagName].methods = {};
-                apiInfo.resources[tagName].methods[sMethodUniqueName] = ioMethod;
+                if (!resources[tagName].methods) resources[tagName].methods = {};
+                resources[tagName].methods[sMethodUniqueName] = method;
             }
         }
     }
-    delete apiInfo.paths; // to keep size down
-    delete apiInfo.definitions; // ditto
-    delete apiInfo.components; // ditto
-    return apiInfo;
+    return resources;
 }
 
-function processOperation(op, method, resource, options) {
-    var header = data.header;
-    var opName = (op.operationId ? op.operationId : data.subtitle);
-    if (options.tocSummary && op.summary) opName = op.summary;
-    content += '## ' + opName + '\n\n'; // TODO template?
-
-    var url = (data.servers[0].url + method.path).replace(/([^:]\/)\/+/g,'$1');
-    var produces = [];
-    var consumes = [];
-
-    var rbType = 'object';
-    if (op.requestBody) {
-        if (op.requestBody.$ref) {
-            rbType = op.requestBody.$ref.replace('#/components/requestBodies/', '');
-            rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
-            op.requestBody = jptr.jptr(data.openapi, op.requestBody.$ref);
-        }
-        for (var rb in op.requestBody.content) {
-            consumes.push(rb);
-        }
-    }
-    for (var r in op.responses) {
-        var response = op.responses[r];
-        if (response.$ref) {
-            response = jptr.jptr(data.openapi, response.$ref);
-        }
+function fakeProdCons(data) {
+    data.produces = [];
+    data.consumes = [];
+    data.bodyParameter = {};
+    data.bodyParameter.exampleValues = {};
+    for (var r in data.operation.responses) {
+        var response = data.operation.responses[r];
         for (var prod in response.content) {
-            produces.push(prod);
+            data.produces.push(prod);
         }
     }
-
-    data.method = method.op;
-    data.methodUpper = method.op.toUpperCase();
-    data.produces = produces;
-    data.consumes = consumes;
-    data.url = url;
-    data.operation = method;
-    data.operationId = op.operationId;
-    data.opName = opName.split(' ').join('-');
-    data.tags = op.tags;
-    data.security = op.security;
-    data.resource = resource; // TODO for callbacks?
-    data.queryString = '';
-    data.requiredQueryString = '';
-    data.queryParameters = [];
-    data.requiredParameters = [];
-    data.headerParameters = [];
-    data.bodyParameter = null;
-
-    var sharedParameters = data.openapi.paths[method.path].parameters || [];
-    var opParameters = (data.openapi.paths[method.path][method.op].parameters || []);
-
-    // dereference shared/op parameters while separate before removing overridden shared parameters
-    for (var p in sharedParameters) {
-        if (sharedParameters[p]["$ref"]) {
-            sharedParameters[p] = jptr.jptr(data.openapi, sharedParameters[p]["$ref"]);
-        }
-    }
-    for (var p in opParameters) {
-        if (opParameters[p]["$ref"]) {
-            opParameters[p] = jptr.jptr(data.openapi, opParameters[p]["$ref"]);
-        }
-    }
-
-    // remove overridden shared (path) parameters
-    if ((sharedParameters.length > 0) && (opParameters.length > 0)) {
-        sharedParameters = [].concat(sharedParameters); // clone
-        for (var sp of sharedParameters) {
-            var match = opParameters.find(function (elem) {
-                return ((elem.name == sp.name) && (elem.in == sp.in));
-            });
-            if (match) {
-                sp["x-widdershins-delete"] = true;
-            }
-        }
-        sharedParameters = sharedParameters.filter(function (e, i, a) {
-            return !e["x-widdershins-delete"];
-        });
-    }
-
-    // combine
-    var parameters = sharedParameters.concat(opParameters);
-
+    let op = data.method.operation;
     if (op.requestBody) {
-        // fake a version 2-style body parameter
-        var body = {};
-        body.name = 'body';
-        body.in = 'body';
-        body.required = op.requestBody.required;
-        body.description = op.requestBody.description ? op.requestBody.description : 'No description';
-        body.schema = op.requestBody.content[Object.keys(op.requestBody.content)[0]].schema;
-        if (body.schema && typeof body.schema.$ref === 'string') {
-            rbType = body.schema.$ref.replace('#/components/schemas/','');
-            rbType = '['+rbType+'](#'+common.gfmLink('schema'+rbType)+')';
-            body.schema = dereference(body.schema, data.openapi, {});
-        }
-        body.type = rbType;
-        parameters.push(body);
-        if (options.schema && body.schema && body.schema.type && body.schema.type === 'object') {
-            let newParameters = common.schemaToArray(body.schema,1,{trim:false},data);
-            parameters = parameters.concat(newParameters);
-        }
-    }
-
-    for (var p in parameters) {
-        var param = parameters[p];
-        param.required = (param.required ? param.required : false);
-        param.safeType = (param.type || 'object');
-        if (!param.depth) param.depth = 0;
-        if (param.safeType == 'object') {
-            if (param.schema && param.schema.type) {
-                param.safeType = param.schema.type;
-            }
-            if (param.schema && param.schema["$ref"]) {
-                param.safeType = param.schema["$ref"].split('/').pop();
-                param.safeType = '['+param.safeType+'](#'+common.gfmLink('schema'+param.safeType)+')';
-            }
-        }
-        if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items.type) {
-            param.safeType += '[' + param.schema.items.type + ']';
-        }
-        if ((param.safeType == 'array') && param.schema && param.schema.items && param.schema.items["$ref"]) {
-            param.safeType += '[' + param.schema.items["$ref"].split('/').pop() + ']';
-        }
-        if (param.schema && param.schema.format) {
-            param.safeType = param.safeType + '(' + param.schema.format + ')';
-        }
-        if (param.schema && param.schema["$ref"]) {
-            param.schema = dereference(param.schema,data.openapi,{});
-            param.exampleSchema = param.schema;
-        }
-        else {
-            param.exampleSchema = param.schema || {};
-        }
-        param.exampleValues = {};
-        param.exampleValues.json = '{}';
-        param.exampleValues.object = {};
-        try {
-            var obj = sampler.sample(param.exampleSchema, { skipReadOnly: true }, data.openapi);
-            var t = obj;
-            if (typeof t == 'string') t = "'" + t + "'";
-            if (typeof t == 'object') t = JSON.stringify(t, null, 2);
-            param.exampleValues.json = t;
-            param.exampleValues.object = obj;
-        }
-        catch (ex) {
-            console.error('# '+ex);
-            if (options.verbose) console.error(ex);
-            param.exampleValues.json = '...';
-        }
-        if ((param.in == 'body') && (!data.bodyParameter)) { // ignore expanded lines
-            data.bodyParameter = param;
-        }
-        if (param.in == 'header') {
-            data.headerParameters.push(param);
-        }
-        if (param.in == 'query') {
-            let temp = param.exampleValues.object;
-            if (Array.isArray(temp)) {
-                temp = '...';
-            }
-            if (!param.allowReserved) {
-                temp = encodeURIComponent(temp);
-            }
-            data.queryParameters.push(param);
-            data.queryString += (data.queryString ? '&' : '?') + param.name + '=' + temp;
-            if (param.required) {
-                data.requiredQueryString += (data.requiredQueryString ?
-                    '&' : '?') + param.name + '=' + temp;
-                data.requiredParameters.push(param);
+        for (var rb in op.requestBody.content) {
+            data.consumes.push(rb);
+            if (!data.bodyParameter.exampleValues.object) {
+                data.bodyParameter.present = true;
+                data.bodyParameter.contentType = rb;
+                if (op.requestBody["x-widdershins-oldRef"]) {
+                    data.bodyParameter.refName = op.requestBody["x-widdershins-oldRef"].replace('#/components/requestBodies/','');
+                }
+                data.bodyParameter.schema = op.requestBody.content[rb].schema;
+                data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{},data.api);
+                if (typeof data.bodyParameter.exampleValues.object === 'object') {
+                    data.bodyParameter.exampleValues.json = safejson(data.bodyParameter.exampleValues.object,null,2);
+                }
+                else {
+                    data.bodyParameter.exampleValues.json = data.bodyParameter.exampleValues.object;
+                }
             }
         }
     }
-    data.parameters = parameters;
+}
 
-    data.allHeaders = common.clone(data.headerParameters);
+function getParameters(data) {
+
+    function stupidity(varname) {
+        let s = encodeURIComponent(varname);
+        s = s.split('-').join('%2D');
+        s = s.split('$').join('%24');
+        s = s.split('.').join('%2E');
+        return s;
+    }
+
+    data.allHeaders = [];
+    data.headerParameters = [];
+    data.requiredParameters = [];
+    let uriTemplateStr = data.method.path.split('/ /').join('/+/');
+    let requiredUriTemplateStr = uriTemplateStr;
+    var templateVars = {};
+
     if (data.consumes.length) {
         var contentType = {};
         contentType.name = 'Content-Type';
@@ -266,400 +133,359 @@ function processOperation(op, method, resource, options) {
         accept.exampleValues.object = data.produces[0];
         data.allHeaders.push(accept);
     }
-
-    var codeSamples = (options.codeSamples || op["x-code-samples"]);
-    if (codeSamples) {
-        data = options.templateCallback('heading_code_samples', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.heading_code_samples(data);
-        data = options.templateCallback('heading_code_samples', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-
-        if (op["x-code-samples"]) {
-            for (var s in op["x-code-samples"]) {
-                var sample = op["x-code-samples"][s];
-                var lang = common.languageCheck(sample.lang, header.language_tabs, true);
-                content += '```' + lang + '\n';
-                content += sample.source;
-                content += '\n```\n';
+    if (!Array.isArray(data.parameters)) data.parameters = [];
+    data.longDescs = false;
+    for (let param of data.parameters) {
+        //var temp = '';
+        param.exampleValues = {};
+        if (!param.required) param.required = false;
+        let pSchema = param.schema;
+        if (!pSchema && param.content) {
+            pSchema = Object.values(param.content)[0].schema;
+        }
+        if (pSchema && !param.safeType) {
+            param.originalType = pSchema.type;
+            param.safeType = pSchema.type || common.inferType(pSchema);
+            if (pSchema.format) {
+                param.safeType = param.safeType+'('+pSchema.format+')';
+            }
+            if ((param.safeType === 'array') && (pSchema.items)) {
+                let itemsType = pSchema.items.type;
+                if (!itemsType) {
+                    itemsType = common.inferType(pSchema.items);
+                }
+                param.safeType = 'array['+itemsType+']';
+            }
+            if (pSchema["x-widdershins-oldRef"]) {
+                let schemaName = pSchema["x-widdershins-oldRef"].replace('#/components/schemas/','');
+                param.safeType = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
+            }
+            if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
+        }
+        if (pSchema) {
+            param.exampleValues.object = param.example || param.default || common.getSample(pSchema,data.options,{},data.api);
+            if (typeof param.exampleValues.object === 'object') {
+                param.exampleValues.json = safejson(param.exampleValues.object,null,2);
+            }
+            else {
+                param.exampleValues.json = "'"+param.exampleValues.object+"'";
             }
         }
-        else {
-            for (var l in header.language_tabs) {
+        if (param.description === 'undefined') { // yes, the string
+            param.description = '';
+        }
+        if (typeof param.description !== 'undefined') {
+            param.shortDesc = param.description.split('\n')[0];
+            if (param.shortDesc !== param.description) data.longDescs = true;
+        }
 
-                var target = header.language_tabs[l];
-                if (typeof target === 'object') {
-                    target = Object.keys(target)[0];
-                }
-                var lcLang = common.languageCheck(target, header.language_tabs, false);
-                if (lcLang) {
-                    var templateName = 'code_'+lcLang.substring(lcLang.lastIndexOf('-') + 1);
-                    var templateFunc = templates[templateName];
-                    if (templateFunc) {
-                        content += '```' + lcLang + '\n';
-                        data = options.templateCallback(templateName, 'pre', data);
-                        if (data.append) { content += data.append; delete data.append; }
-                        content += templateFunc(data);
-                        data = options.templateCallback(templateName, 'post', data);
-                        if (data.append) { content += data.append; delete data.append; }
-                        content += '```\n\n';
-                    }
-                }
+        if (param.in === 'cookie') {
+            if (!param.style) param.style = 'form';
+            // style prefixes: form
+        }
+        if (param.in === 'header') {
+            if (!param.style) param.style = 'simple';
+            data.headerParameters.push(param);
+            data.allHeaders.push(param);
+        }
+        if (param.in === 'path') {
+            let template = param.allowReserved ? '{+' : '{';
+            // style prefixes: matrix, label, simple
+            if (!param.style) param.style = 'simple';
+            if (param.style === 'label') template += '.';
+            if (param.style === 'matrix') template += ';';
+            template += stupidity(param.name);
+            template += param.explode ? '*}' : '}';
+            uriTemplateStr = uriTemplateStr.split('{'+param.name+'}').join(template);
+            requiredUriTemplateStr = requiredUriTemplateStr.split('{'+param.name+'}').join(template);
+        }
+        if (param.in === 'query') {
+            let template = param.allowReserved ? '{?' : '{?'; // RFC6570 doesn't support multiple operators (?+ in this case)
+            // style prefixes: form, spaceDelimited, pipeDelimited, deepObject
+            if (!param.style) param.style = 'form';
+            template += stupidity(param.name);
+            template += param.explode ? '*}' : '}';
+            uriTemplateStr += template;
+            if (param.required) {
+                requiredUriTemplateStr += template;
+                data.requiredParameters.push(param);
             }
         }
+        templateVars[stupidity(param.name)] = param.exampleValues.object;
     }
 
-    // TODO template?
-    if (data.subtitle != opName) content += '`' + data.subtitle + '`\n\n';
-    if (op.summary && !options.tocSummary) content += '*' + op.summary + '*\n\n';
-    if (op.description) content += op.description + '\n\n';
+    let uriTemplate = new URITemplate(uriTemplateStr);
+    let requiredUriTemplate = new URITemplate(requiredUriTemplateStr);
+    data.uriExample = uriTemplate.expand(templateVars);
+    data.requiredUriExample = requiredUriTemplate.expand(templateVars);
 
-    data.enums = [];
+    //TODO deconstruct and reconstruct to cope w/ spaceDelimited/pipeDelimited
 
-    if (parameters.length > 0) {
-        var longDescs = false;
-        for (var p in parameters) {
-            param = parameters[p];
-            param.shortDesc = (typeof param.description === 'string') ? param.description.split('\n')[0] : 'No description';
-            if ((typeof param.description === 'string') && (param.description.trim().split('\n').length > 1)) longDescs = true;
-            param.originalType = param.type;
-            param.type = param.safeType;
+    data.queryString = data.uriExample.substr(data.uriExample.indexOf('?'));
+    if (!data.queryString.startsWith('?')) data.queryString = '';
+    data.queryString = data.queryString.split('%25').join('%');
+    data.requiredQueryString = data.requiredUriExample.substr(data.requiredUriExample.indexOf('?'));
+    if (!data.requiredQueryString.startsWith('?')) data.requiredQueryString = '';
+    data.requiredQueryString = data.requiredQueryString.split('%25').join('%');
 
-            if (param.schema && param.schema.enum) {
-                for (var e in param.schema.enum) {
-                    var nvp = {};
-                    nvp.name = param.name;
-                    nvp.value = param.schema.enum[e];
-                    data.enums.push(nvp);
-                }
-            }
-            if (param.schema && param.schema.items && param.schema.items.enum) {
-                for (var e in param.schema.items.enum) {
-                    var nvp = {};
-                    nvp.name = param.name;
-                    nvp.value = param.schema.items.enum[e];
-                    data.enums.push(nvp);
-                }
-            }
+}
 
-        }
-
-        var paramHeader = false;
-        for (var p in parameters) {
-            param = parameters[p];
-            if ((param.in === 'body') && (param.depth == 0)) {
-                var xmlWrap = '';
-                var obj = dereference(param.schema, data.openapi, options);
-                if (obj && !paramHeader) {
-                    data = options.templateCallback('heading_body_parameter', 'pre', data);
-                    if (data.append) { content += data.append; delete data.append; }
-                    content += templates.heading_body_parameter(data);
-                    data = options.templateCallback('heading_body_parameter', 'post', data);
-                    if (data.append) { content += data.append; delete data.append; }
-                    paramHeader = true;
-                }
-                if (obj && obj.xml && obj.xml.name) {
-                    xmlWrap = obj.xml.name;
-                }
-                obj = common.getSample(obj, options, {skipReadOnly:true}, data.openapi);
-                if (obj && obj.properties) obj = obj.properties;
-                if (obj) {
-                    if (common.doContentType(consumes, common.jsonContentTypes)) {
-                        content += '```json\n';
-                        content += JSON.stringify(obj, null, 2) + '\n';
-                        content += '```\n';
-                    }
-                    if (common.doContentType(consumes, common.yamlContentTypes)) {
-                        content += '```yaml\n';
-                        content += yaml.safeDump(obj) + '\n';
-                        content += '```\n';
-                    }
-                    if (common.doContentType(consumes, common.formContentTypes)) {
-                        content += '```yaml\n';
-                        content += yaml.safeDump(obj) + '\n';
-                        content += '```\n';
-                    }
-                    if (common.doContentType(consumes, common.xmlContentTypes) && (typeof obj === 'object')) {
-                        if (xmlWrap) {
-                            var newObj = {};
-                            newObj[xmlWrap] = obj;
-                            obj = newObj;
-                        }
-                        content += '```xml\n';
-                        content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-                        content += '```\n';
-                    }
-                }
-            }
-        }
-
-        data.parameters = parameters; // redundant?
-        data = options.templateCallback('parameters', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.parameters(data);
-        data = options.templateCallback('parameters', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-
-        if (longDescs) {
-            for (var p in parameters) {
-                var param = parameters[p];
-                var desc = param.description ? param.description : '';
-                var descs = [];
-                if (typeof desc === 'string') {
-                    descs = desc.trim().split('\n');
-                }
-                if (descs.length > 1) {
-                    content += '##### ' + param.name + '\n'; // TODO template
-                    content += desc + '\n';
-                }
-            }
-        }
-
+function getBodyParameterExamples(data) {
+    let obj = data.bodyParameter.exampleValues.object;
+    let content = '';
+    let xmlWrap = false;
+    if (data.bodyParameter.schema && data.bodyParameter.schema.xml) {
+        xmlWrap = data.bodyParameter.schema.xml.name;
     }
-
-    var responseSchemas = false;
-    var responseHeaders = false;
-    var inlineSchemas = false;
-    data.responses = [];
-    for (var resp in op.responses) {
-        let response = op.responses[resp];
-        if (response.schema || response.content) responseSchemas = true;
-        if (response.headers) responseHeaders = true;
+    if (common.doContentType(data.consumes, common.jsonContentTypes)) {
+        content += '```json\n';
+        content += safejson(obj,null,2) + '\n';
+        content += '```\n';
     }
+    if (common.doContentType(data.consumes, common.yamlContentTypes)) {
+        content += '```yaml\n';
+        content += yaml.safeDump(obj) + '\n';
+        content += '```\n';
+    }
+    if (common.doContentType(data.consumes, common.formContentTypes)) {
+        content += '```yaml\n';
+        content += yaml.safeDump(obj) + '\n';
+        content += '```\n';
+    }
+    if (common.doContentType(data.consumes, common.xmlContentTypes) && (typeof obj === 'object')) {
+        if (xmlWrap) {
+            var newObj = {};
+            newObj[xmlWrap] = obj;
+            obj = newObj;
+        }
+        content += '```xml\n';
+        content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
+        content += '```\n';
+    }
+    return content;
+}
 
-    for (var resp in op.responses) {
-        let response = op.responses[resp];
+function fakeBodyParameter(data) {
+    if (!data.parameters) data.parameters = [];
+    let bodyParams = [];
+    if (data.bodyParameter.schema) {
+        let param = {};
+        param.in = 'body';
+        param.schema = data.bodyParameter.schema;
+        param.name = 'body';
+        param.required = data.operation.requestBody.required || false;
+        param.description = data.operation.requestBody.description;
+        param.refName = data.bodyParameter.refName;
+        if (!data.options.omitBody || param.schema["x-widdershins-oldRef"]) {
+           bodyParams.push(param);
+        }
 
-        response.status = resp;
-        response.meaning = (resp == 'default' ? 'Default' : 'Unknown');
+        if ((param.schema.type === 'object') && (data.options.expandBody || (!param.schema["x-widdershins-oldRef"]))) {
+            let offset = (data.options.omitBody ? -1 : 0);
+            let props = common.schemaToArray(data.bodyParameter.schema,offset,{trim:true},data);
+
+            for (let block of props) {
+                for (let prop of block.rows) {
+                    let param = {};
+                    param.in = 'body';
+                    param.schema = prop.schema;
+                    param.name = prop.displayName;
+                    param.required = prop.required;
+                    param.description = prop.description;
+                    param.safeType = prop.safeType;
+                    bodyParams.push(param);
+                }
+            }
+        }
+
+        data.parameters = data.parameters.concat(bodyParams);
+    }
+}
+
+function mergePathParameters(data) {
+    if (!data.parameters) data.parameters = [];
+    data.parameters = data.parameters.concat(data.method.pathParameters||[]);
+    data.parameters = data.parameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+}
+
+function getResponses(data) {
+    let responses = [];
+    for (let r in data.operation.responses) {
+        let response = data.operation.responses[r];
+        let entry = {};
+        entry.status = r;
+        entry.meaning = (r === 'default' ? data.translations.responseDefault : data.translations.responseUnknown);
         var url = '';
         for (var s in common.statusCodes) {
-            if (common.statusCodes[s].code == resp) {
-                response.meaning = common.statusCodes[s].phrase;
+            if (common.statusCodes[s].code === r) {
+                entry.meaning = common.statusCodes[s].phrase;
                 url = common.statusCodes[s].spec_href;
                 break;
             }
         }
-        if (url) response.meaning = '[' + response.meaning + '](' + url + ')';
-        if (!response.description) response.description = 'No description';
-        response.description = response.description.trim();
-
-        response.schema = 'None';
-        if (response.content) {
-            for (let c in response.content) {
-                let mediatype = response.content[c];
-                if (mediatype.schema) {
-                    response.schema = 'Inline';
-                    if (mediatype.schema.$ref) {
-                        let ref = mediatype.schema.$ref.split('/').pop();
-                        response.schema = '['+ref+'](#schema'+common.gfmLink(ref)+')';
-                    }
-                    else if ((Object.keys(mediatype.schema).length == 1) && (mediatype.schema.type)) {
-                        response.schema = mediatype.schema.type;
-                    }
-                    else if ((Object.keys(mediatype.schema).length == 2) && (mediatype.schema.type) && (mediatype.schema.format)) {
-                        response.schema = mediatype.schema.type+'('+mediatype.schema.format+')';
-                    }
-                    else {
-                        inlineSchemas = true;
-                    }
+        if (url) entry.meaning = '[' + entry.meaning + '](' + url + ')';
+        entry.description = (typeof response.description === 'string' ? response.description.trim() : undefined);
+        entry.schema = response.content ? data.translations.schemaInline : data.translations.schemaNone;
+        for (let ct in response.content) {
+            let contentType = response.content[ct];
+            if (contentType.schema) entry.type = contentType.schema.type;
+            if (contentType.schema && contentType.schema["x-widdershins-oldRef"]) {
+                let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
+                entry.schema = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
+                entry.$ref = true;
+            }
+            else {
+                if (contentType.schema && contentType.schema.type && (contentType.schema.type !== 'object') && (contentType.schema.type !== 'array')) {
+                    entry.schema = contentType.schema.type;
                 }
             }
         }
-        data.responses.push(response);
+        entry.content = response.content;
+        entry.links = response.links;
+        responses.push(entry);
     }
-
-    if (responseSchemas) {
-        data = options.templateCallback('heading_example_responses', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.heading_example_responses(data);
-        data = options.templateCallback('heading_example_responses', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-        for (var resp in op.responses) {
-            var response = op.responses[resp];
-            for (var ct in response.content) {
-                var contentType = response.content[ct];
-                var cta = [ct];
-                if (contentType.schema) {
-                    var xmlWrap = '';
-                    var obj = {};
-                    try {
-                        obj = dereference(contentType.schema, data.api, {});
-                    }
-                    catch (ex) {
-                        console.error(ex.message);
-                    }
-                    if (obj && obj.xml && obj.xml.name) {
-                        xmlWrap = obj.xml.name;
-                    }
-                    if (Object.keys(obj).length > 0) {
-                        obj = common.getSample(obj,options,{},data.openapi);
-                        // TODO support embedded/reffed examples
-                        if (common.doContentType(cta, common.jsonContentTypes)) {
-                            content += '```json\n';
-                            content += JSON.stringify(obj, null, 2) + '\n';
-                            content += '```\n';
-                        }
-                        if (common.doContentType(cta, common.yamlContentTypes)) {
-                            content += '```yaml\n';
-                            content += yaml.safeDump(obj) + '\n';
-                            content += '```\n';
-                        }
-                        if (xmlWrap) {
-                            var newObj = {};
-                            newObj[xmlWrap] = obj;
-                            obj = newObj;
-                        }
-                        if ((typeof obj === 'object') && common.doContentType(cta, common.xmlContentTypes)) {
-                            content += '```xml\n';
-                            content += xml.getXml(obj, '@', '', true, '  ', false) + '\n';
-                            content += '```\n';
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    data = options.templateCallback('responses', 'pre', data);
-    if (data.append) { content += data.append; delete data.append; }
-    content += templates.responses(data);
-    data = options.templateCallback('responses', 'post', data);
-    if (data.append) { content += data.append; delete data.append; }
-
-    if (inlineSchemas && options.schema) {
-        for (var resp in op.responses) {
-            var response = op.responses[resp];
-            for (var ct in response.content) {
-                var contentType = response.content[ct];
-                if (contentType.schema && !contentType.schema.$ref) {
-                    data.responseStatus = resp;
-                    data.response = response;
-                    data.schemaProperties = common.schemaToArray(contentType.schema,0,{trim:true},data);
-
-                    data.enums = [];
-                    for (var prop in data.schemaProperties) {
-                        if (prop.schema) {
-                            for (var e in prop.schema.enum) {
-                                var nvp = {};
-                                nvp.name = param.name;
-                                nvp.value = param.schema.enum[e];
-                                data.enums.push(nvp);
-                            }
-                        }
-                    }
-
-                    data = options.templateCallback('response_schema', 'pre', data);
-                    if (data.append) { content += data.append; delete data.append; }
-                    content += templates.response_schema(data);
-                    data = options.templateCallback('response_schema', 'post', data);
-                    if (data.append) { content += data.append; delete data.append; }
-                }
-                break; // only show one content-type for now
-            }
-        }
-    }
-
-    if (responseHeaders) {
-        data.response_headers = [];
-        for (var resp in op.responses) {
-            var response = op.responses[resp];
-            for (var h in response.headers) {
-                var hdr = response.headers[h];
-                hdr.status = resp;
-                hdr.header = h;
-                if (!hdr.format) hdr.format = '';
-                if (!hdr.description) hdr.description = '';
-                if (!hdr.type && hdr.schema && hdr.schema.type) {
-                    hdr.type = hdr.schema.type;
-                    hdr.format = hdr.schema.format || '';
-                }
-
-                data.response_headers.push(hdr);
-            }
-        }
-        data = options.templateCallback('response_headers', 'pre', data);
-        content += templates.response_headers(data);
-        if (data.append) { content += data.append; delete data.append; }
-        data = options.templateCallback('response_headers', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-    }
-
-    var security = (op.security ? op.security : data.openapi.security);
-    if (!security) security = [];
-    if (security.length <= 0) {
-        data = options.templateCallback('authentication_none', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.authentication_none(data);
-        data = options.templateCallback('authentication_none', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-    }
-    else {
-        data.securityDefinitions = [];
-        var list = '';
-        for (var s in security) {
-            var link;
-            link = '#/components/securitySchemes/' + Object.keys(security[s])[0];
-            var secDef = jptr.jptr(data.openapi, link);
-            data.securityDefinitions.push(secDef);
-            list += (list ? ', ' : '') + (secDef ? secDef.type : 'None');
-            var scopes = security[s][Object.keys(security[s])[0]];
-            if (Array.isArray(scopes) && (scopes.length > 0)) {
-                list += ' ( Scopes: ';
-                for (var scope in scopes) {
-                    list += scopes[scope] + ' ';
-                }
-                list += ')';
-            }
-        }
-        data.authenticationStr = list;
-        data = options.templateCallback('authentication', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.authentication(data);
-        data = options.templateCallback('authentication', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-    }
-
-    content += '\n';
+    return responses;
 }
 
-// TODO: callbacks, include an enclosing div with a specific class
-// TODO: links
+function getResponseExamples(data) {
+    let content = '';
+    for (var resp in data.operation.responses) {
+        var response = data.operation.responses[resp];
+        for (var ct in response.content) {
+            var contentType = response.content[ct];
+            var cta = [ct];
+            if (contentType.schema) {
+                var xmlWrap = '';
+                var obj = contentType.schema;
+                if (obj && obj.xml && obj.xml.name) {
+                    xmlWrap = obj.xml.name;
+                }
+                if (Object.keys(obj).length > 0) {
+                    // support embedded examples
+                    if (contentType.examples) {
+                        obj = common.clean(contentType.examples[Object.keys(contentType.examples)[0]]);
+                    }
+                    else if (contentType.example) {
+                        obj = common.clean(contentType.example);
+                    }
+                    else {
+                        obj = common.getSample(obj,data.options,{},data.api);
+                    }
+                    if (common.doContentType(cta, common.jsonContentTypes)) {
+                        content += '```json\n';
+                        content += safejson(obj, null, 2) + '\n';
+                        content += '```\n';
+                    }
+                    if (common.doContentType(cta, common.yamlContentTypes)) {
+                        content += '```yaml\n';
+                        content += yaml.safeDump(obj) + '\n';
+                        content += '```\n';
+                    }
+                    if (xmlWrap) {
+                        var newObj = {};
+                        newObj[xmlWrap] = obj;
+                        obj = newObj;
+                    }
+                    if ((typeof obj === 'object') && common.doContentType(cta, common.xmlContentTypes)) {
+                        content += '```xml\n';
+                        content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
+                        content += '```\n';
+                    }
+                }
+            }
+        }
+    }
+    return content;
+}
 
-function convert(openapi, options, callback) {
+function getResponseHeaders(data) {
+    let headers = [];
+    for (let r in data.operation.responses) {
+        let response = data.operation.responses[r];
+        if (response.headers) {
+            for (let h in response.headers) {
+                let header = response.headers[h];
+                let entry = {};
+                entry.status = r;
+                entry.header = h;
+                entry.description = header.description;
+                entry.in = 'header';
+                entry.required = header.required;
+                entry.schema = header.schema || {};
+                entry.type = entry.schema.type;
+                entry.format = entry.schema.format;
+                headers.push(entry);
+            }
+        }
+    }
+    return headers;
+}
 
-    var defaults = {};
+function getAuthenticationStr(data) {
+    let list = '';
+    for (let s in data.security) {
+        let secName = Object.keys(data.security[s])[0];
+        let link = '#/components/securitySchemes/' + secName;
+        let secDef = jptr(data.api, link);
+        list += (list ? ', ' : '') + (secDef ? secName : data.translations.secDefNone);
+        let scopes = data.security[s][secName];
+        if (Array.isArray(scopes) && (scopes.length > 0)) {
+            list += ' ( '+data.translations.secDefScopes+': ';
+            for (let scope in scopes) {
+                list += scopes[scope] + ' ';
+            }
+            list += ')';
+        }
+    }
+    return list;
+}
+
+function convertInner(api, options, callback) {
+    let defaults = {};
+    defaults.title = 'API';
     defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }];
-    defaults.codeSamples = true;
-    defaults.theme = 'darkula';
-    defaults.search = true;
-    defaults.sample = true;
-    defaults.discovery = false;
+    defaults.toc_footers = [];
     defaults.includes = [];
-    defaults.templateCallback = function (templateName, stage, data) { return data; };
-    defaults.schema = true;
-    defaults.headings = 2;
+    defaults.search = true;
+    defaults.theme = 'darkula';
+    defaults.headingLevel = 2;
+    defaults.templateCallback = function(template,stage,data) { return data; };
 
-    options = Object.assign({}, defaults, options);
-    if (!options.codeSamples) options.language_tabs = [];
+    options = Object.assign({},defaults,options);
 
-    if (!templates || options.resetTemplates) {
+    let data = {};
+    if (options.verbose) console.log('starting deref',api.info.title);
+    if (api.components) {
+        data.components = clone(api.components);
+    }
+    else {
+        data.components = {};
+    }
+    data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
+    if (options.verbose) console.log('finished deref');
+
+    if (data.api.components && data.api.components.schemas && data.api.components.schemas["x-widdershins-oldRef"]) {
+        delete data.api.components.schemas["x-widdershins-oldRef"];
+    }
+
+    if (typeof templates === 'undefined') {
         templates = dot.process({ path: path.join(__dirname, 'templates', 'openapi3') });
     }
     if (options.user_templates) {
         templates = Object.assign(templates, dot.process({ path: options.user_templates }));
     }
+    data.translations = {};
+    templates.translations(data);
 
-    var header = {};
-    header.title = openapi.info.title + ' ' + ((openapi.info.version && openapi.info.version.toLowerCase().startsWith('v')) ? openapi.info.version : 'v' + (openapi.info.version||'?'));
+    data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
-    // we always show json / yaml / xml if used in content-types
+    let header = {};
+    header.title = api.info.title + ' ' + data.version;
     header.language_tabs = options.language_tabs;
-
     header.toc_footers = [];
-    if (openapi.externalDocs) {
-        if (openapi.externalDocs.url) {
-            header.toc_footers.push('<a href="' + openapi.externalDocs.url + '">' + (openapi.externalDocs.description ? openapi.externalDocs.description : 'External Docs') + '</a>');
+    if (api.externalDocs) {
+        if (api.externalDocs.url) {
+            header.toc_footers.push('<a href="' + api.externalDocs.url + '">' + (api.externalDocs.description ? api.externalDocs.description : data.translations.externalDocs) + '</a>');
         }
     }
     header.includes = options.includes;
@@ -667,16 +493,15 @@ function convert(openapi, options, callback) {
     header.highlight_theme = options.theme;
     header.headingLevel = options.headings;
 
-    data = {};
-    data.api = data.openapi = openapi;
-    data.translations = {};
-    templates.translations(data);
+    data.options = options;
     data.header = header;
+    data.title_prefix = data.api.info.title.split(' ').join('-');
+    data.templates = templates;
+    data.resources = convertToToc(api,data);
+    //console.warn(util.inspect(data.resources));
 
-    content = '';
-
-    if (openapi.servers && openapi.servers.length) {
-        data.servers = openapi.servers;
+    if (data.api.servers && data.api.servers.length) {
+        data.servers = data.api.servers;
     }
     else if (options.loadedFrom) {
         data.servers = [{url:options.loadedFrom}];
@@ -687,139 +512,60 @@ function convert(openapi, options, callback) {
     data.host = up.parse(data.servers[0].url).host;
     data.protocol = up.parse(data.servers[0].url).protocol;
     if (data.protocol) data.protocol = data.protocol.replace(':','');
+    data.baseUrl = data.servers[0].url;
 
-    data.contactName = (openapi.info.contact && openapi.info.contact.name ? openapi.info.contact.name : 'Support');
+    data.utils = {};
+    data.utils.yaml = yaml;
+    data.utils.inspect = util.inspect;
+    data.utils.safejson = safejson;
+    data.utils.isPrimitive = function(t) { return ((t !== 'object') && (t !== 'array')) };
+    data.utils.getSample = common.getSample;
+    data.utils.schemaToArray = common.schemaToArray;
+    data.utils.fakeProdCons = fakeProdCons;
+    data.utils.getParameters = getParameters;
+    data.utils.getCodeSamples = common.getCodeSamples;
+    data.utils.getBodyParameterExamples = getBodyParameterExamples;
+    data.utils.fakeBodyParameter = fakeBodyParameter;
+    data.utils.mergePathParameters = mergePathParameters;
+    data.utils.getResponses = getResponses;
+    data.utils.getResponseExamples = getResponseExamples;
+    data.utils.getResponseHeaders = getResponseHeaders;
+    data.utils.getAuthenticationStr = getAuthenticationStr;
+    data.utils.join = function(s) {
+        return s.split('\r').join('').split('\n').join(' ').trim();
+    };
 
-    data = options.templateCallback('heading_main', 'pre', data);
-    if (data.append) { content += data.append; delete data.append; }
-    content += templates.heading_main(data) + '\n';
-    data = options.templateCallback('heading_main', 'post', data);
-    if (data.append) { content += data.append; delete data.append; }
-
-    var securityContainer = (openapi.components && openapi.components.securitySchemes);
-    if (securityContainer) {
-        data.securityDefinitions = [];
-        for (var s in securityContainer) {
-            var secdef = securityContainer[s];
-            var desc = secdef.description ? secdef.description : '';
-            if (secdef.type == 'oauth2') {
-                secdef.flowArray = [];
-                for (var f in secdef.flows) {
-                    var flow = secdef.flows[f];
-                    flow.flowName = f;
-                    flow.scopeArray = [];
-                    for (var s in flow.scopes) {
-                        var scope = {};
-                        scope.name = s;
-                        scope.description = flow.scopes[s];
-                        flow.scopeArray.push(scope);
-                    }
-                    secdef.flowArray.push(flow);
-                }
-            }
-            secdef.ref = s;
-            if (!secdef.description) secdef.description = '';
-            data.securityDefinitions.push(secdef);
-        }
-        data = options.templateCallback('security', 'pre', data);
+    let content = '---\n'+yaml.dump(header)+'\n---\n\n';
+        data = options.templateCallback('main', 'pre', data);
         if (data.append) { content += data.append; delete data.append; }
-        content += templates.security(data);
-        data = options.templateCallback('security', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
+    try {
+        content += templates.main(data);
     }
-
-    if (options.verbose) console.warn('Converting to TOC');
-    var apiInfo = convertToToc(openapi);
-    if (options.verbose) console.warn('Converted to TOC');
-
-    for (var r in apiInfo.resources) {
-        content += '# ' + r + '\n\n';
-        var resource = apiInfo.resources[r];
-        if (resource.description) content += resource.description + '\n\n';
-
-        if (resource.externalDocs) {
-            if (resource.externalDocs.url) {
-                content += '<a href="' + resource.externalDocs.url + '">' + (resource.externalDocs.description ? resource.externalDocs.description : 'External docs') + '</a>\n';
-            }
-        }
-
-        for (var m in resource.methods) {
-            var method = resource.methods[m];
-            data.subtitle = method.op.toUpperCase() + ' ' + method.path;
-            var op = openapi.paths[method.path][method.op];
-            if ((method.op !== 'parameters') && (method.op !== 'summary') && (method.op !== 'description') &&
-                (!method.op.startsWith('x-'))) {
-                processOperation(op, method, resource, options);
-            }
-        }
+    catch (ex) {
+        console.warn(ex);
     }
-
-    if (options.schema && openapi.components && openapi.components.schemas && Object.keys(openapi.components.schemas).length>0) {
-        data = options.templateCallback('schema_header', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.schema_header(data) + '\n';
-        data = options.templateCallback('schema_header', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
-
-        for (let s in openapi.components.schemas) {
-            content += '## '+s+'\n\n';
-            content += '<a name="schema'+s.toLowerCase()+'"></a>\n\n';
-            let schema = openapi.components.schemas[s];
-            schema = dereference(schema, openapi, {});
-
-            var obj = common.getSample(schema,options,{},data.openapi);
-
-            data.schema = obj;
-            data = options.templateCallback('schema_sample', 'pre', data);
-            if (data.append) { content += data.append; delete data.append; }
-            content += templates.schema_sample(data) + '\n';
-            data = options.templateCallback('schema_sample', 'post', data);
-            if (data.append) { content += data.append; delete data.append; }
-
-            data.schema = schema;
-            data.enums = [];
-            data.schemaProperties = common.schemaToArray(schema,0,{trim:true},data);
-
-            for (let p of data.schemaProperties) {
-                if (p.schema && p.schema.enum) {
-                    for (let e of p.schema.enum) {
-                        data.enums.push({name:p.name,value:e});
-                    }
-                }
-            }
-
-            data = options.templateCallback('schema_properties', 'pre', data);
-            if (data.append) { content += data.append; delete data.append; }
-            content += templates.schema_properties(data) + '\n';
-            data = options.templateCallback('schema_properties', 'post', data);
-            if (data.append) { content += data.append; delete data.append; }
-
-        }
-    }
-
-    data = options.templateCallback('footer', 'pre', data);
+    data = options.templateCallback('main', 'post', data);
     if (data.append) { content += data.append; delete data.append; }
-    content += templates.footer(data) + '\n';
-    data = options.templateCallback('footer', 'post', data);
-    if (data.append) { content += data.append; delete data.append; }
+    content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
 
-    if (options.discovery) {
-        data = options.templateCallback('discovery', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
-        content += templates.discovery(data) + '\n';
-        data = options.templateCallback('discovery', 'post', data);
-        if (data.append) { content += data.append; delete data.append; }
+    callback(null,content);
+}
+
+function convert(api, options, callback) {
+    if (options.resolve) {
+        swagger2openapi.convertObj(api, {resolve:true}, function(err, sOptions) {
+        if (err) {
+            console.error(err.message);
+        }
+        else {
+            convertInner(sOptions.openapi, options, callback);
+        }});
     }
-
-    var headerStr = '---\n' + yaml.safeDump(header) + '---\n';
-    // apparently you can insert jekyll front-matter in here for github
-    // see https://github.com/lord/slate/issues/702
-    content = content.replace(/^\s*[\r\n]/gm,'\n\n');
-    var result = (headerStr + '\n' + content);
-    if (callback) callback(null, result);
-    return result;
+    else {
+        convertInner(api, options, callback);
+    }
 }
 
 module.exports = {
-    convert: convert
+    convert : convert
 };

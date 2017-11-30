@@ -9,7 +9,7 @@ var yaml = require('js-yaml');
 var widdershins = require('./index.js');
 
 var argv = require('yargs')
-    .usage('testRunner [options] [{path-to-specs}]')
+    .usage('testRunner [options] [{path-to-definitions}]')
     .boolean('noschema')
     .alias('n','noschema')
     .describe('noschema','Set widdershins --noschema option')
