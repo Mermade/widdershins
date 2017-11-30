@@ -6,6 +6,7 @@ in/
 out/
 scripts/
 test/
+utils/
 
 # Logs
 logs

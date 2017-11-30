@@ -4,11 +4,13 @@ const openapi2 = require('./openapi2.js');
 const openapi3 = require('./openapi3.js');
 const asyncapi = require('./asyncapi.js');
 const semoasa = require('./semoasa.js');
+const apiblueprint = require('./apiblueprint.js');
 
 function convert(api, options, callback) {
 
+    options.samplerErrors = new Map();
+
     if (typeof api === 'string') {
-        let apiblueprint = require('./apiblueprint.js');
         apiblueprint.convert(api, options, callback);
     }
     else if (api.swagger) {

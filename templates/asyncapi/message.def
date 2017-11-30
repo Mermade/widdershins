@@ -1,0 +1,76 @@
+### {{=data.messageName}}
+
+{{? data.message.deprecated}}Note: **Deprecated**{{?}}
+
+{{? data.message.headers }}
+> Example headers
+
+```json
+{{ data.headers = JSON.stringify(data.utils.getSample(data.message.headers,data.options,{},data.api),null,2); }}
+{{= data.headers }}
+```
+{{?}}
+
+{{? data.message.payload }}
+> Example payload
+
+```json
+{{ data.payload = JSON.stringify(data.utils.getSample(data.message.payload,data.options,{},data.api),null,2); }}
+{{= data.payload }}
+```
+{{?}}
+
+> Code Samples
+
+{{= data.utils.getCodeSamples(data) }}
+
+{{? data.message.summary}}*{{=data.message.summary}}*{{?}}
+
+{{? data.message.description}}{{=data.message.description}}{{?}}
+
+{{? data.message.headers }}
+#### Headers
+
+{{ var blocks = data.utils.schemaToArray(data.message.headers,0,{trim:true,join:true},data); }}
+
+##### Properties
+
+{{~ blocks :block }}
+{{? block.title }}
+*{{= block.title}}*
+{{?}}
+|Name|Type|Required|Description|
+|---|---|---|---|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.type||''}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~}}
+{{~}}
+
+{{?}}
+
+{{? data.message.payload }}
+#### Payload
+
+{{ var blocks = data.utils.schemaToArray(data.message.payload,0,{trim:true,join:true},data); }}
+
+##### Properties
+
+{{~ blocks :block }}
+{{? block.title }}
+*{{= block.title}}*
+{{?}}
+|Name|Type|Required|Description|
+|---|---|---|---|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.type||''}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~}}
+{{~}}
+
+{{?}}
+
+{{ data.effectiveSecurity = []; }}
+{{ if (data.api.security) data.effectiveSecurity = data.api.security; }}
+{{ if (data.message.security) data.effectiveSecurity = data.message.security; }}
+{{? data.effectiveSecurity.length }}
+{{#def.authentication}}
+{{??}}
+{{#def.authentication_none}}
+{{?}}

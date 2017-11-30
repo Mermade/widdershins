@@ -1,1 +1,8 @@
-//Coming soon...
+/* asyncapi-java-tools */
+try (JmsServer client = builder.build()) {
+
+  client.{{=data.topicName}}()
+    .publish({{=data.payload}})
+      .toCompletableFuture()
+      .get();
+}

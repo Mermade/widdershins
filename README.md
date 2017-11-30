@@ -16,8 +16,10 @@ OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ### News
 
-* As of v2.1.0 Widdershins expands the definition of OpenAPI body parameters / requestBodies (and AsyncAPI headers and payloads, Semoasa schemas) by default. You can restore the old behaviour by using the `--noschema` option.
-* If you are using Node.js 4, please use the `--harmony` flag
+* As of v3.0.0 Widdershins no longer expands the definition of OpenAPI body parameters / requestBodies by default, unless they have an inline schema. You can restore the old behaviour by using the `--expandBody` option.
+* You may limit the depth of schema examples using the `--maxDepth` option. The default is 10.
+* To omit schemas entirely, please copy and customise the `main.dot` template.
+* As of v3.x you must use the `--harmony` flag if running on Node.js 4
 
 ### To install
 
@@ -32,7 +34,6 @@ Options:
   -h, --help            Show help                                      [boolean]
   --version             Show version number                            [boolean]
   -y, --yaml            Load spec in yaml format, default json         [boolean]
-  -a, --aggressive      Use alternative dereffing logic                [boolean]
   -c, --code            Turn generic code samples off                  [boolean]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
   -e, --environment     Load config/override options from file          [string]
@@ -67,7 +68,6 @@ options.sample = true; // set false by --raw
 options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
-options.aggressive = false;
 options.summary = false;
 options.headings = 2;
 converter.convert(apiObj,options,function(err,str){
@@ -110,6 +110,17 @@ If you specify an `options.templateCallback` function, it will be called before 
 * [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
+## User templates
+
+To override a `.dot` template, you need to copy over the child `.def` partials as well.
+
+To override a `.def` partial, you need to copy over the parent `.dot` template as well. For OpenAPI 3 this will be `main.dot`
+except for `parameters`, `responses` and `callbacks`, which are children of the `operation.dot` template.
+
+This means it is usually easiest to copy all `.dot` and `.def` files to your user templates directory. A visual `diff` tool
+which can run across two directories (such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org)) may be useful
+in bringing in changes from Widdershins updates.
+
 ## Tests
 
 To run a test-suite:
@@ -136,3 +147,15 @@ Thanks to [@latgeek](https://github.com/LatGeek) for the logo.
 Please feel free to add a link to your API documentation here.
 
 * [GOV.UK Content API v1.0.0](https://content-api.publishing.service.gov.uk/reference.html)
+* [GOV UK Digital Marketplace API v1.0.0](https://alphagov.github.io/digitalmarketplace-api-docs/#digital-marketplace-api-v1-0-0)
+* [Capital One API](https://www.capitalone.co.uk/developer/api/)
+* [Cognite Data API](http://doc.cognitedata.com/)
+* [SpeckleWorks API](https://speckleworks.github.io/SpeckleOpenApi)
+* [Bank by API](https://tbicr.github.io/bank-api/bank-api.html)
+* [Open EO API](https://open-eo.github.io/openeo-api-poc/apireference/index.html)
+
+## Widdershins and Shins
+
+If you need a wrapper around both Widdershins and Shins, why not consider the following projects:
+
+* https://github.com/jantoniucci/shinner

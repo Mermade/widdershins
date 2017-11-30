@@ -13,5 +13,5 @@ script:
   - node $nflags testRunner openapi-directory/APIs/
   - node $nflags testRunner openapi-definitions/
   - node $nflags testRunner openapi3-examples/pass/
-  - node $nflags testRunner specs/
-#  - node testRunner $nflags hapi/APIs/
+  - node $nflags testRunner defs/
+#  - node testRunner hapi/APIs/

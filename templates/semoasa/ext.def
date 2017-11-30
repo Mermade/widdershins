@@ -27,9 +27,7 @@ This extension is deprecated and should be transitioned out of use.
 
 {{=x.description||''}}
 
-{{ var props = [];
-   data.utils.schemaToArray(x.schema,0,props,true);
-}}
+{{ var blocks = data.utils.schemaToArray(x.schema,0,{trim:true},data); }}
 
 {{?x.externalDocs}}
 <a href="{{=x.externalDocs.url}}">{{=x.externalDocs.description}}</a>
@@ -39,9 +37,11 @@ This extension is deprecated and should be transitioned out of use.
 <a href="{{=x.location}}">Authoritative definition</a>
 {{?}}
 
+{{~ blocks :block}}
 |Property|Type|Required|Description
 |---|---|---|---|
-{{~props :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=p.description}}|
+{{~block.rows :p}}|{{=p.name}}|{{=p.type}}|{{=p.required}}|{{=data.utils.join(p.description||'')}}|
+{{~}}
 {{~}}
 
 {{?x.oas2}}

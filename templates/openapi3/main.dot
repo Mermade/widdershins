@@ -1,0 +1,107 @@
+<h1 id="{{=data.title_prefix}}">{{=data.api.info.title}} {{=data.version}}</h1>
+
+> Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example requests and responses.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
+
+{{? data.api.info.description}}{{=data.api.info.description}}{{?}}
+
+Base URLs:
+{{~data.api.servers :s}}
+* <a href="{{=s.url}}">{{=s.url}}</a>
+{{ for(var v in s.variables) { }}
+    * **{{=v}}** - {{=s.variables[v].description||''}} Default: {{=s.variables[v].default}}
+{{? s.variables[v].enum}}
+{{~ s.variables[v].enum :e}}
+        * {{= e}}
+{{~}}
+{{?}}
+{{ } }}
+{{~}}
+
+{{? data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>{{?}}
+{{? data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || 'Support'}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a> {{?}}{{?}}
+{{? data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{??}} License: {{=data.api.info.license.name}}{{?}}{{?}}
+
+{{? data.api.components && data.api.components.securitySchemes }}
+{{#def.security}}
+{{?}}
+
+{{ for (var r in data.resources) { }}
+{{ data.resource = data.resources[r]; }}
+
+<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-')}}">{{= r}}</h1>
+
+{{? data.resource.description }}{{= data.resource.description}}{{?}}
+
+{{? data.resource.externalDocs}}
+<a href="{{=data.resource.externalDocs.url}}">{{=data.resource.externalDocs.description||'External documentation'}}</a>
+{{?}}
+
+{{ for (var m in data.resource.methods) { }}
+{{ data.operationUniqueName = m; }}
+{{ data.method = data.resource.methods[m]; }}
+{{ data.operation = data.method.operation; }}
+{{= data.templates.operation(data) }}
+{{ } /* of methods */ }}
+
+{{ } /* of resources */ }}
+
+{{? data.api.components && data.api.components.schemas }}
+# Schemas
+
+{{ for (var s in data.components.schemas) { }}
+{{ var origSchema = data.components.schemas[s]; }}
+{{ var schema = data.api.components.schemas[s]; }}
+
+## {{=s}}
+
+<a id="schema{{=s.toLowerCase()}}"></a>
+
+```json
+{{=data.utils.safejson(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+```
+
+{{ var enums = []; }}
+{{ var blocks = data.utils.schemaToArray(origSchema,-1,{trim:true,join:true},data); }}
+{{ for (var block of blocks) {
+     for (var p of block.rows) {
+       if (p.schema && p.schema.enum) {
+         for (var e of p.schema.enum) {
+           enums.push({name:p.name,value:e});
+         }
+       }
+     }
+   }
+}}
+
+### Properties
+
+{{~ blocks :block}}
+{{? !block.title }}{{??}}*{{= block.title}}*{{= '\n\n'}}{{?}}
+{{? block.rows.length}}|Name|Type|Required|Description|
+|---|---|---|---|{{?}}
+{{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~}}
+{{~}}
+{{? blocks[0].rows.length === 0 }}
+*None*
+{{?}}
+
+{{? enums.length > 0 }}
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+{{~ enums :e}}|{{=e.name}}|{{=e.value}}|
+{{~}}
+
+{{?}}
+
+{{ } /* of schemas */ }}
+
+{{?}}
+
+{{#def.footer}}
+
+{{? data.options.discovery}}
+{{#def.discovery}}
+{{?}}
