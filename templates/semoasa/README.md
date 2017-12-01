@@ -1,6 +1,6 @@
 ## Semoasa 0.1.0 template parameters
 
-[<abbr title="Specification Extension Metadata for OAS Annotations">Semoasa</abbr>](https://github.com/RepreZen/Semoasa) is a machine-readable format for extensions to Swagger/OpenAPI 2.0 and 3.0 specifications. 
+[Semoasa](https://github.com/RepreZen/Semoasa) (Specification Extension Metadata for OAS Annotations) is a machine-readable format for extensions to Swagger/OpenAPI 2.0 and 3.0 specifications. 
 
 ### 'main' template
 
