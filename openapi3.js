@@ -305,7 +305,7 @@ function fakeBodyParameter(data) {
 function mergePathParameters(data) {
     if (!data.parameters) data.parameters = [];
     data.parameters = data.parameters.concat(data.method.pathParameters||[]);
-    data.parameters = data.parameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index);
+    data.parameters = data.parameters.filter((param, index, self) => self.findIndex((p) => {return p.name === param.name && p.in === param.in; }) === index || param.in === 'body');
 }
 
 function getResponses(data) {

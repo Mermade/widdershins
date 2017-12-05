@@ -238,7 +238,7 @@ function schemaToArray(schema,offset,options,data) {
                 if (oDepth<0) oDepth=0;
             }
             iDepth = state.depth;
-        //console.warn('state %s, idepth %s, odepth now %s, offset %s',state.depth,iDepth,oDepth,offset);
+            //console.warn('state %s, idepth %s, odepth now %s, offset %s',state.depth,iDepth,oDepth,offset);
         }
 
         entry.depth = Math.max(oDepth+offset,0);
