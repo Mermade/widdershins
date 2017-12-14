@@ -82,7 +82,7 @@ Base URLs:
 {{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
-{{? blocks[0].rows.length === 0 }}
+{{? (blocks[0].rows.length === 0) && (blocks.length === 1) }}
 *None*
 {{?}}
 
