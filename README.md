@@ -155,6 +155,7 @@ Please feel free to add a link to your API documentation here.
 * [SpeckleWorks API](https://speckleworks.github.io/SpeckleOpenApi)
 * [Bank by API](https://tbicr.github.io/bank-api/bank-api.html)
 * [Open EO API](https://open-eo.github.io/openeo-api-poc/apireference/index.html)
+* [Split Payments API](http://docs.split.cash/)
 
 ## Widdershins and Shins
 
