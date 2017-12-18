@@ -15,7 +15,7 @@
     - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
 {{?}}
 {{? sd.type == 'http'}}
-* HTTP Authentication. {{=sd.description}}
+* HTTP {{=sd.scheme}} {{?sd.bearerFormat}}Format: {{=sd.bearerFormat}}{{?}} Authentication. {{=sd.description}}
 {{?}}
 {{? sd.type == 'userPassword'}}
 * Password Authentication. {{=sd.description}}
