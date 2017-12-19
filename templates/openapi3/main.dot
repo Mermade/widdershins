@@ -52,7 +52,7 @@ Base URLs:
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
-## {{=s}}
+<h2 id="tocS{{=s.toLowerCase()}}">{{=s}}</h2>
 
 <a id="schema{{=s.toLowerCase()}}"></a>
 
