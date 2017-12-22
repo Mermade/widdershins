@@ -336,6 +336,13 @@
         "spec_href": "https://tools.ietf.org/html/rfc2518#section-10.1"
     },
     {
+        "code": "103",
+        "phrase": "Early Hints",
+        "description": "\"the server is likely to send a final response with the header fields included in the informational response\"",
+        "spec_title": "RFC8297#2",
+        "spec_href": "https://tools.ietf.org/html/rfc8297#section-2"
+    },
+    {
         "code": "207",
         "phrase": "Multi-Status",
         "description": "\"provides status for multiple independent operations.\"",
