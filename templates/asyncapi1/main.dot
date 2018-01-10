@@ -1,3 +1,5 @@
+<section>
+
 # {{=data.api.info.title}} {{=data.version}}
 
 > Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example headers and payloads.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
@@ -25,6 +27,7 @@ Base URLs:
 {{? data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.contactName}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{=data.contactName}}</a>{{?}}{{?}}
 {{? data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{??}}License: {{=data.api.info.license.name}}{{?}}{{?}}
+</section>
 
 {{? data.api.components && data.api.components.securitySchemes }}
 {{#def.security }}
@@ -32,11 +35,17 @@ Base URLs:
 
 {{ for (var r in data.resources) { }}
 {{ var resource = data.resources[r]; }}
+
+<section>
+
 # {{=r}}
 
 {{ for (var t in resource.topics) { }}
 {{ data.topicName = t; }}
 {{ data.topic = resource.topics[t]; }}
+
+<section>
+
 ## {{=t}}
 
 {{? data.topic.parameters }}
@@ -59,7 +68,11 @@ Base URLs:
 
 {{ } /* end of messages */ }}
 
+</section>
+
 {{ } /* end of topics */ }}
+
+</section>
 
 {{ } /* end of resources */ }}
 
@@ -117,10 +130,14 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 {{?}}
 
 {{? data.api.components && data.api.components.schemas }}
+
+<section>
 # Schemas
 
 {{ for (var s in data.api.components.schemas) { }}
 {{ var schema = data.api.components.schemas[s]; }}
+
+<section>
 
 ## {{=s}}
 
@@ -170,7 +187,11 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 
 {{?}}
 
+</section>
+
 {{ } /* of schemas */ }}
+
+</section>
 
 {{?}}
 

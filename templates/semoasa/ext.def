@@ -4,6 +4,8 @@
    var sample = x.example||data.utils.getSample(x.schema,data.options,{},data.api);
 }}
 
+<section>
+
 ## {{=ext}}
 > {{=ext}} example
 ```json
@@ -63,3 +65,5 @@ This extension is deprecated and should be transitioned out of use.
 {{?}}
 
 {{ } }}
+
+</section>

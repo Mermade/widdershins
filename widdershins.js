@@ -34,6 +34,8 @@ var argv = require('yargs')
     .boolean('httpsnippet')
     .default('httpsnippet',false)
     .describe('httpsnippet','Use httpsnippet to generate code samples')
+    .boolean('html')
+    .describe('html','Output html instead of markdown, implies omitHeader')
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
@@ -57,6 +59,8 @@ var argv = require('yargs')
     .describe('raw','Output raw schemas not example values')
     .boolean('resolve')
     .describe('resolve','Resolve external $refs')
+    .string('respec')
+    .describe('respec','Filename containing the ReSpec config object, implies html,omitHeader')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
@@ -152,6 +156,18 @@ options.yaml = argv.yaml;
 options.customApiKeyValue = argv.customApiKeyValue;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
+if (argv.respec) {
+    let r = fs.readFileSync(path.resolve(argv.respec),'utf8');
+    try {
+        options.respec = yaml.safeLoad(r,{json:true});
+    }
+    catch (ex) {
+        console.error(ex.message);
+    }
+}
+options.html = argv.html;
+if (options.respec) options.html = true;
+if (options.html) options.omitHeader = true;
 
 if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');

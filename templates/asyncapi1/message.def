@@ -3,6 +3,7 @@
 {{ data.messageName = data.message["x-widdershins-oldRef"].split('/').pop(); }}
 {{?}}
 {{?}}
+<section>
 <h3 id="{{=data.utils.slugify(data.topicName)}}-{{=data.messageName}}">{{=data.messageName}}</h3>
 
 {{? data.message.deprecated}}Note: **Deprecated**{{?}}
@@ -81,3 +82,5 @@
 {{??}}
 {{#def.authentication_none}}
 {{?}}
+
+</section>

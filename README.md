@@ -29,12 +29,6 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ### Examples
 
-Command-line use looks like this:
-```
-node widdershins [options] {input-file|url} [[-o] output markdown]
-```
-
-For example:
 ```
 node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --summary defs/petstore3.json -o petstore3.md
 ```
