@@ -578,9 +578,9 @@ function convertInner(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
-    let content = '---\n'+yaml.dump(header)+'\n---\n\n';
-        data = options.templateCallback('main', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
+    let content = options.noHeader ? '' : '---\n'+yaml.dump(header)+'\n---\n\n';
+    data = options.templateCallback('main', 'pre', data);
+    if (data.append) { content += data.append; delete data.append; }
     try {
         content += templates.main(data);
     }
@@ -590,6 +590,8 @@ function convertInner(api, options, callback) {
     data = options.templateCallback('main', 'post', data);
     if (data.append) { content += data.append; delete data.append; }
     content = common.removeDupeBlankLines(content);
+
+    if (options.html) content = common.html(content,header,options);
 
     callback(null,content);
 }

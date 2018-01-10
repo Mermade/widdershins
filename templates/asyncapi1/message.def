@@ -1,3 +1,5 @@
+<section>
+
 ### {{=data.messageName}}
 
 {{? data.message.deprecated}}Note: **Deprecated**{{?}}
@@ -74,3 +76,5 @@
 {{??}}
 {{#def.authentication_none}}
 {{?}}
+
+</section>

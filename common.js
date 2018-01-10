@@ -12,6 +12,26 @@ const reref = require('reftools/lib/reref.js').reref;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 
+const hljs = require('highlightjs/highlight.pack.js');
+const emoji = require('markdown-it-emoji');
+const md = require('markdown-it')({
+  html: true,
+  linkify: true,
+  typographer: true,
+  highlight: function (str, lang) {
+      lang = lang.split('--')[0];
+      if (lang && hljs.getLanguage(lang)) {
+          try {
+              return '<pre class="nohighlight example"><code>' +
+                  hljs.highlight(lang, str, true).value +
+                  '</code></pre>';
+          } catch (__) { }
+      }
+
+      return '<pre class="highlight example"><code>' + md.utils.escapeHtml(str) + '</code></pre>';
+    }
+}).use(emoji);
+
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
 let statusCodes = require('./statusCodes.json');
@@ -390,6 +410,17 @@ function toPrimitive(v) {
     return v;
 }
 
+function html(markdown,header,options) {
+    let preface = `<head><meta charset="UTF-8"><title>${md.utils.escapeHtml(header.title)}</title></head>`;
+    if (options.respec) {
+        preface += '<script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>';
+        preface += `<script class="remove">var respecConfig = ${JSON.stringify(options.respec)};</script>`;
+        preface += '<html><section id="abstract"></section>';
+        preface += '<section id="sotd"></section>';
+    }
+    return preface+md.render(markdown);
+}
+
 module.exports = {
     statusCodes : statusCodes,
     doContentType : doContentType,
@@ -403,6 +434,7 @@ module.exports = {
     gfmLink : gfmLink,
     schemaToArray : schemaToArray,
     removeDupeBlankLines: removeDupeBlankLines,
-    toPrimitive: toPrimitive
+    toPrimitive: toPrimitive,
+    html : html
 };
 

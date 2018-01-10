@@ -1,3 +1,5 @@
+<section>
+
 ## {{= data.operationUniqueName}}
 
 {{? data.operation.operationId}}
@@ -45,3 +47,4 @@
 {{??}}
 {{#def.authentication_none}}
 {{?}}
+</section>

@@ -1,3 +1,5 @@
+<section>
+
 # OpenAPI Extensions Documentation
 
 {{? data.header.language_tabs.length}}> Scroll down for schema examples. Select a format for examples from the tabs above or the mobile navigation menu.{{?}}
@@ -9,6 +11,9 @@ This documentation was automatically generated from a v{{=data.api.openapiExtens
 {{ for(var ns in data.api) { }}
   {{ if ((ns !== 'openapiExtensionFormat') && (ns !== 'components')) { }}
   {{ data.ns = data.api[ns]; }}
+
+<section>
+
 # {{=ns}}
 
 {{ var first = Object.keys(data.ns)[0];
@@ -20,5 +25,10 @@ Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}
 {{?}}
 
 {{#def.ext}}
-  {{ } }}
-{{ } }}
+
+</section>
+
+  {{ } /* of if */ }}
+{{ } /* of for */ }}
+
+</section>

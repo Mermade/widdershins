@@ -31,8 +31,13 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 node widdershins [options] {input-file|url} [[-o] output markdown]
   --expandBody          Expand requestBody properties in parameters    [boolean]
   --headings            Levels of headings to expand in TOC[number] [default: 2]
+  --html                Output html instead of markdown, implies noHeader
+                                                                       [boolean]
+  --noHeader            Omit yaml front-matter                         [boolean]
   --omitBody            Omit top-level fake body parameter object      [boolean]
   --resolve             Resolve external $refs                         [boolean]
+  --respec              Filename containing the ReSpec config object, implies
+                        html,noHeader                                   [string]
   --summary             Use summary instead of operationId for TOC     [boolean]
   --verbose             Increase verbosity                             [boolean]
   -h, --help            Show help                                      [boolean]

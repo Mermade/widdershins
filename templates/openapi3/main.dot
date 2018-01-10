@@ -1,3 +1,4 @@
+<section>
 <h1 id="{{=data.title_prefix}}">{{=data.api.info.title}} {{=data.version}}</h1>
 
 > Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example requests and responses.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
@@ -22,6 +23,7 @@ Base URLs:
 {{? data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || 'Support'}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a> {{?}}{{?}}
 {{? data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{??}} License: {{=data.api.info.license.name}}{{?}}{{?}}
+</section>
 
 {{? data.api.components && data.api.components.securitySchemes }}
 {{#def.security}}
@@ -30,6 +32,7 @@ Base URLs:
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
+<section>
 <h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-')}}">{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
@@ -45,15 +48,19 @@ Base URLs:
 {{= data.templates.operation(data) }}
 {{ } /* of methods */ }}
 
+</section>
 {{ } /* of resources */ }}
 
 {{? data.api.components && data.api.components.schemas }}
+<section>
+
 # Schemas
 
 {{ for (var s in data.components.schemas) { }}
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
+<section>
 <h2 id="tocS{{=s.toLowerCase()}}">{{=s}}</h2>
 
 <a id="schema{{=s.toLowerCase()}}"></a>
@@ -75,6 +82,8 @@ Base URLs:
    }
 }}
 
+<section>
+
 ### Properties
 
 {{~ blocks :block}}
@@ -89,6 +98,8 @@ Base URLs:
 {{?}}
 
 {{? enums.length > 0 }}
+<section>
+
 #### Enumerated Values
 
 |Property|Value|
@@ -96,7 +107,11 @@ Base URLs:
 {{~ enums :e}}|{{=e.name}}|{{=data.utils.toPrimitive(e.value)}}|
 {{~}}
 
+</section>
 {{?}}
+
+</section>
+</section>
 
 {{ } /* of schemas */ }}
 

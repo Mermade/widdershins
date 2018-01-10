@@ -74,13 +74,15 @@ function convert(api, options, callback) {
 
     let content;
     try {
-        content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
-            templates.main(data);
+        content = options.noHeader ? '' : '---\n'+yaml.safeDump(header)+'\n---\n\n';
+        content += templates.main(data);
     }
     catch (ex) {
         return callback(ex);
     }
     content = common.removeDupeBlankLines(content);
+
+    if (options.html) content = common.html(content,header,options);
 
     callback(null,content);
 }

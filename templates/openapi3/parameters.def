@@ -1,3 +1,4 @@
+<section>
 <h3 id="{{=data.operationUniqueName}}-parameters">Parameters</h3>
 
 |Parameter|In|Type|Required|Description|
@@ -36,3 +37,4 @@
 {{~ data.enums :e}}|{{=e.name}}|{{=data.utils.toPrimitive(e.value)}}|
 {{~}}
 {{?}}
+</section>

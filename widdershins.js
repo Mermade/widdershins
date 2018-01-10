@@ -29,6 +29,8 @@ var argv = require('yargs')
     .number('headings')
     .describe('headings','Levels of headings to expand in TOC')
     .default('headings',2)
+    .boolean('html')
+    .describe('html','Output html instead of markdown, implies noHeader')
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
@@ -38,6 +40,8 @@ var argv = require('yargs')
     .alias('m','maxDepth')
     .describe('maxDepth','Maximum depth for schema examples')
     .default('maxDepth',10)
+    .boolean('noHeader')
+    .describe('noHeader','Omit yaml front-matter')
     .boolean('omitBody')
     .describe('omitBody','Omit top-level fake body parameter object')
     .string('outfile')
@@ -48,6 +52,8 @@ var argv = require('yargs')
     .describe('raw','Output raw schemas not example values')
     .boolean('resolve')
     .describe('resolve','Resolve external $refs')
+    .string('respec')
+    .describe('respec','Filename containing the ReSpec config object, implies html,noHeader')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
@@ -114,6 +120,19 @@ options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
+if (argv.respec) {
+    let r = fs.readFileSync(path.resolve(argv.respec),'utf8');
+    try {
+        options.respec = yaml.safeLoad(r,{json:true});
+    }
+    catch (ex) {
+        console.error(ex.message);
+    }
+}
+options.html = argv.html;
+options.noHeader = argv.noHeader;
+if (options.respec) options.html = true;
+if (options.html) options.noHeader = true;
 
 if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');
