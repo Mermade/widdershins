@@ -14,6 +14,10 @@ var argv = require('yargs')
     .usage('widdershins [options] {input-file|url} [[-o] output markdown]')
     .demand(1)
     .strict()
+    .string('abstract')
+    .alias('a','abstract')
+    .describe('abstract','the filename of the markdown include file to use for the ReSpec abstract section')
+    .default('abstract','./include/abstract.md')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
@@ -58,6 +62,9 @@ var argv = require('yargs')
     .alias('s','search')
     .default('search',true)
     .describe('search','Whether to enable search or not, default true')
+    .string('sotd')
+    .describe('sotd','the filename of the markdown include file to use for the ReSpec SotD section')
+    .default('sotd','./include/sotd.md')
     .boolean('summary')
     .describe('summary','Use summary instead of operationId for TOC')
     .string('theme')
@@ -121,6 +128,8 @@ options.omitBody = argv.omitBody;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
+    options.abstract = argv.abstract;
+    options.sotd = argv.sotd;
     let r = fs.readFileSync(path.resolve(argv.respec),'utf8');
     try {
         options.respec = yaml.safeLoad(r,{json:true});

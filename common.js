@@ -1,6 +1,8 @@
 'use strict';
 
+const fs = require('fs');
 const util = require('util');
+
 const jptr = require('jgexml/jpath.js');
 const sampler = require('openapi-sampler');
 const safejson = require('safe-json-stringify');
@@ -410,13 +412,24 @@ function toPrimitive(v) {
     return v;
 }
 
+function include(filename) {
+    return md.render(fs.readFileSync(filename,'utf8'));
+}
+
 function html(markdown,header,options) {
-    let preface = `<head><meta charset="UTF-8"><title>${md.utils.escapeHtml(header.title)}</title></head>`;
+    let preface = `<html><head><meta charset="UTF-8"><title>${md.utils.escapeHtml(header.title)}</title>`;
     if (options.respec) {
-        preface += '<script src="https://www.w3.org/Tools/respec/respec-w3c-common" class="remove"></script>';
+        preface += '<script src="https://mermade.github.io/static/respec-widdershins.js" class="remove"></script>';
         preface += `<script class="remove">var respecConfig = ${JSON.stringify(options.respec)};</script>`;
-        preface += '<html><section id="abstract"></section>';
-        preface += '<section id="sotd"></section>';
+        preface += '</head><body><section id="abstract">';
+        preface += include(options.abstract);
+        preface += '</section>';
+        preface += '<section id="sotd">';
+        preface += include(options.sotd);
+        preface += '</section>';
+    }
+    else {
+        preface += '</head><body>';
     }
     return preface+md.render(markdown);
 }
