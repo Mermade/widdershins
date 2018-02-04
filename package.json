@@ -38,7 +38,7 @@
     "dot": "^1.0.3",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
-    "node-fetch": "^1.7.3",
+    "node-fetch": "^2.0.0",
     "openapi-sampler": "^1.0.0-beta.8",
     "reftools": "0.0.20",
     "safe-json-stringify": "github:MikeRalphson/safe-json-stringify",
