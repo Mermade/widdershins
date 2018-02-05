@@ -1,8 +1,8 @@
 # widdershins
-OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/lord/slate) /
+OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/lord/slate) /
 [Shins](https://github.com/mermade/shins) compatible markdown
 
-![Build](https://img.shields.io/travis/Mermade/widdershins/master.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-419-brightgreen.svg)](https://github.com/mermade/openapi_specifications)
+![Build](https://img.shields.io/travis/Mermade/widdershins/master.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-419-brightgreen.svg)](https://github.com/mermade/OpenAPI_specifications)
 [![Known Vulnerabilities](https://snyk.io/test/npm/widdershins/badge.svg)](https://snyk.io/test/npm/widdershins)
 
 <img src="http://mermade.github.io/widdershins/logo.png" width="247px" height="250px" />
@@ -10,9 +10,9 @@ OpenApi / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### Widdershins *adverb*:
 * In a direction contrary to the sun's course;
 * anticlockwise;
-* helping you produce static documentation from your OpenApi 3.0 / Swagger 2.0 / AsyncAPI 1.x / Semoasa 0.1.0 definition
+* helping you produce static documentation from your OpenAPI 3.0 / Swagger 2.0 / AsyncAPI 1.x / Semoasa 0.1.0 definition
 
-![Widdershins screenshot](https://github.com/Mermade/oa2s-comparison/blob/master/docs/widdershins.png?raw=true)
+![Widdershins screenshot](https://mermade.github.io/widdershins/screenshot.png)
 
 ### News
 
@@ -85,7 +85,7 @@ options.language_tabs = [{ 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { '
 
 If you need to support a version of Slate \<v1.5.0 (or a renderer which also doesn't support display-names for language-tabs, such as `node-slate`, `slate-node` or `whiteboard`), you can use the `--environment` option with the included `whiteboard_env.json` file to simply achieve this.
 
-The `loadedFrom` option is only needed where the OpenApi / Swagger definition does not specify a host, and (as per the OpenApi [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
+The `loadedFrom` option is only needed where the OpenAPI / Swagger definition does not specify a host, and (as per the OpenAPI [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
 
 Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
@@ -108,7 +108,7 @@ Templates have access to a `data` object with a range of properties based on the
 
 If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
 
-* [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
+* [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/OpenAPI3/README.md)
 * [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
@@ -133,8 +133,8 @@ node testRunner {path-to-APIs}
 
 The test harness currently expects `.yaml` or `.json` files and has been tested against
 
-* [APIs.guru](https://github.com/APIs-guru/openapi-directory)
-* [Mermade OpenApi definitions collection](https://github.com/mermade/openapi-definitions)
+* [APIs.guru](https://github.com/APIs-guru/OpenAPI-directory)
+* [Mermade OpenAPI definitions collection](https://github.com/mermade/OpenAPI-definitions)
 
 ### Comparison between this and other OpenAPI / Swagger to Slate tools
 
@@ -152,7 +152,7 @@ Please feel free to add a link to your API documentation here.
 * [GOV UK Digital Marketplace API v1.0.0](https://alphagov.github.io/digitalmarketplace-api-docs/#digital-marketplace-api-v1-0-0)
 * [Capital One API](https://www.capitalone.co.uk/developer/api/)
 * [Cognite Data API](http://doc.cognitedata.com/)
-* [SpeckleWorks API](https://speckleworks.github.io/SpeckleOpenApi)
+* [SpeckleWorks API](https://speckleworks.github.io/SpeckleOpenAPI)
 * [Bank by API](https://tbicr.github.io/bank-api/bank-api.html)
 * [Open EO API](https://open-eo.github.io/openeo-api-poc/apireference/index.html)
 * [Split Payments API](http://docs.split.cash/)
