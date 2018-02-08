@@ -163,6 +163,9 @@ function schemaToArray(schema,offset,options,data) {
     let wsState = wsGetState();
     wsState.combine = true;
     walkSchema(schema,{},wsState,function(schema,parent,state){
+        if (schema.enum && Array.isArray(schema.enum)) {
+            schema.type = 'enum(' + schema.enum.join(', ') + ')';
+        }
 
         let isBlock = false;
         if (state.property && (state.property.startsWith('allOf') || state.property.startsWith('anyOf') || state.property.startsWith('oneOf') || (state.property === 'not'))) {
