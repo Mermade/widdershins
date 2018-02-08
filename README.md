@@ -77,6 +77,8 @@ converter.convert(apiObj,options,function(err,str){
 });
 ```
 
+The `headings` option is currently only supported by Shins, not Slate which lacks this feature.
+
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
 
 ```javascript
