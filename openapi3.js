@@ -84,7 +84,7 @@ function fakeProdCons(data) {
                     data.bodyParameter.refName = op.requestBody["x-widdershins-oldRef"].replace('#/components/requestBodies/','');
                 }
                 data.bodyParameter.schema = op.requestBody.content[rb].schema;
-                data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{},data.api);
+                data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{skipReadOnly:true},data.api);
                 if (typeof data.bodyParameter.exampleValues.object === 'object') {
                     data.bodyParameter.exampleValues.json = safejson(data.bodyParameter.exampleValues.object,null,2);
                 }
@@ -163,7 +163,7 @@ function getParameters(data) {
             if (param.refName) param.safeType = '['+param.refName+'](#schema'+param.refName.toLowerCase()+')';
         }
         if (pSchema) {
-            param.exampleValues.object = param.example || param.default || common.getSample(pSchema,data.options,{},data.api);
+            param.exampleValues.object = param.example || param.default || common.getSample(pSchema,data.options,{skipReadOnly:true},data.api);
             if (typeof param.exampleValues.object === 'object') {
                 param.exampleValues.json = safejson(param.exampleValues.object,null,2);
             }
@@ -369,7 +369,7 @@ function getResponseExamples(data) {
                         obj = common.clean(contentType.example);
                     }
                     else {
-                        obj = common.getSample(obj,data.options,{},data.api);
+                        obj = common.getSample(obj,data.options,{skipWriteOnly:true},data.api);
                     }
                     if (common.doContentType(cta, common.jsonContentTypes)) {
                         content += '```json\n';
