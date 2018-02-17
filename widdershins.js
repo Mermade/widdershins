@@ -127,9 +127,9 @@ if (argv.environment) {
 }
 
 var input = argv._[0];
+options.source = input;
 var up = url.parse(input);
 if (up.protocol && up.protocol.startsWith('http')) {
-    options.source = input;
     fetch(input)
     .then(function (res) {
         return res.text();
