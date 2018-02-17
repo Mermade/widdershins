@@ -27,7 +27,18 @@
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
+{{ var enums = []; }}
 {{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true,join:true},data); }}
+{{ for (var block of blocks) {
+     for (var p of block.rows) {
+       if (p.schema && p.schema.enum) {
+         for (var e of p.schema.enum) {
+           enums.push({name:p.name,value:e});
+         }
+       }
+     }
+   }
+}}
 
 Status Code **{{=response.status}}**
 
@@ -39,6 +50,16 @@ Status Code **{{=response.status}}**
 {{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
+
+{{? enums.length > 0 }}
+#### Enumerated Values
+
+|Property|Value|
+|---|---|
+{{~ enums :e}}|{{=e.name}}|{{=e.value}}|
+{{~}}
+
+{{?}}
 
 {{ data.response = response; }}
 {{#def.links}}
