@@ -4,6 +4,7 @@
 
 {{? data.api.info.description}}{{=data.api.info.description}}{{?}}
 
+{{? data.api.servers }}
 Base URLs:
 {{~data.api.servers :s}}
 * <a href="{{=s.url}}">{{=s.url}}</a>
@@ -16,6 +17,7 @@ Base URLs:
 {{?}}
 {{ } }}
 {{~}}
+{{?}}
 
 {{? data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || 'Support'}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a> {{?}}{{?}}
