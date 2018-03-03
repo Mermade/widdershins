@@ -19,7 +19,7 @@ function preProcessor(api) {
 
 function convertToToc(source) {
     let resources = {};
-    for (var t in source.topics) {
+    for (let t in source.topics) {
         let topic = source.topics[t];
         for (var m in topic) {
             var message = topic[m];
@@ -30,8 +30,8 @@ function convertToToc(source) {
             if (!resources[tagName]) {
                 resources[tagName] = {};
                 if (source.tags) {
-                    for (var t in source.tags) {
-                        var tag = source.tags[t];
+                    for (let t in source.tags) {
+                        let tag = source.tags[t];
                         if (tag.name === tagName) {
                             resources[tagName].description = tag.description;
                             resources[tagName].externalDocs = tag.externalDocs;

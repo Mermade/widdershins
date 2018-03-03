@@ -1,3 +1,5 @@
+'use strict';
+
 function convert(api, options, callback) {
     api = api.split('\r').join('');
     var lines = api.split('\n');
