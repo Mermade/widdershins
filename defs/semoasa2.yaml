@@ -157,7 +157,7 @@ guru.apis:
   x-preferred:
     description: "A property of the `info` object, `x-preferred` is a Boolean property which distinguishes between multiple versions of the same API. Where the `x-providerName` and `x-serviceName` are the same, only one definition should be marked `x-preferred: true`. This helps users of the APIs.guru collection organise and display the APIs."
     schema:
-      type: string
+      type: boolean
     oas2:
       usage: restricted
       objectTypes:
