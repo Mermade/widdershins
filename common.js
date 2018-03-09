@@ -293,7 +293,7 @@ function schemaToArray(schema,offset,options,data) {
             //console.warn(entry.safeType);
         }
 
-        entry.required = (parent.required && parent.required.indexOf(entry.name)>=0);
+        entry.required = (parent.required && Array.isArray(parent.required) && parent.required.indexOf(entry.name)>=0);
         if (typeof entry.required === 'undefined') entry.required = false;
 
         if (typeof entry.type === 'undefined') {
