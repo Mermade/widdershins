@@ -14,22 +14,23 @@ const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
-var statusCodes = require('./statusCodes.json');
+let statusCodes = require('./statusCodes.json');
 
-// could change these to be regexes...
-var xmlContentTypes = ['application/xml', 'text/xml', 'image/svg+xml', 'application/rss+xml', 'application/rdf+xml', 'application/atom+xml', 'application/mathml+xml', 'application/hal+xml'];
-var jsonContentTypes = ['application/json; charset=utf-8','application/json', 'text/json', 'application/hal+json', 'application/ld+json', 'application/json-patch+json'];
-var yamlContentTypes = ['application/x-yaml', 'text/x-yaml'];
-var formContentTypes = ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream'];
+const contentTypes = {
+    xml: ['^(application|text|image){1}\\/(.*\\+){0,1}xml(;){0,1}(\\s){0,}(charset=.*){0,}$'],
+    json: ['^(application|text){1}\\/(.*\\+){0,1}json(;){0,1}(\\s){0,}(charset=.*){0,}$'],
+    yaml: ['application/x-yaml', 'text/x-yaml'],
+    form: ['multipart/form-data', 'application/x-www-form-urlencoded', 'application/octet-stream']
+};
 
 function nop(obj) {
     return obj;
 }
 
-function doContentType(types, targets) {
-    for (var type in types) {
-        for (var target of targets) {
-            if (types[type] === target) return true;
+function doContentType(ctTypes, ctClass) {
+    for (let type of ctTypes) {
+        for (let target of contentTypes[ctClass]||[]) {
+            if (type.match(target)) return true;
         }
     }
     return false;
@@ -380,10 +381,6 @@ function getSample(orig,options,samplerOptions,api){
 
 module.exports = {
     statusCodes : statusCodes,
-    xmlContentTypes : xmlContentTypes,
-    jsonContentTypes : jsonContentTypes,
-    yamlContentTypes : yamlContentTypes,
-    formContentTypes : formContentTypes,
     doContentType : doContentType,
     languageCheck : languageCheck,
     getCodeSamples : getCodeSamples,

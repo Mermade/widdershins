@@ -243,22 +243,22 @@ function getBodyParameterExamples(data) {
     if (data.bodyParameter.schema && data.bodyParameter.schema.xml) {
         xmlWrap = data.bodyParameter.schema.xml.name;
     }
-    if (common.doContentType(data.consumes, common.jsonContentTypes)) {
+    if (common.doContentType(data.consumes, 'json')) {
         content += '```json\n';
         content += safejson(obj,null,2) + '\n';
         content += '```\n';
     }
-    if (common.doContentType(data.consumes, common.yamlContentTypes)) {
+    if (common.doContentType(data.consumes, 'yaml')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
         content += '```\n';
     }
-    if (common.doContentType(data.consumes, common.formContentTypes)) {
+    if (common.doContentType(data.consumes, 'form')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
         content += '```\n';
     }
-    if (common.doContentType(data.consumes, common.xmlContentTypes) && (typeof obj === 'object')) {
+    if (common.doContentType(data.consumes, 'xml') && (typeof obj === 'object')) {
         if (xmlWrap) {
             var newObj = {};
             newObj[xmlWrap] = obj;
@@ -377,12 +377,12 @@ function getResponseExamples(data) {
                     else {
                         obj = common.getSample(obj,data.options,{skipWriteOnly:true},data.api);
                     }
-                    if (common.doContentType(cta, common.jsonContentTypes)) {
+                    if (common.doContentType(cta, 'json')) {
                         content += '```json\n';
                         content += safejson(obj, null, 2) + '\n';
                         content += '```\n';
                     }
-                    if (common.doContentType(cta, common.yamlContentTypes)) {
+                    if (common.doContentType(cta, 'yaml')) {
                         content += '```yaml\n';
                         content += yaml.safeDump(obj) + '\n';
                         content += '```\n';
@@ -392,7 +392,7 @@ function getResponseExamples(data) {
                         newObj[xmlWrap] = obj;
                         obj = newObj;
                     }
-                    if ((typeof obj === 'object') && common.doContentType(cta, common.xmlContentTypes)) {
+                    if ((typeof obj === 'object') && common.doContentType(cta, 'xml')) {
                         content += '```xml\n';
                         content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
                         content += '```\n';
