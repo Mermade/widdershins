@@ -10,6 +10,7 @@ before_script:
 #  - git clone --depth 1 https://github.com/SOM-Research/hapi.git
   - . ./bin/setflags.sh
 script:
+  - npm test
   - node $nflags testRunner openapi-directory/APIs/
   - node $nflags testRunner openapi-definitions/
   - node $nflags testRunner openapi3-examples/pass/
