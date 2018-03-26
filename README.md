@@ -154,7 +154,7 @@ Please feel free to add a link to your API documentation here.
 * [GOV UK Digital Marketplace API v1.0.0](https://alphagov.github.io/digitalmarketplace-api-docs/#digital-marketplace-api-v1-0-0)
 * [Capital One API](https://www.capitalone.co.uk/developer/api/)
 * [Cognite Data API](http://doc.cognitedata.com/)
-* [SpeckleWorks API](https://speckleworks.github.io/SpeckleOpenAPI)
+* [SpeckleWorks API](https://speckleworks.github.io/SpeckleSpecs)
 * [Bank by API](https://tbicr.github.io/bank-api/bank-api.html)
 * [Open EO API](https://open-eo.github.io/openeo-api-poc/apireference/index.html)
 * [Split Payments API](http://docs.split.cash/)
