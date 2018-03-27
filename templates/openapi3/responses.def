@@ -47,7 +47,7 @@ Status Code **{{=response.status}}**
 |Name|Type|Required|Description|
 |---|---|---|---|{{??}}*{{=block.title}}*
 {{?}}
-{{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~block.rows :p}}|<span style="white-space:nowrap">{{=p.displayName}}</span>|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
 
