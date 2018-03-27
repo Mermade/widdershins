@@ -22,7 +22,7 @@ Swagger / OpenAPI 2.0 definitions are converted automatically.
 * `queryParameters[]` - a subset of `parameters` that are `in:query`
 * `requiredParameters[]` - a subset of `queryParameters` that are `required:true`
 * `headerParameters[]` - a subset of `parameters` that are `in:header`
-* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`
+* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`, and optionally `Authorization` (the latter has an `isAuth` boolean property set true so it an be omitted in templates if desired
 
 ### Parameter template
 

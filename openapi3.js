@@ -133,6 +133,7 @@ function getParameters(data) {
         accept.exampleValues.object = data.produces[0];
         data.allHeaders.push(accept);
     }
+
     if (!Array.isArray(data.parameters)) data.parameters = [];
     data.longDescs = false;
     for (let param of data.parameters) {
@@ -218,6 +219,34 @@ function getParameters(data) {
             }
         }
         templateVars[stupidity(param.name)] = param.exampleValues.object;
+    }
+
+    let effSecurity;
+    let existingAuth = data.allHeaders.find(function(e,i,a){
+        return e.name.toLowerCase() === 'authorization';
+    });
+    if (!existingAuth) {
+        if (data.operation.security) {
+            effSecurity = Object.keys(data.operation.security[0])[0];
+        }
+        else if (data.api.security) {
+            effSecurity = Object.keys(data.api.security[0])[0];
+        }
+        if (effSecurity && data.api.components && data.api.components.securitySchemes && data.api.components.securitySchemes[effSecurity]) {
+            let secScheme = data.api.components.securitySchemes[effSecurity];
+            if ((secScheme.type === 'oauth2') || (secScheme.type === 'openIdConnect') ||
+                ((secScheme.type === 'http') && (secScheme.scheme === 'bearer'))) {
+                let authHeader = {};
+                authHeader.name = 'Authorization';
+                authHeader.type = 'string';
+                authHeader.in = 'header';
+                authHeader.isAuth = true;
+                authHeader.exampleValues = {};
+                authHeader.exampleValues.object = 'bearer {access-token}';
+                authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
+                data.allHeaders.push(authHeader);
+            }
+        }
     }
 
     let uriTemplate = new URITemplate(uriTemplateStr);
