@@ -201,9 +201,9 @@ function getParameters(data) {
             requiredUriTemplateStr = requiredUriTemplateStr.split('{'+param.name+'}').join(template);
         }
         if (param.in === 'query') {
-            let isFirst = uriTemplateStr.indexOf('{&') < 0
+            let isFirst = uriTemplateStr.indexOf('{&') < 0;
             // Since RFC6570 doesn't support multiple operators we cannot use (?+ and (&+ for reserved parameters
-            let prefix = isFirst ? '{?' : '{&'
+            let prefix = isFirst ? '{?' : '{&';
             var template = '';
             // style prefixes: form, spaceDelimited, pipeDelimited, deepObject
             if (!param.style) param.style = 'form';
@@ -213,7 +213,7 @@ function getParameters(data) {
 
             if (param.required) {
                 let isFirstRequired = requiredUriTemplateStr.indexOf('{?') < 0;
-                let reqPrefix = isFirstRequired ? '{?' : '{&'
+                let reqPrefix = isFirstRequired ? '{?' : '{&';
                 requiredUriTemplateStr += (reqPrefix + template);
                 data.requiredParameters.push(param);
             }
