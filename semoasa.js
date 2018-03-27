@@ -74,7 +74,7 @@ function convert(api, options, callback) {
 
     let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
         templates.main(data);
-    content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
+    content = common.removeDupeBlankLines(content);
 
     callback(null,content);
 }

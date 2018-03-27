@@ -379,6 +379,10 @@ function getSample(orig,options,samplerOptions,api){
     return result;
 }
 
+function removeDupeBlankLines(content) {
+    return content.replace(/[\r\n]{3,}/g, '\n\n');
+}
+
 module.exports = {
     statusCodes : statusCodes,
     doContentType : doContentType,
@@ -390,5 +394,6 @@ module.exports = {
     strim : strim,
     getSample : getSample,
     gfmLink : gfmLink,
-    schemaToArray : schemaToArray
+    schemaToArray : schemaToArray,
+    removeDupeBlankLines: removeDupeBlankLines
 };

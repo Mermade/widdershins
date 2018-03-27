@@ -552,7 +552,7 @@ function convertInner(api, options, callback) {
     }
     data = options.templateCallback('main', 'post', data);
     if (data.append) { content += data.append; delete data.append; }
-    content = content.replace(/^\s*[\r\n]/gm,'\n\n'); // remove dupe blank lines
+    content = common.removeDupeBlankLines(content);
 
     callback(null,content);
 }
