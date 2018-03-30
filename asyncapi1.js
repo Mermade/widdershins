@@ -81,7 +81,7 @@ function convert(api, options, callback) {
     header.highlight_theme = options.theme;
 
     if (typeof templates === 'undefined') {
-        templates = dot.process({ path: path.join(__dirname, 'templates', 'asyncapi') });
+        templates = dot.process({ path: path.join(__dirname, 'templates', 'asyncapi1') });
     }
     if (options.user_templates) {
         templates = Object.assign(templates, dot.process({ path: options.user_templates }));

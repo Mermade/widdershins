@@ -2,7 +2,7 @@
 
 const openapi2 = require('./openapi2.js');
 const openapi3 = require('./openapi3.js');
-const asyncapi = require('./asyncapi.js');
+const asyncapi1 = require('./asyncapi1.js');
 const semoasa = require('./semoasa.js');
 const apiblueprint = require('./apiblueprint.js');
 
@@ -20,7 +20,7 @@ function convert(api, options, callback) {
         openapi3.convert(api, options, callback);
     }
     else if (api.asyncapi) {
-        asyncapi.convert(api, options, callback);
+        asyncapi1.convert(api, options, callback);
     }
     else if (api.openapiExtensionFormat) {
         semoasa.convert(api, options, callback);
