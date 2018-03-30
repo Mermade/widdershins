@@ -29,11 +29,16 @@ var argv = require('yargs')
     .number('headings')
     .describe('headings','Levels of headings to expand in TOC')
     .default('headings',2)
+    .boolean('httpsnippet')
+    .default('httpsnippet',false)
+    .describe('httpsnippet','Use httpsnippet to generate code samples')
     .alias('i','includes')
     .describe('includes','List of files to include, comma separated')
     .boolean('lang')
     .alias('l','lang')
     .describe('lang','Automatically generate list of languages for code samples')
+    .array('language_tabs')
+    .describe('language_tabs', 'List of language tabs for code samples using "language[:label[:client]]" format, for example: "javascript:JavaScript:request"')
     .number('maxLevel')
     .alias('m','maxDepth')
     .describe('maxDepth','Maximum depth for schema examples')
@@ -96,8 +101,22 @@ function doit(s) {
 }
 
 options.codeSamples = !argv.code;
+options.httpsnippet = argv.httpsnippet;
 if (argv.lang) {
     options.language_tabs = [];
+}
+else if (argv.language_tabs) {
+    const languages = argv.language_tabs
+        .reduce((languages, item) => {
+            const [lang, name, client] = item.split(':', 3);
+
+            languages.language_tabs.push({ [lang]: name || lang });
+            languages.language_clients[lang] = client || '';
+
+            return languages;
+        }, { language_tabs: [], language_clients: []});
+    options.language_tabs = languages.language_tabs;
+    options.language_clients = languages.language_clients;
 }
 if (argv.theme) options.theme = argv.theme;
 options.user_templates = argv.user_templates;

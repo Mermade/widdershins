@@ -1,6 +1,5 @@
 'use strict';
 
-const util = require('util');
 const jptr = require('jgexml/jpath.js');
 const sampler = require('openapi-sampler');
 const safejson = require('safe-json-stringify');
@@ -8,13 +7,13 @@ const recurse = require('reftools/lib/recurse.js').recurse;
 const visit = require('reftools/lib/visit.js').visit;
 const clone = require('reftools/lib/clone.js').clone;
 const circularClone = require('reftools/lib/clone.js').circularClone;
-const reref = require('reftools/lib/reref.js').reref;
 const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
 const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
+const httpsnippetGenerator = require('./httpsnippetGenerator');
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */
 /* "Unlicensed", public domain */
-let statusCodes = require('./statusCodes.json');
+const statusCodes = require('./statusCodes.json');
 
 const contentTypes = {
     xml: ['^(application|text|image){1}\\/(.*\\+){0,1}xml(;){0,1}(\\s){0,}(charset=.*){0,}$'],
@@ -62,32 +61,61 @@ function languageCheck(language, language_tabs, mutate) {
 
 function getCodeSamples(data) {
     let s = '';
-    let op = data.operation||data.message;
+    const op = data.operation||data.message;
     if (op && op["x-code-samples"]) {
         for (var c in op["x-code-samples"]) {
             var sample = op["x-code-samples"][c];
             var lang = languageCheck(sample.lang, data.header.language_tabs, true);
-            s += '```' + lang + '\n';
-            s += sample.source;
-            s += '\n```\n';
+            s += generateCodeSnippet(lang, sample.source);
         }
     }
     else {
-        for (let lang of data.header.language_tabs) {
-            let target = lang;
-            if (typeof lang === 'object') target = Object.keys(target)[0];
-            let lcLang = languageCheck(target,data.header.language_tabs,false);
-            var templateName = 'code_' + lcLang.substring(lcLang.lastIndexOf('-') +
-1);
-            var templateFunc = data.templates[templateName];
-            if (templateFunc) {
-                s += '```'+lcLang+'\n';
-                s += templateFunc(data)+'\n';
-                s += '```\n\n';
-            }
-        }
+        const samplesGenerator = data.options.httpsnippet
+            ? httpsnippetGenerator.generate
+            : fileTemplateGenerator;
+
+        const codeSamples = data.header.language_tabs
+            .map(tab => {
+                const lang = typeof tab === 'object'
+                    ? Object.keys(tab)[0]
+                    : tab;
+
+                const lowerCaseLanguage = languageCheck(lang, data.header.language_tabs, false);
+                const target = getLanguageTarget(lowerCaseLanguage);
+                const client = getLanguageClient(lang, data.options.language_clients);
+
+                const sample = (target && samplesGenerator(target, client, data)) || '';
+                return (sample && generateCodeSnippet(lowerCaseLanguage, sample)) || '';
+            });
+
+        s += codeSamples.join('');
     }
     return s;
+}
+
+function getLanguageTarget(lang) {
+    // _Check if language custom target is used
+    // i.e., javascript--nodejs -> nodejs
+    return (lang && lang.split('--')[1]) || lang;
+}
+
+function getLanguageClient(lang, clients) {
+    return (lang && clients && clients[lang]) || '';
+}
+
+function fileTemplateGenerator(target, client, data) {
+    const templateName = getCodeSampleTemplateName(target);
+    const templateFunc = data.templates[templateName];
+    return (templateFunc && templateFunc(data)) || '';
+}
+
+function getCodeSampleTemplateName(target) {
+    return `code_${target}`;
+}
+
+function generateCodeSnippet(lang, code) {
+    const snippetSeparator = '```';
+    return `${snippetSeparator}${lang}\n${code}\n${snippetSeparator}\n\n`;
 }
 
 function gfmLink(text) {
