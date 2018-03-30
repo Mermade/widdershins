@@ -11,8 +11,7 @@ Base URLs:
     * **{{=v}}** - {{=s.variables[v].description||''}} Default: {{=s.variables[v].default}}
 {{? s.variables[v].enum}}
 {{~ s.variables[v].enum :e}}
-        * {{= e}}
-{{~}}
+        * {{= e}}{{~}}
 {{?}}
 {{ } }}
 {{~}}
@@ -35,6 +34,18 @@ Base URLs:
 {{ data.topicName = t; }}
 {{ data.topic = resource.topics[t]; }}
 ## {{=t}}
+
+{{? data.topic.parameters }}
+<h3 id="{{=data.topicName}}-parameters">Parameters</h3>
+
+{{ data.parameters = data.utils.getParameters(data.topic.parameters); }}
+
+|Parameter|In|Type|Required|Description|
+|---|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}|{{=p.in}}|{{=p.safeType}}|{{=p.required}}|{{=p.shortDesc || 'No description'}}|
+{{~}}
+
+{{?}}
 
 {{ for (var m in data.topic.messages) { }}
 {{ data.messageName = m; }}

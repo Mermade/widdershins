@@ -8,7 +8,7 @@
 
 {{? sd.type == 'apiKey' }}
 * API Key
-    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
+    - Parameter Name: **{{=sd.name||sd.in}}**, in: {{=sd.in}}. {{=sd.description}}
 {{?}}
 {{? sd.type == 'httpApiKey' }}
 * API Key
