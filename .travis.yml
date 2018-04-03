@@ -1,8 +1,8 @@
 language: node_js
 node_js:
+  - "9"
   - "8"
   - "6"
-  - "4"
 before_script:
   - git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
   - git clone --depth 1 https://github.com/mermade/openapi-definitions.git
