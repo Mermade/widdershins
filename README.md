@@ -20,6 +20,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 * You may limit the depth of schema examples using the `--maxDepth` option. The default is 10.
 * To omit schemas entirely, please copy and customise the `main.dot` template.
 * As of v3.x you must use the `--harmony` flag if running on Node.js 4
+* As of v3.1.0 Widdershins includes a generated `Authorization` header in OpenAPI code samples. If you wish to omit this, see [here](/templates/OpenAPI3/README.md).
 
 ### To install
 
