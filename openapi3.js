@@ -103,6 +103,8 @@ function getParameters(data) {
         s = s.split('-').join('%2D');
         s = s.split('$').join('%24');
         s = s.split('.').join('%2E');
+        s = s.split('(').join('%28');
+        s = s.split(')').join('%29');
         return s;
     }
 
