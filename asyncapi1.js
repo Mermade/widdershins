@@ -50,7 +50,7 @@ function convertToToc(source) {
 function getParameters(params) {
     for (let p of params) {
         if (!p.in) p.in = 'topic';
-        if (!p.required) p.required = false;
+        if (typeof p.required === 'undefined') p.required = true;
         p.safeType = p.schema.type;
         p.shortDesc = p.description;
     }
