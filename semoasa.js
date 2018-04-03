@@ -72,8 +72,9 @@ function convert(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
+    let content;
     try {
-        let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
+        content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
             templates.main(data);
     }
     catch (ex) {
