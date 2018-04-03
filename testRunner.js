@@ -56,7 +56,7 @@ widdershinsOptions.verbose = options.verbose;
 function genStackNext() {
     if (!genStack.length) return false;
     var gen = genStack.shift();
-    gen.next();
+    setImmediate(() => gen.next());
     return true;
 }
 
