@@ -127,10 +127,13 @@ function* check(file) {
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
-                    //console.warn(result);
                 }
                 if (ok && result.indexOf('x-widdershins-')>=0) {
                     message = 'Ok except for x-widdershins- references';
+                    ok = false;
+                }
+                if (ok && result.indexOf('[object Object]')>=0) {
+                    message = 'Ok except for object references';
                     ok = false;
                 }
                 if ((result != '') && ok) {
@@ -170,6 +173,12 @@ function* check(file) {
 process.exitCode = 1;
 pathspec = path.resolve(pathspec);
 
+let stat = fs.statSync(pathspec);
+if (stat && stat.isFile()) {
+    genStack.push(check(pathspec));
+    genStackNext();
+}
+else {
 rf(pathspec, { readContents: false, filenameFormat: rf.FULL_PATH }, function (err) {
     if (err) console.log(util.inspect(err));
 })
@@ -183,6 +192,7 @@ rf(pathspec, { readContents: false, filenameFormat: rf.FULL_PATH }, function (er
 .catch(err => {
     console.log(util.inspect(err));
 });
+}
 
 process.on('exit', function(code) {
     if (failures.length>0) {

@@ -40,11 +40,21 @@ function convertToToc(source) {
                 }
             }
             if (!resources[tagName].topics) resources[tagName].topics = {};
-            resources[tagName].topics[t] = { messages: {} };
+            resources[tagName].topics[t] = { messages: {}, parameters: topic.parameters };
             resources[tagName].topics[t].messages[m] = message;
         }
     }
     return resources;
+}
+
+function getParameters(params) {
+    for (let p of params) {
+        if (!p.in) p.in = 'topic';
+        if (!p.required) p.required = false;
+        p.safeType = p.schema.type;
+        p.shortDesc = p.description;
+    }
+    return params;
 }
 
 function convert(api, options, callback) {
@@ -95,8 +105,10 @@ function convert(api, options, callback) {
     data.resources = convertToToc(data.api);
 
     data.utils = {};
+    data.utils.inspect = util.inspect;
     data.utils.yaml = yaml;
     data.utils.getSample = common.getSample;
+    data.utils.getParameters = getParameters;
     data.utils.schemaToArray = common.schemaToArray;
     data.utils.getCodeSamples = common.getCodeSamples;
 
