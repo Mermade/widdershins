@@ -111,7 +111,7 @@ Templates have access to a `data` object with a range of properties based on the
 If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
 
 * [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/OpenAPI3/README.md)
-* [AsyncAPI 1.0 template parameters](/templates/asyncapi/README.md)
+* [AsyncAPI 1.x template parameters](/templates/asyncapi1/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
 ## User templates

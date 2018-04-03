@@ -1,4 +1,4 @@
-## AsyncAPI 1.0 template parameters
+## AsyncAPI 1.x template parameters
 
 ### Code templates
 
@@ -8,6 +8,15 @@
 * `tags[]` - the full list of tags applying to the message
 * `payload` - containing `.obj`, `.str` and `.json` properties
 * `header` - containing `.obj`, `.str` and `.json` properties
+
+### Parameter Object (AsyncAPI 1.1+)
+
+* After `data.utils.getParameters` is called
+    * `name` - the name of the parameter
+    * `in` - always `topic` in AsyncAPI v1.1
+    * `required` - boolean. Defaulted to `true`
+    * `safeType` - should usually be `string`
+    * `shortDesc` - the parameter description
 
 ### Payload template
 
