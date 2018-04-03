@@ -33,6 +33,6 @@
 
 |Parameter|Value|
 |---|---|
-{{~ data.enums :e}}|{{=e.name}}|{{=e.value}}|
+{{~ data.enums :e}}|{{=e.name}}|{{=data.utils.toPrimitive(e.value)}}|
 {{~}}
 {{?}}

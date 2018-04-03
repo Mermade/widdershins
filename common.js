@@ -383,6 +383,13 @@ function removeDupeBlankLines(content) {
     return content.replace(/[\r\n]{3,}/g, '\n\n');
 }
 
+function toPrimitive(v) {
+    if (typeof v === 'object') { // including arrays
+        return JSON.stringify(v);
+    }
+    return v;
+}
+
 module.exports = {
     statusCodes : statusCodes,
     doContentType : doContentType,
@@ -395,6 +402,7 @@ module.exports = {
     getSample : getSample,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray,
-    removeDupeBlankLines: removeDupeBlankLines
+    removeDupeBlankLines: removeDupeBlankLines,
+    toPrimitive: toPrimitive
 };
 
