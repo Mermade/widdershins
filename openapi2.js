@@ -12,6 +12,7 @@ function convert(api, options, callback) {
             else {
                 console.error(err.message);
             }
+            return callback(err);
         }
         else {
             options.resolve = false; // done now

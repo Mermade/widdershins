@@ -112,9 +112,14 @@ function convert(api, options, callback) {
     data.utils.schemaToArray = common.schemaToArray;
     data.utils.getCodeSamples = common.getCodeSamples;
 
-    let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
-        templates.main(data);
-    content = common.removeDupeBlankLines(content);
+    try {
+        let content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
+            templates.main(data);
+        content = common.removeDupeBlankLines(content);
+    }
+    catch (ex) {
+        return callback(ex);
+    }
 
     callback(null,content);
 }
@@ -122,3 +127,4 @@ function convert(api, options, callback) {
 module.exports = {
     convert : convert
 };
+

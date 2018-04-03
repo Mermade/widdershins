@@ -111,8 +111,9 @@ function* check(file) {
         widdershinsOptions.source = file;
         try {
             widdershins.convert(src, widdershinsOptions, function(err, result){
-                let ok = !!result;
+                let ok = (!!result && !err);
                 let message = '';
+                if (!result) result = '';
                 result = result.split('is undefined').join('x');
                 result = result.split('are undefined').join('x');
                 result = result.split('be undefined').join('x');
@@ -152,6 +153,7 @@ function* check(file) {
                 else {
                     console.warn(red+file);
                     if (message) console.warn(message);
+                    if (err) console.warn(err);
                     result = false;
                 }
                 handleResult(file, result);

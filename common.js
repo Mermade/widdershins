@@ -335,7 +335,7 @@ function getSampleInner(orig,options,samplerOptions,api){
                 sample = sampler.sample(obj,samplerOptions,defs);
             }
             if (typeof sample !== 'undefined') {
-                if (Object.keys(sample).length) return sample
+                if (sample !== null && Object.keys(sample).length) return sample
                 else {
                     return sampler.sample({ type: 'object', properties: { anonymous: obj}},samplerOptions,defs).anonymous;
                 }

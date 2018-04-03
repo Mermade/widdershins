@@ -226,10 +226,10 @@ function getParameters(data) {
         return e.name.toLowerCase() === 'authorization';
     });
     if (!existingAuth) {
-        if (data.operation.security) {
+        if (data.operation.security && data.operation.security.length) {
             effSecurity = Object.keys(data.operation.security[0])[0];
         }
-        else if (data.api.security) {
+        else if (data.api.security && data.api.security.length) {
             effSecurity = Object.keys(data.api.security[0])[0];
         }
         if (effSecurity && data.api.components && data.api.components.securitySchemes && data.api.components.securitySchemes[effSecurity]) {
@@ -583,7 +583,7 @@ function convertInner(api, options, callback) {
         content += templates.main(data);
     }
     catch (ex) {
-        console.warn(ex);
+        return callback(ex);
     }
     data = options.templateCallback('main', 'post', data);
     if (data.append) { content += data.append; delete data.append; }
