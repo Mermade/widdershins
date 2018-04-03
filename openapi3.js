@@ -272,20 +272,23 @@ function getBodyParameterExamples(data) {
     if (data.bodyParameter.schema && data.bodyParameter.schema.xml) {
         xmlWrap = data.bodyParameter.schema.xml.name;
     }
+    else if (data.bodyParameter.schema && data.bodyParameter.schema["x-widdershins-oldRef"]) {
+        xmlWrap = data.bodyParameter.schema["x-widdershins-oldRef"].split('/').pop();
+    }
     if (common.doContentType(data.consumes, 'json')) {
         content += '```json\n';
         content += safejson(obj,null,2) + '\n';
-        content += '```\n';
+        content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'yaml')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
-        content += '```\n';
+        content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'form')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
-        content += '```\n';
+        content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'xml') && (typeof obj === 'object')) {
         if (xmlWrap) {
@@ -295,7 +298,7 @@ function getBodyParameterExamples(data) {
         }
         content += '```xml\n';
         content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
-        content += '```\n';
+        content += '```\n\n';
     }
     return content;
 }
@@ -390,10 +393,13 @@ function getResponseExamples(data) {
             var contentType = response.content[ct];
             var cta = [ct];
             if (contentType.schema) {
-                var xmlWrap = '';
+                var xmlWrap = false;
                 var obj = contentType.schema;
                 if (obj && obj.xml && obj.xml.name) {
                     xmlWrap = obj.xml.name;
+                }
+                else if (obj["x-widdershins-oldRef"]) {
+                    xmlWrap = obj["x-widdershins-oldRef"].split('/').pop();
                 }
                 if (Object.keys(obj).length > 0) {
                     // support embedded examples
@@ -409,12 +415,12 @@ function getResponseExamples(data) {
                     if (common.doContentType(cta, 'json')) {
                         content += '```json\n';
                         content += safejson(obj, null, 2) + '\n';
-                        content += '```\n';
+                        content += '```\n\n';
                     }
                     if (common.doContentType(cta, 'yaml')) {
                         content += '```yaml\n';
                         content += yaml.safeDump(obj) + '\n';
-                        content += '```\n';
+                        content += '```\n\n';
                     }
                     if (xmlWrap) {
                         var newObj = {};
@@ -424,7 +430,7 @@ function getResponseExamples(data) {
                     if ((typeof obj === 'object') && common.doContentType(cta, 'xml')) {
                         content += '```xml\n';
                         content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
-                        content += '```\n';
+                        content += '```\n\n';
                     }
                 }
             }
@@ -489,7 +495,7 @@ function convertInner(api, options, callback) {
     options = Object.assign({},defaults,options);
 
     let data = {};
-    if (options.verbose) console.log('starting deref',api.info.title);
+    if (options.verbose) console.warn('starting deref',api.info.title);
     if (api.components) {
         data.components = clone(api.components);
     }
@@ -497,7 +503,7 @@ function convertInner(api, options, callback) {
         data.components = {};
     }
     data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
-    if (options.verbose) console.log('finished deref');
+    if (options.verbose) console.warn('finished deref');
 
     if (data.api.components && data.api.components.schemas && data.api.components.schemas["x-widdershins-oldRef"]) {
         delete data.api.components.schemas["x-widdershins-oldRef"];
@@ -533,7 +539,6 @@ function convertInner(api, options, callback) {
     data.title_prefix = data.api.info.title.split(' ').join('-');
     data.templates = templates;
     data.resources = convertToToc(api,data);
-    //console.warn(util.inspect(data.resources));
 
     if (data.api.servers && data.api.servers.length) {
         data.servers = data.api.servers;

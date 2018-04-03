@@ -59,9 +59,9 @@ function convert(api, options, callback) {
     options = Object.assign({},defaults,options);
 
     let data = {};
-    if (options.verbose) console.log('starting deref',api.info.title);
+    if (options.verbose) console.warn('starting deref',api.info.title);
     data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
-    if (options.verbose) console.log('finished deref');
+    if (options.verbose) console.warn('finished deref');
     data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
     let header = {};
