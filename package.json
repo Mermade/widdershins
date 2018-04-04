@@ -36,6 +36,7 @@
   "homepage": "https://github.com/Mermade/widdershins#readme",
   "dependencies": {
     "dot": "^1.0.3",
+    "httpsnippet": "1.16.5",
     "jgexml": "latest",
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",

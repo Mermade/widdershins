@@ -38,11 +38,15 @@ node widdershins [options] {input-file|url} [[-o] output markdown]
   -h, --help            Show help                                      [boolean]
   --version             Show version number                            [boolean]
   -c, --code            Turn generic code samples off                  [boolean]
+  --httpsnippet         Use httpsnippet to generate code samples
+                                                      [boolean] [default: false]
   -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
   -e, --environment     Load config/override options from file          [string]
   -i, --includes        List of files to include, comma separated       [string]
   -l, --lang            Automatically generate list of languages for code
                         samples                                        [boolean]
+  --language_tabs       List of language tabs for code samples using
+                        "language[:label[:client]]" format              [string]
   -m, --maxDepth        Maximum depth for schema examples          [default: 10]
   -o, --outfile         File to write output markdown to                [string]
   -r, --raw             Output raw schemas not example values          [boolean]
@@ -60,7 +64,9 @@ or
 var converter = require('widdershins');
 var options = {}; // defaults shown
 options.codeSamples = true;
+options.httpsnippet = false;
 //options.language_tabs = [];
+//options.language_clients = [];
 //options.loadedFrom = sourceUrl;
 //options.user_templates = './user_templates';
 options.templateCallback = function(templateName,stage,data) { return data };
@@ -86,6 +92,14 @@ options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'Ja
 ```
 
 If you need to support a version of Slate \<v1.5.0 (or a renderer which also doesn't support display-names for language-tabs, such as `node-slate`, `slate-node` or `whiteboard`), you can use the `--environment` option with the included `whiteboard_env.json` file to simply achieve this.
+
+If you are using the `httpsnippet` option to generate code samples, you can specify the client library used to perform the requests for each language by overriding the `options.language_clients`:
+
+```javascript
+options.language_clients = [{ 'shell': 'curl' }, { 'node': 'request' }, { 'java': 'unirest' }];
+```
+
+To see the list of languages and clients supported by httpsnippet, [click here](https://github.com/Kong/httpsnippet/tree/master/src/targets).
 
 The `loadedFrom` option is only needed where the OpenAPI / Swagger definition does not specify a host, and (as per the OpenAPI [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
