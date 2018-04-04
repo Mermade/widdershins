@@ -19,7 +19,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 * As of v3.0.0 Widdershins no longer expands the definition of OpenAPI body parameters / requestBodies by default, unless they have an inline schema. You can restore the old behaviour by using the `--expandBody` option.
 * You may limit the depth of schema examples using the `--maxDepth` option. The default is 10.
 * To omit schemas entirely, please copy and customise the `main.dot` template.
-* As of v3.1.0 Widdershins includes a generated `Authorization` header in OpenAPI code samples. If you wish to omit this, see [here](/templates/OpenAPI3/README.md).
+* As of v3.1.0 Widdershins includes a generated `Authorization` header in OpenAPI code samples. If you wish to omit this, see [here](/templates/openapi3/README.md).
 
 ### To install
 
@@ -124,7 +124,7 @@ Templates have access to a `data` object with a range of properties based on the
 
 If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
 
-* [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/OpenAPI3/README.md)
+* [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
 * [AsyncAPI 1.x template parameters](/templates/asyncapi1/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
