@@ -158,7 +158,8 @@ The test harness currently expects `.yaml` or `.json` files and has been tested 
 
 ### Acknowledgements
 
-Thanks to [@latgeek](https://github.com/LatGeek) for the logo.
+* [@latgeek](https://github.com/LatGeek) for the logo.
+* [@vfernandestoptal](https://github.com/vfernandestoptal) for the httpsnippet support.
 
 ### Widdershins in the wild
 
