@@ -248,6 +248,17 @@ function getParameters(data) {
                 authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
                 data.allHeaders.push(authHeader);
             }
+            else if ((secScheme.type === 'apiKey') && (secScheme.in === 'header')) {
+                let authHeader = {};
+                authHeader.name = secScheme.name;
+                authHeader.type = 'string';
+                authHeader.in = 'header';
+                authHeader.isAuth = true;
+                authHeader.exampleValues = {};
+                authHeader.exampleValues.object = 'API_KEY';
+                authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
+                data.allHeaders.push(authHeader);
+            }
         }
     }
 
