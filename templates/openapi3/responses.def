@@ -43,10 +43,10 @@
 Status Code **{{=response.status}}**
 
 {{~ blocks :block}}
-{{? !block.title }}
-|Name|Type|Required|Description|
-|---|---|---|---|{{??}}*{{=block.title}}*
+{{? block.title }}*{{=block.title}}*
 {{?}}
+|Name|Type|Required|Description|
+|---|---|---|---|
 {{~block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
