@@ -417,10 +417,10 @@ function getResponseExamples(data) {
                 if (Object.keys(obj).length > 0) {
                     // support embedded examples
                     if (contentType.examples) {
-                        obj = common.clean(contentType.examples[Object.keys(contentType.examples)[0]]);
+                        obj = common.clean(contentType.examples[Object.keys(contentType.examples)[0]].value);
                     }
                     else if (contentType.example) {
-                        obj = common.clean(contentType.example);
+                        obj = common.clean(contentType.example.value);
                     }
                     else {
                         obj = common.getSample(obj,data.options,{skipWriteOnly:true},data.api);
