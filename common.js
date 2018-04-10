@@ -188,6 +188,9 @@ function schemaToArray(schema,offset,options,data) {
     let blockDepth = 0;
     let container = [];
     let block = { title: '', rows: [] };
+    if (schema.description) block.title = schema.description;
+    if (!block.title && schema.title) block.title = schema.title;
+    if (schema.externalDocs) block.externalDocs = schema.externalDocs;
     container.push(block);
     let wsState = wsGetState();
     wsState.combine = true;

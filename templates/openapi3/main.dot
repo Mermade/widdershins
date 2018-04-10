@@ -78,7 +78,10 @@ Base URLs:
 ### Properties
 
 {{~ blocks :block}}
-{{? !block.title }}{{??}}*{{= block.title}}*{{= '\n\n'}}{{?}}
+{{? block.title }}*{{= block.title}}*{{= '\n\n'}}{{?}}
+{{? block.externalDocs}}
+<a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
+{{?}}
 {{? block.rows.length}}|Name|Type|Required|Description|
 |---|---|---|---|{{?}}
 {{~ block.rows :p}}|{{=p.displayName}}|{{=p.safeType}}|{{=p.required}}|{{=p.description||'No description'}}|
