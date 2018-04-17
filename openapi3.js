@@ -244,7 +244,7 @@ function getParameters(data) {
                 authHeader.in = 'header';
                 authHeader.isAuth = true;
                 authHeader.exampleValues = {};
-                authHeader.exampleValues.object = 'bearer {access-token}';
+                authHeader.exampleValues.object = 'Bearer {access-token}';
                 authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
                 data.allHeaders.push(authHeader);
             }
