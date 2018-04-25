@@ -80,7 +80,10 @@ Base URLs:
 {{? block.externalDocs}}
 <a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
 
+{{? block===blocks[0] }}
 ### Properties
+{{?}}
+
 {{?}}
 {{? block.rows.length}}|Name|Type|Required|Description|
 |---|---|---|---|{{?}}
