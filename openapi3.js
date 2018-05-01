@@ -84,7 +84,14 @@ function fakeProdCons(data) {
                     data.bodyParameter.refName = op.requestBody["x-widdershins-oldRef"].replace('#/components/requestBodies/','');
                 }
                 data.bodyParameter.schema = op.requestBody.content[rb].schema;
-                data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{skipReadOnly:true},data.api);
+                if (op.requestBody.content[rb].examples) {
+                  let key = Object.keys(op.requestBody.content[rb].examples)[0];
+                  data.bodyParameter.exampleValues.object = op.requestBody.content[rb].examples[key].value;
+                  data.bodyParameter.exampleValues.description = op.requestBody.content[rb].examples[key].description;
+                }
+                else {
+                    data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{skipReadOnly:true},data.api);
+                }
                 if (typeof data.bodyParameter.exampleValues.object === 'object') {
                     data.bodyParameter.exampleValues.json = safejson(data.bodyParameter.exampleValues.object,null,2);
                 }
