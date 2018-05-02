@@ -41,7 +41,7 @@
 {{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ block.rows :p}}|{{=p.name}}|{{=p.type||''}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.safeType||''}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
 
@@ -60,7 +60,7 @@
 {{?}}
 |Name|Type|Required|Description|
 |---|---|---|---|
-{{~ block.rows :p}}|{{=p.name}}|{{=p.type||''}}|{{=p.required}}|{{=p.description||'No description'}}|
+{{~ block.rows :p}}|{{=p.name}}|{{=p.safeType||''}}|{{=p.required}}|{{=p.description||'No description'}}|
 {{~}}
 {{~}}
 
