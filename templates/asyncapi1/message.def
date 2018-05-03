@@ -20,9 +20,11 @@
 ```
 {{?}}
 
+{{? data.options.codeSamples }}
 > Code Samples
 
 {{= data.utils.getCodeSamples(data) }}
+{{?}}
 
 {{? data.message.summary}}*{{=data.message.summary}}*{{?}}
 
