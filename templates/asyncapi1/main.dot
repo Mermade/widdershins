@@ -36,7 +36,7 @@ Base URLs:
 ## {{=t}}
 
 {{? data.topic.parameters }}
-<h3 id="{{=data.topicName}}-parameters">Parameters</h3>
+### Parameters
 
 {{ data.parameters = data.utils.getParameters(data.topic.parameters); }}
 
