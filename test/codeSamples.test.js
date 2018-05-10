@@ -147,7 +147,7 @@ describe('getCodeSamples tests', () => {
             const testData = clone(sampleData);
             testData.options = { httpsnippet: true };
             testData.header.language_tabs[0] = 'javascript--nodejs';
-            testData.options.language_clients = { 'javascript--nodejs': 'request' };
+            testData.options.language_clients = [ { 'javascript--nodejs': 'request' } ];
             const expected = `\`\`\`javascript--nodejs\nhttpsnippet-nodejs-request-sample\n\`\`\`\n\n` +
             `\`\`\`php\nhttpsnippet-php--sample\n\`\`\`\n\n`;
 
