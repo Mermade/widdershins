@@ -1,4 +1,4 @@
-### {{=data.messageName}}
+<h3 id="{{=data.utils.slugify(data.topicName)}}-{{=data.messageName}}">{{=data.messageName}}</h3>
 
 {{? data.message.deprecated}}Note: **Deprecated**{{?}}
 
