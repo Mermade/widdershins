@@ -438,6 +438,12 @@ function toPrimitive(v) {
     return v;
 }
 
+function slugify(text) {
+    return text.toString().toLowerCase().trim()
+        .replace(/&/g, '-and-')         // Replace & with 'and'
+        .replace(/[\s\W-]+/g, '-')      // Replace spaces, non-word characters and dashes with a single dash (-)
+}
+
 module.exports = {
     statusCodes : statusCodes,
     doContentType : doContentType,
@@ -447,6 +453,7 @@ module.exports = {
     clone : clone,
     clean : clean,
     strim : strim,
+    slugify : slugify,
     getSample : getSample,
     gfmLink : gfmLink,
     schemaToArray : schemaToArray,

@@ -587,6 +587,7 @@ function convertInner(api, options, callback) {
     data.utils.safejson = safejson;
     data.utils.isPrimitive = function(t) { return (t && (t !== 'object') && (t !== 'array')) };
     data.utils.toPrimitive = common.toPrimitive;
+    data.utils.slugify = common.slugify;
     data.utils.getSample = common.getSample;
     data.utils.schemaToArray = common.schemaToArray;
     data.utils.fakeProdCons = fakeProdCons;
