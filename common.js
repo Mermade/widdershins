@@ -100,7 +100,12 @@ function getLanguageTarget(lang) {
 }
 
 function getLanguageClient(lang, clients) {
-    return (lang && clients && clients[lang]) || '';
+    if (!(lang && clients && clients.length)) return '';
+    const client = clients.find(function(e,i,a){
+      return Object.keys(e)[0] === lang;
+    });
+    if (client) return Object.values(client)[0];
+    return '';
 }
 
 function fileTemplateGenerator(target, client, data) {
