@@ -38,7 +38,7 @@ function generate(data) {
 function getValues(items) {
     return (items || [])
         .map((item) => {
-            return { name: item.name, value: item.exampleValues.object };
+            return { name: item.name, value: item.exampleValues.object.toString() };
         });
 }
 
