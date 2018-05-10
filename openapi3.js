@@ -184,7 +184,7 @@ function getParameters(data) {
         if (param.description === 'undefined') { // yes, the string
             param.description = '';
         }
-        if (typeof param.description !== 'undefined') {
+        if ((typeof param.description !== 'undefined') && (typeof param.description === 'string')) {
             param.shortDesc = param.description.split('\n')[0];
             if (param.shortDesc !== param.description) data.longDescs = true;
         }

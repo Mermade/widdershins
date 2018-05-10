@@ -90,12 +90,17 @@ function doit(s) {
     }
 
     converter.convert(api,options,function(err,output){
-        var outfile = argv.outfile||argv._[1];
-        if (outfile) {
-            fs.writeFileSync(path.resolve(outfile),output,'utf8');
+        if (err) {
+            console.warn(err);
         }
         else {
-            console.log(output);
+            var outfile = argv.outfile||argv._[1];
+            if (outfile) {
+                fs.writeFileSync(path.resolve(outfile),output,'utf8');
+            }
+            else {
+                console.log(output);
+            }
         }
     });
 }
