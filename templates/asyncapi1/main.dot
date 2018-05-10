@@ -36,7 +36,7 @@ Base URLs:
 ## {{=t}}
 
 {{? data.topic.parameters }}
-### Parameters
+<h3 id="{{=data.utils.slugify(data.topicName)}}-parameters">Parameters</h3>
 
 {{ data.parameters = data.utils.getParameters(data.topic.parameters); }}
 
@@ -86,7 +86,7 @@ Base URLs:
    }
 }}
 
-### Properties
+<h3 id="{{=data.utils.slugify(s)}}-properties">Properties</h3>
 
 {{~ blocks :block }}
 {{? block.title }}
