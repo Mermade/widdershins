@@ -548,7 +548,7 @@ function convertInner(api, options, callback) {
     data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
     let header = {};
-    header.title = api.info.title + ' ' + data.version;
+    header.title = api.info.title||'API' + ' ' + data.version;
     header.language_tabs = options.language_tabs;
     header.toc_footers = [];
     if (api.externalDocs) {
@@ -563,7 +563,7 @@ function convertInner(api, options, callback) {
 
     data.options = options;
     data.header = header;
-    data.title_prefix = data.api.info.title.split(' ').join('-');
+    data.title_prefix = (data.api.info.title.trim()||'API').split(' ').join('-');
     data.templates = templates;
     data.resources = convertToToc(api,data);
 
