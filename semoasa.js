@@ -65,6 +65,7 @@ function convert(api, options, callback) {
     data.utils.yaml = yaml;
     data.utils.getSample = common.getSample;
     data.utils.schemaToArray = common.schemaToArray;
+    data.utils.slugify = common.slugify;
     data.utils.linkCase = function(s) {
         return s[0].toLowerCase()+s.substr(1);
     };

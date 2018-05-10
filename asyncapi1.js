@@ -111,6 +111,7 @@ function convert(api, options, callback) {
     data.utils.getParameters = getParameters;
     data.utils.schemaToArray = common.schemaToArray;
     data.utils.getCodeSamples = common.getCodeSamples;
+    data.utils.slugify = common.slugify;
 
     let content;
     try {
