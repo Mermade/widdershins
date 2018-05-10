@@ -10,7 +10,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node_modules/.bin/mocha"
+    "test": "node $nflags node_modules/mocha/bin/_mocha"
   },
   "repository": {
     "type": "git",
