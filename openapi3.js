@@ -34,10 +34,10 @@ function convertToToc(source,data) {
                 method.path = p;
                 method.pathParameters = source.paths[p].parameters;
                 var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
-                sMethodUniqueName = sMethodUniqueName.split(' ').join('_'); // TODO {, } and : ?
                 if (data.options.tocSummary && method.operation.summary) {
                     sMethodUniqueName = method.operation.summary;
                 }
+                method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
                     tagName = method.operation.tags[0];
