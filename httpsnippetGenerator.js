@@ -11,6 +11,7 @@ function generate(target, client, data) {
     }
     catch (ex) {
         console.warn('Error generating code sample using httpsnippet for', target, client);
+        if (data.options.verbose) console.warn(ex.message);
         return '';
     }
 }
