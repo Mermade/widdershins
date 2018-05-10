@@ -310,7 +310,6 @@ function schemaToArray(schema,offset,options,data) {
         if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
         if ((entry.type === 'array') && schema.items) {
             let itemsType = schema.items.type||'any';
-            //console.warn(util.inspect(schema));
             if (schema.items["x-widdershins-oldRef"]) {
                 let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
@@ -324,8 +323,14 @@ function schemaToArray(schema,offset,options,data) {
             if (schema.items.oneOf) itemsType = 'oneOf';
             if (schema.items.not) itemsType = 'not';
             entry.safeType = '['+itemsType+']';
-            //console.warn(entry.safeType);
         }
+
+        if (schema.nullable === true) {
+            entry.safeType += '\\|null';
+        }
+
+        if (schema.readOnly) entry.restrictions = data.translations.readOnly;
+        if (schema.writeOnly) entry.restrictions = data.translations.writeOnly;
 
         entry.required = (parent.required && Array.isArray(parent.required) && parent.required.indexOf(entry.name)>=0);
         if (typeof entry.required === 'undefined') entry.required = false;
