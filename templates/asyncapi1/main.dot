@@ -22,7 +22,7 @@ Base URLs:
 {{? data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.contactName}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{=data.contactName}}</a>{{?}}{{?}}
 {{? data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{??}}License: {{=data.api.info.license.name}}{{?}}{{?}}
 
-{{? data.api.components.securitySchemes }}
+{{? data.api.components && data.api.components.securitySchemes }}
 {{#def.security }}
 {{?}}
 
@@ -59,7 +59,7 @@ Base URLs:
 
 {{ } /* end of resources */ }}
 
-{{? data.api.components.schemas }}
+{{? data.api.components && data.api.components.schemas }}
 # Schemas
 
 {{ for (var s in data.api.components.schemas) { }}
