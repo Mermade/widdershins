@@ -234,37 +234,39 @@ function getParameters(data) {
     let existingAuth = data.allHeaders.find(function(e,i,a){
         return e.name.toLowerCase() === 'authorization';
     });
-    if (!existingAuth) {
-        if (data.operation.security && data.operation.security.length) {
-            effSecurity = Object.keys(data.operation.security[0])[0];
-        }
-        else if (data.api.security && data.api.security.length) {
-            effSecurity = Object.keys(data.api.security[0])[0];
-        }
-        if (effSecurity && data.api.components && data.api.components.securitySchemes && data.api.components.securitySchemes[effSecurity]) {
-            let secScheme = data.api.components.securitySchemes[effSecurity];
-            if ((secScheme.type === 'oauth2') || (secScheme.type === 'openIdConnect') ||
-                ((secScheme.type === 'http') && (secScheme.scheme === 'bearer'))) {
-                let authHeader = {};
-                authHeader.name = 'Authorization';
-                authHeader.type = 'string';
-                authHeader.in = 'header';
-                authHeader.isAuth = true;
-                authHeader.exampleValues = {};
-                authHeader.exampleValues.object = 'Bearer {access-token}';
-                authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
-                data.allHeaders.push(authHeader);
-            }
-            else if ((secScheme.type === 'apiKey') && (secScheme.in === 'header')) {
-                let authHeader = {};
-                authHeader.name = secScheme.name;
-                authHeader.type = 'string';
-                authHeader.in = 'header';
-                authHeader.isAuth = true;
-                authHeader.exampleValues = {};
-                authHeader.exampleValues.object = 'API_KEY';
-                authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
-                data.allHeaders.push(authHeader);
+    if (data.operation.security && data.operation.security.length) {
+        effSecurity = Object.keys(data.operation.security[0]);
+    }
+    else if (data.api.security && data.api.security.length) {
+        effSecurity = Object.keys(data.api.security[0]);
+    }
+    if (effSecurity && effSecurity.length && data.api.components && data.api.components.securitySchemes) {
+        for (let ess of effSecurity) {
+            if (data.api.components.securitySchemes[ess]) {
+                let secScheme = data.api.components.securitySchemes[ess];
+                if (!existingAuth && ((secScheme.type === 'oauth2') || (secScheme.type === 'openIdConnect') ||
+                    ((secScheme.type === 'http') && (secScheme.scheme === 'bearer')))) {
+                    let authHeader = {};
+                    authHeader.name = 'Authorization';
+                    authHeader.type = 'string';
+                    authHeader.in = 'header';
+                    authHeader.isAuth = true;
+                    authHeader.exampleValues = {};
+                    authHeader.exampleValues.object = 'Bearer {access-token}';
+                    authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
+                    data.allHeaders.push(authHeader);
+                }
+                else if ((secScheme.type === 'apiKey') && (secScheme.in === 'header')) {
+                    let authHeader = {};
+                    authHeader.name = secScheme.name;
+                    authHeader.type = 'string';
+                    authHeader.in = 'header';
+                    authHeader.isAuth = true;
+                    authHeader.exampleValues = {};
+                    authHeader.exampleValues.object = 'API_KEY';
+                    authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
+                    data.allHeaders.push(authHeader);
+                }
             }
         }
     }
@@ -485,17 +487,22 @@ function getResponseHeaders(data) {
 function getAuthenticationStr(data) {
     let list = '';
     for (let s in data.security) {
-        let secName = Object.keys(data.security[s])[0];
-        let link = '#/components/securitySchemes/' + secName;
-        let secDef = jptr(data.api, link);
-        list += (list ? ', ' : '') + (secDef ? secName : data.translations.secDefNone);
-        let scopes = data.security[s][secName];
-        if (Array.isArray(scopes) && (scopes.length > 0)) {
-            list += ' ( '+data.translations.secDefScopes+': ';
-            for (let scope in scopes) {
-                list += scopes[scope] + ' ';
+        let count = 0;
+        for (let sse in Object.keys(data.security[s])) {
+            let secName = Object.keys(data.security[s])[sse];
+            let link = '#/components/securitySchemes/' + secName;
+            let secDef = jptr(data.api, link);
+            let sep = (count > 0) ? ' & ' : ', ';
+            list += (list ? sep : '') + (secDef ? secName : data.translations.secDefNone);
+            let scopes = data.security[s][secName];
+            if (Array.isArray(scopes) && (scopes.length > 0)) {
+                list += ' ( '+data.translations.secDefScopes+': ';
+                for (let scope in scopes) {
+                    list += scopes[scope] + ' ';
+                }
+                list += ')';
             }
-            list += ')';
+            count++;
         }
     }
     return list;
