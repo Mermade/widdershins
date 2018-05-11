@@ -191,6 +191,7 @@ function schemaToArray(schema,offset,options,data) {
     let iDepth = 0;
     let oDepth = 0;
     let blockDepth = 0;
+    let skipDepth = -1;
     let container = [];
     let block = { title: '', rows: [] };
     if (schema) {
@@ -305,11 +306,13 @@ function schemaToArray(schema,offset,options,data) {
         if (schema["x-widdershins-oldRef"]) {
             entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
             entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+            if (data.options.shallowSchemas) skipDepth = entry.depth;
         }
         if (schema.$ref) { // repeat for un-dereferenced schemas
             entry.$ref = schema.$ref.replace('#/components/schemas/','');
             entry.type = '$ref';
             entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+            if (data.options.shallowSchemas) skipDepth = entry.depth;
         }
 
         if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
@@ -348,6 +351,8 @@ function schemaToArray(schema,offset,options,data) {
         if (typeof entry.name === 'string' && entry.name.startsWith('x-widdershins-')) {
             entry.name = ''; // reset
         }
+        if ((skipDepth >= 0) && (entry.depth >= skipDepth)) entry.name = ''; // reset
+        if (entry.depth < skipDepth) skipDepth = -1;
         entry.displayName = (data.translations.indent.repeat(entry.depth)+' '+entry.name).trim();
 
         if ((!state.top || entry.type !== 'object') && (entry.name)) {

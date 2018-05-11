@@ -34,6 +34,7 @@ node widdershins [options] {input-file|url} [[-o] output markdown]
   --headings            Levels of headings to expand in TOC[number] [default: 2]
   --omitBody            Omit top-level fake body parameter object      [boolean]
   --resolve             Resolve external $refs                         [boolean]
+  --shallowSchemas      Don't expand schemas past $refs                [boolean]
   --summary             Use summary instead of operationId for TOC     [boolean]
   --verbose             Increase verbosity                             [boolean]
   -h, --help            Show help                                      [boolean]
@@ -60,7 +61,6 @@ node widdershins [options] {input-file|url} [[-o] output markdown]
 
 or
 
-
 ```javascript
 var converter = require('widdershins');
 var options = {}; // defaults shown
@@ -74,9 +74,9 @@ options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
 options.search = true;
 options.sample = true; // set false by --raw
-options.schema = true; // set false by --noschema
 options.discovery = false;
 options.includes = [];
+options.shallowSchemas = false;
 options.summary = false;
 options.headings = 2;
 converter.convert(apiObj,options,function(err,str){

@@ -57,6 +57,8 @@ var argv = require('yargs')
     .alias('s','search')
     .default('search',true)
     .describe('search','Whether to enable search or not, default true')
+    .boolean('shallowSchemas')
+    .describe('shallowSchemas',"Don't expand schemas past $refs")
     .boolean('summary')
     .describe('summary','Use summary instead of operationId for TOC')
     .string('theme')
@@ -136,6 +138,7 @@ options.resolve = argv.resolve;
 options.expandBody = argv.expandBody;
 options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
+options.shallowSchemas = argv.shallowSchemas;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 
