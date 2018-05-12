@@ -73,8 +73,11 @@ var argv = require('yargs')
     .boolean('experimental')
     .alias('x','experimental')
     .describe('experimental','For backwards compatibility only, ignored')
+    .boolean('yaml')
+    .alias('y','yaml')
+    .describe('yaml','Display JSON schemas in YAML format')
     .help('h')
-    .alias('h', 'help')
+    .alias('h','help')
     .version()
     .argv;
 
@@ -139,6 +142,7 @@ options.expandBody = argv.expandBody;
 options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
 options.shallowSchemas = argv.shallowSchemas;
+options.yaml = argv.yaml;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

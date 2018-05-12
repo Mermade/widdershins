@@ -59,8 +59,13 @@ Base URLs:
 
 <a id="schema{{=s.toLowerCase()}}"></a>
 
+{{? data.options.yaml }}
+```yaml
+{{=data.utils.yaml.safeDump(data.utils.getSample(schema,data.options,{},data.api))}}
+{{??}}
 ```json
 {{=data.utils.safejson(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+{{?}}
 ```
 
 {{ var enums = []; }}

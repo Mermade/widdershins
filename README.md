@@ -57,6 +57,7 @@ node widdershins [options] {input-file|url} [[-o] output markdown]
   -t, --theme           Syntax-highlighter theme to use                 [string]
   -u, --user_templates  directory to load override templates from       [string]
   -x, --experimental    For backwards compatibility only, ignored      [boolean]
+  -y, --yaml            Display JSON schemas in YAML format            [boolean]
 ```
 
 or
@@ -79,6 +80,7 @@ options.includes = [];
 options.shallowSchemas = false;
 options.summary = false;
 options.headings = 2;
+options.yaml = false;
 converter.convert(apiObj,options,function(err,str){
   // str contains the converted markdown
 });
