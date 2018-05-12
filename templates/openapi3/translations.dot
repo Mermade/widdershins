@@ -1,5 +1,6 @@
 {{
 data.translations.defaultTag = 'Default';
+data.translations.response = 'Response';
 data.translations.responseDefault = 'Default';
 data.translations.responseUnknown = 'Unknown';
 data.translations.schemaInline = 'Inline';

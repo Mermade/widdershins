@@ -409,53 +409,60 @@ function getResponses(data) {
 
 function getResponseExamples(data) {
     let content = '';
-    for (var resp in data.operation.responses) {
-        var response = data.operation.responses[resp];
-        for (var ct in response.content) {
-            var contentType = response.content[ct];
-            var cta = [ct];
-            if (contentType.schema) {
-                var xmlWrap = false;
-                var obj = contentType.schema;
+    let examples = [];
+    for (let resp in data.operation.responses) {
+        let response = data.operation.responses[resp];
+        for (let ct in response.content) {
+            let contentType = response.content[ct];
+            let cta = [ct];
+            // support embedded examples
+            if (contentType.examples) {
+                for (let ctei in contentType.examples) {
+                    let example = contentType.examples[ctei];
+                    examples.push({description:example.description,value: common.clean(example.value), cta: cta});
+                }
+            }
+            else if (contentType.example) {
+                examples.push({description:resp+' '+data.translations.response,value:common.clean(contentType.example.value), cta: cta});
+            }
+            else if (contentType.schema) {
+                let obj = contentType.schema;
+                let xmlWrap = false;
                 if (obj && obj.xml && obj.xml.name) {
                     xmlWrap = obj.xml.name;
                 }
                 else if (obj["x-widdershins-oldRef"]) {
                     xmlWrap = obj["x-widdershins-oldRef"].split('/').pop();
                 }
-                if (Object.keys(obj).length > 0) {
-                    // support embedded examples
-                    if (contentType.examples) {
-                        obj = common.clean(contentType.examples[Object.keys(contentType.examples)[0]].value);
-                    }
-                    else if (contentType.example) {
-                        obj = common.clean(contentType.example.value);
-                    }
-                    else {
-                        obj = common.getSample(obj,data.options,{skipWriteOnly:true},data.api);
-                    }
-                    if (common.doContentType(cta, 'json')) {
-                        content += '```json\n';
-                        content += safejson(obj, null, 2) + '\n';
-                        content += '```\n\n';
-                    }
-                    if (common.doContentType(cta, 'yaml')) {
-                        content += '```yaml\n';
-                        content += yaml.safeDump(obj) + '\n';
-                        content += '```\n\n';
-                    }
-                    if (xmlWrap) {
-                        var newObj = {};
-                        newObj[xmlWrap] = obj;
-                        obj = newObj;
-                    }
-                    if ((typeof obj === 'object') && common.doContentType(cta, 'xml')) {
-                        content += '```xml\n';
-                        content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
-                        content += '```\n\n';
-                    }
-                }
+                examples.push({description:resp+' '+data.translations.response,value:common.getSample(obj,data.options,{skipWriteOnly:true},data.api), cta: cta, xmlWrap: xmlWrap});
             }
+        }
+    }
+    let lastDesc = '';
+    for (let example of examples) {
+        if (example.description && example.description !== lastDesc) {
+            content += '> '+example.description+'\n\n';
+            lastDesc = example.description;
+        }
+        if (common.doContentType(example.cta, 'json')) {
+            content += '```json\n';
+            content += safejson(example.value, null, 2) + '\n';
+            content += '```\n\n';
+        }
+        if (common.doContentType(example.cta, 'yaml')) {
+            content += '```yaml\n';
+            content += yaml.safeDump(example.value) + '\n';
+            content += '```\n\n';
+        }
+        let xmlObj = example.value;
+        if (example.xmlWrap) {
+            xmlObj = {};
+            xmlObj[example.xmlWrap] = example.value;
+        }
+        if ((typeof xmlObj === 'object') && common.doContentType(example.cta, 'xml')) {
+            content += '```xml\n';
+            content += xml.getXml(JSON.parse(safejson(xmlObj)), '@', '', true, '  ', false) + '\n';
+            content += '```\n\n';
         }
     }
     return content;
