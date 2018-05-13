@@ -22,7 +22,7 @@ Swagger / OpenAPI 2.0 definitions are converted automatically.
 * `queryParameters[]` - a subset of `parameters` that are `in:query`
 * `requiredParameters[]` - a subset of `queryParameters` that are `required:true`
 * `headerParameters[]` - a subset of `parameters` that are `in:header`
-* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`, and optionally `Authorization` (the latter has an `isAuth` boolean property set true so it an be omitted in templates if desired
+* `allHeaders[]` - a concatenation of `headerParameters` and pseudo-parameters `Accept` and `Content-Type`, and optionally `Authorization` (the latter has an `isAuth` boolean property set true so it can be omitted in templates if desired
 
 ### Parameter template
 
@@ -56,7 +56,7 @@ Swagger / OpenAPI 2.0 definitions are converted automatically.
 
 ### Common to all templates
 
-* `openapi` - the top-level OpenApi / Swagger document
+* `openapi` - the top-level OpenAPI / Swagger document
 * `header` - the front-matter of the Slate/Shins markdown document
 * `host` - the (computed) host of the API
 * `protocol` - the default/first protocol of the API
