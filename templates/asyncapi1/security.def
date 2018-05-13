@@ -4,30 +4,28 @@
 
 {{ var sd = data.api.components.securitySchemes[s]; }}
 
-"userPassword", "apiKey", "X509", "symmetricEncryption", "asymmetricEncryption", "httpApiKey", "http".
-
 {{? sd.type == 'apiKey' }}
 * API Key
-    - Parameter Name: **{{=sd.name||sd.in}}**, in: {{=sd.in}}. {{=sd.description}}
+    - Parameter Name: **{{=sd.name||sd.in}}**, in: {{=sd.in}}. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'httpApiKey' }}
 * API Key
-    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description}}
+    - Parameter Name: **{{=sd.name}}**, in: {{=sd.in}}. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'http'}}
-* HTTP {{=sd.scheme}} {{?sd.bearerFormat}}Format: {{=sd.bearerFormat}}{{?}} Authentication. {{=sd.description}}
+* HTTP {{=sd.scheme}}{{?sd.bearerFormat}} Format: {{=sd.bearerFormat}}{{?}} Authentication. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'userPassword'}}
-* Password Authentication. {{=sd.description}}
+* Password Authentication. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'X509'}}
-* X509 Authentication. {{=sd.description}}
+* X509 Authentication. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'symmetricEncryption'}}
-* Symmetric encryption. {{=sd.description}}
+* Symmetric encryption. {{=sd.description||''}}
 {{?}}
 {{? sd.type == 'asymmetricEncryption'}}
-* Asymmetric encryption. {{=sd.description}}
+* Asymmetric encryption. {{=sd.description||''}}
 {{?}}
 
 {{ } /* of securitySchemes */ }}

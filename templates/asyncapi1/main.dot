@@ -6,9 +6,13 @@
 
 Base URLs:
 {{~data.api.servers :s}}
+{{? s.url.indexOf(':\/\/')<0 }}
 * <a href="{{=s.scheme}}://{{=s.url}}">{{=s.scheme}}://{{=s.url}}</a>
+{{??}}
+* <a href="{{=s.url}}">{{=s.url}}</a>
+{{?}}
 {{ for(var v in s.variables) { }}
-    * **{{=v}}** - {{=s.variables[v].description||''}} Default: {{=s.variables[v].default}}
+    * **{{=v}}** - {{=s.variables[v].description||''}} {{? s.variables[v].default }}Default: {{=s.variables[v].default}}{{?}}
 {{? s.variables[v].enum}}
 {{~ s.variables[v].enum :e}}
         * {{= e}}{{~}}
@@ -59,6 +63,59 @@ Base URLs:
 
 {{ } /* end of resources */ }}
 
+{{? data.api.stream }}
+{{ data.topicName = 'streaming'; }}
+# Streaming API
+
+## Framing
+
+Type: {{= data.api.stream.framing.type}}
+Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
+
+{{? data.api.stream.read }}
+## Read
+{{~ data.api.stream.read :r }}
+{{ data.messageName = ''; }}
+{{ data.message = r; }}
+{{#def.message}}
+{{~}}
+{{?}}
+
+{{? data.api.stream.write }}
+## Write
+{{~ data.api.stream.write :w }}
+{{ data.messageName = ''; }}
+{{ data.message = w; }}
+{{#def.message}}
+{{~}}
+{{?}}
+
+{{?}}
+
+{{? data.api.events }}
+# Evented API
+{{ data.topicName = 'evented'; }}
+
+{{? data.api.events.receive }}
+## Received
+{{~ data.api.events.receive :r }}
+{{ data.messageName = ''; }}
+{{ data.message = r; }}
+{{#def.message}}
+{{~}}
+{{?}}
+
+{{? data.api.events.send }}
+## Sent
+{{~ data.api.events.send :s }}
+{{ data.messageName = ''; }}
+{{ data.message = s; }}
+{{#def.message}}
+{{~}}
+{{?}}
+
+{{?}}
+
 {{? data.api.components && data.api.components.schemas }}
 # Schemas
 
@@ -69,8 +126,13 @@ Base URLs:
 
 <a name="schema{{=s.toLowerCase()}}"></a>
 
+{{? data.options.yaml }}
+```yaml
+{{=data.utils.yaml.dump(data.utils.getSample(schema,data.options,{},data.api))}}
+{{??}}
 ```json
 {{=JSON.stringify(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+{{?}}
 ```
 
 {{ var enums = []; }}
