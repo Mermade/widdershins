@@ -191,4 +191,5 @@ Please feel free to add a link to your API documentation here.
 
 If you need a wrapper around both Widdershins and Shins, why not consider the following projects:
 
-* https://github.com/jantoniucci/shinner
+* [api2html](https://github.com/tobilg/api2html)
+* [shinner](https://github.com/jantoniucci/shinner)
