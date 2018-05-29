@@ -511,6 +511,9 @@ function getAuthenticationStr(data) {
             }
             count++;
         }
+        if (count === 0) { // 'null' security
+            list += (list ? ', ' : '') + data.translations.secDefNone;
+        }
     }
     return list;
 }
