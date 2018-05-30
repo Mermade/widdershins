@@ -85,9 +85,9 @@ function fakeProdCons(data) {
                 }
                 data.bodyParameter.schema = op.requestBody.content[rb].schema;
                 if (op.requestBody.content[rb].examples) {
-                  let key = Object.keys(op.requestBody.content[rb].examples)[0];
-                  data.bodyParameter.exampleValues.object = op.requestBody.content[rb].examples[key].value;
-                  data.bodyParameter.exampleValues.description = op.requestBody.content[rb].examples[key].description;
+                    let key = Object.keys(op.requestBody.content[rb].examples)[0];
+                    data.bodyParameter.exampleValues.object = op.requestBody.content[rb].examples[key].value;
+                    data.bodyParameter.exampleValues.description = op.requestBody.content[rb].examples[key].description;
                 }
                 else {
                     data.bodyParameter.exampleValues.object = common.getSample(op.requestBody.content[rb].schema,data.options,{skipReadOnly:true},data.api);
@@ -284,7 +284,6 @@ function getParameters(data) {
     data.requiredQueryString = data.requiredUriExample.substr(data.requiredUriExample.indexOf('?'));
     if (!data.requiredQueryString.startsWith('?')) data.requiredQueryString = '';
     data.requiredQueryString = data.requiredQueryString.split('%25').join('%');
-
 }
 
 function getBodyParameterExamples(data) {
@@ -385,10 +384,13 @@ function getResponses(data) {
         }
         if (url) entry.meaning = '[' + entry.meaning + '](' + url + ')';
         entry.description = (typeof response.description === 'string' ? response.description.trim() : undefined);
-        entry.schema = response.content ? data.translations.schemaInline : data.translations.schemaNone;
+        entry.schema = data.translations.schemaNone;
         for (let ct in response.content) {
             let contentType = response.content[ct];
-            if (contentType.schema) entry.type = contentType.schema.type;
+            if (contentType.schema) {
+                entry.type = contentType.schema.type;
+                entry.schema = data.translations.schemaInline;
+            }
             if (contentType.schema && contentType.schema["x-widdershins-oldRef"]) {
                 let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 entry.schema = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
@@ -407,6 +409,18 @@ function getResponses(data) {
     return responses;
 }
 
+function convertExample(ex) {
+    if (typeof ex === 'string') {
+        try {
+            return yaml.safeLoad(ex);
+        }
+        catch (e) {
+            return ex;
+        }
+    }
+    else return ex;
+}
+
 function getResponseExamples(data) {
     let content = '';
     let examples = [];
@@ -419,11 +433,11 @@ function getResponseExamples(data) {
             if (contentType.examples) {
                 for (let ctei in contentType.examples) {
                     let example = contentType.examples[ctei];
-                    examples.push({description:example.description,value: common.clean(example.value), cta: cta});
+                    examples.push({description:example.description||response.description,value: common.clean(convertExample(example.value)), cta: cta});
                 }
             }
             else if (contentType.example) {
-                examples.push({description:resp+' '+data.translations.response,value:common.clean(contentType.example.value), cta: cta});
+                examples.push({description:resp+' '+data.translations.response,value:common.clean(convertExample(contentType.example.value)), cta: cta});
             }
             else if (contentType.schema) {
                 let obj = contentType.schema;
