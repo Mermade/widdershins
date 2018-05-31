@@ -540,7 +540,7 @@ function convertInner(api, options, callback) {
     defaults.includes = [];
     defaults.search = true;
     defaults.theme = 'darkula';
-    defaults.headingLevel = 2;
+    defaults.headings = 2;
     defaults.templateCallback = function(template,stage,data) { return data; };
 
     options = Object.assign({},defaults,options);
