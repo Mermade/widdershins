@@ -35,6 +35,7 @@
   },
   "homepage": "https://github.com/Mermade/widdershins#readme",
   "dependencies": {
+    "deep-sort-object": "^1.0.2",
     "dot": "^1.0.3",
     "httpsnippet": "1.16.5",
     "jgexml": "latest",

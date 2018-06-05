@@ -76,6 +76,8 @@ var argv = require('yargs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Display JSON schemas in YAML format')
+    .string('sections')
+    .describe('sections_config', 'Configuration file defining a custom set of sections, rather than using the pure API tag names.')
     .help('h')
     .alias('h','help')
     .version()
@@ -143,6 +145,15 @@ options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
 options.shallowSchemas = argv.shallowSchemas;
 options.yaml = argv.yaml;
+if (argv.sections_config){
+    let s = fs.readFileSync(argv.sections_config, 'utf8');
+    let obj = JSON.parse(s);
+    if(obj["sections"]){
+        options.sections = obj["sections"];
+    } else {
+        console.error("Invalid sections configuration file. ");
+    }
+}
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

@@ -3,6 +3,8 @@
 const path = require('path');
 const util = require('util');
 const up = require('url');
+const fs = require('fs');
+const sortobject = require('deep-sort-object');
 
 const yaml = require('js-yaml');
 const safejson = require('safe-json-stringify');
@@ -39,10 +41,11 @@ function convertToToc(source,data) {
                 }
                 method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
+
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = method.operation.tags[0];
+                    tagName = getSectionTag(method.operation.tags[0], data.options.sections);
                 }
-                if (!resources[tagName]) {
+                if (!resources[tagName]) { //Does this tag already exist? If no, initialize it
                     resources[tagName] = {};
                     if (source.tags) {
                         for (var t in source.tags) {
@@ -54,12 +57,27 @@ function convertToToc(source,data) {
                         }
                     }
                 }
-                if (!resources[tagName].methods) resources[tagName].methods = {};
+                if (!resources[tagName].methods) resources[tagName].methods = {}; //Does this tag already have a methods object?
                 resources[tagName].methods[sMethodUniqueName] = method;
             }
         }
     }
-    return resources;
+    fs.writeFileSync('./resources-alex.json', util.inspect(resources));
+    const ordered = {};
+    Object.keys(resources).sort().forEach(function(key) {
+        ordered[key] = resources[key];
+    });
+    return ordered;
+}
+
+function getSectionTag(tag, sections){
+    for (let section of sections){
+        if(section.tags.indexOf(tag) > -1){
+            return section.title;
+        }
+    }
+    return tag;
+
 }
 
 function fakeProdCons(data) {
@@ -533,6 +551,8 @@ function getAuthenticationStr(data) {
 }
 
 function convertInner(api, options, callback) {
+    api = sortobject(api);
+
     let defaults = {};
     defaults.title = 'API';
     defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go' }];
