@@ -43,7 +43,7 @@ function convertToToc(source,data) {
                 var tagName = data.translations.defaultTag;
 
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = getSectionTag(method.operation.tags[0], data.options.sections);
+                    tagName = getSectionTag(method.operation.tags[0], data.options.extras.sections);
                 }
                 if (!resources[tagName]) { //Does this tag already exist? If no, initialize it
                     resources[tagName] = {};
@@ -62,7 +62,6 @@ function convertToToc(source,data) {
             }
         }
     }
-    fs.writeFileSync('./resources-alex.json', util.inspect(resources));
     const ordered = {};
     Object.keys(resources).sort().forEach(function(key) {
         ordered[key] = resources[key];
