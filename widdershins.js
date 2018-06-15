@@ -76,8 +76,6 @@ var argv = require('yargs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Display JSON schemas in YAML format')
-    .string('extras')
-    .describe('extras', 'Configuration file defining a custom set of extra values that can be used by the templating engine')
     .help('h')
     .alias('h','help')
     .version()
@@ -145,15 +143,6 @@ options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
 options.shallowSchemas = argv.shallowSchemas;
 options.yaml = argv.yaml;
-if (argv.extras){
-    let s = fs.readFileSync(argv.extras, 'utf8');
-    let obj = JSON.parse(s);
-    if(obj["sections"]){
-        options.extras = obj;
-    } else {
-        console.error("Invalid extras file. ");
-    }
-}
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

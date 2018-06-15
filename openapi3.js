@@ -3,8 +3,6 @@
 const path = require('path');
 const util = require('util');
 const up = require('url');
-const fs = require('fs');
-const sortobject = require('deep-sort-object');
 
 const yaml = require('js-yaml');
 const safejson = require('safe-json-stringify');
@@ -41,11 +39,10 @@ function convertToToc(source,data) {
                 }
                 method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
-
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = getSectionTag(method.operation.tags[0], data.options.extras.sections);
+                    tagName = getSectionTag(method.operation.tags[0], data.options.sections);
                 }
-                if (!resources[tagName]) { //Does this tag already exist? If no, initialize it
+                if (!resources[tagName]) {
                     resources[tagName] = {};
                     if (source.tags) {
                         for (var t in source.tags) {
@@ -57,7 +54,7 @@ function convertToToc(source,data) {
                         }
                     }
                 }
-                if (!resources[tagName].methods) resources[tagName].methods = {}; //Does this tag already have a methods object?
+                if (!resources[tagName].methods) resources[tagName].methods = {};
                 resources[tagName].methods[sMethodUniqueName] = method;
             }
         }
@@ -550,8 +547,6 @@ function getAuthenticationStr(data) {
 }
 
 function convertInner(api, options, callback) {
-    api = sortobject(api);
-
     let defaults = {};
     defaults.title = 'API';
     defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go' }];

@@ -1,5 +1,15 @@
 {
   "language_tabs":  [{ "http": "HTTP" }, { "javascript": "JavaScript" },
       { "javascript--nodejs": "Node.JS" }, { "python": "Python" },
-      { "ruby": "Ruby" }, { "go": "Go" }]
+      { "ruby": "Ruby" }, { "go": "Go" }],
+    "sections": [
+        {
+            "title": "Companies",
+            "tags": ["companies"]
+        },
+        {
+            "title": "Billing",
+            "tags": ["invoice-create", "invoice-close", "invoice-delete"]
+        }
+    ]
 }
