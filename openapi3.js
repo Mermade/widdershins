@@ -67,9 +67,11 @@ function convertToToc(source,data) {
 }
 
 function getSectionTag(tag, sections){
-    for (let section of sections){
-        if(section.tags.indexOf(tag) > -1){
-            return section.title;
+    if (sections) {
+        for (let section of sections) {
+            if (section.tags.indexOf(tag) > -1) {
+                return section.title;
+            }
         }
     }
     return tag;
