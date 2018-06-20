@@ -198,9 +198,9 @@ function schemaToArray(schema,offset,options,data) {
         if (schema.title) block.title = schema.title;
         if (!block.title && schema.description)
             block.title = schema.description;
-        else if (schema.description)
-            block.description = schema.description;
-        if (schema.externalDocs) block.externalDocs = schema.externalDocs;
+        block.description = schema.description;
+        if (schema.externalDocs)
+            block.externalDocs = schema.externalDocs;
     }
     container.push(block);
     let wsState = wsGetState();
