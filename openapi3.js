@@ -424,6 +424,7 @@ function convertExample(ex) {
 function getResponseExamples(data) {
     let content = '';
     let examples = [];
+    let autoDone = {};
     for (let resp in data.operation.responses) {
         let response = data.operation.responses[resp];
         for (let ct in response.content) {
@@ -441,14 +442,22 @@ function getResponseExamples(data) {
             }
             else if (contentType.schema) {
                 let obj = contentType.schema;
-                let xmlWrap = false;
-                if (obj && obj.xml && obj.xml.name) {
-                    xmlWrap = obj.xml.name;
+                let autoCT = '';
+                if (common.doContentType(cta, 'json')) autoCT = 'json';
+                if (common.doContentType(cta, 'yaml')) autoCT = 'yaml';
+                if (common.doContentType(cta, 'xml'))  autoCT = 'xml';
+
+                if (!autoDone[autoCT]) {
+                    autoDone[autoCT] = true;
+                    let xmlWrap = false;
+                    if (obj && obj.xml && obj.xml.name) {
+                        xmlWrap = obj.xml.name;
+                    }
+                    else if (obj["x-widdershins-oldRef"]) {
+                        xmlWrap = obj["x-widdershins-oldRef"].split('/').pop();
+                    }
+                    examples.push({description:resp+' '+data.translations.response,value:common.getSample(obj,data.options,{skipWriteOnly:true},data.api), cta: cta, xmlWrap: xmlWrap});
                 }
-                else if (obj["x-widdershins-oldRef"]) {
-                    xmlWrap = obj["x-widdershins-oldRef"].split('/').pop();
-                }
-                examples.push({description:resp+' '+data.translations.response,value:common.getSample(obj,data.options,{skipWriteOnly:true},data.api), cta: cta, xmlWrap: xmlWrap});
             }
         }
     }
