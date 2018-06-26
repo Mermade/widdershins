@@ -40,7 +40,7 @@ function convertToToc(source,data) {
                 method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = getTagGroup(method.operation.tags[0], data.options.sections);
+                    tagName = getTagGroup(method.operation.tags[0], data.options.tagGroups);
                 }
                 if (!resources[tagName]) {
                     resources[tagName] = {};
