@@ -101,18 +101,19 @@ The `--environment` option specifies a JSON or YAML-formatted `options` object, 
   "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
   "verbose": true,
   "tagGroups": [
-          {
-              "title": "Companies",
-              "tags": ["companies"]
-          },
-          {
-              "title": "Billing",
-              "tags": ["invoice-create", "invoice-close", "invoice-delete"]
-          }
-      ]
+    {
+      "title": "Companies",
+      "tags": ["companies"]
+    },
+    {
+      "title": "Billing",
+      "tags": ["invoice-create", "invoice-close", "invoice-delete"]
+    }
+  ]
 }
 ```
-You can also you use the environment file to group OAS/Swagger tagged paths together to create a more elegant table of contents, and overall page structure.
+
+You can also use the environment file to group OAS/Swagger tagged paths together to create a more elegant table of contents, and overall page structure.
 
 If you need to support a version of Slate \<v1.5.0 (or a renderer which also doesn't support display-names for language-tabs, such as `node-slate`, `slate-node` or `whiteboard`), you can use the `--environment` option with the included `whiteboard_env.json` file to simply achieve this.
 
@@ -200,7 +201,7 @@ Please feel free to add a link to your API documentation here.
 
 ## Widdershins and Shins
 
-If you need a wrapper around both Widdershins and Shins, why not consider the following projects:
+If you need a wrapper around both Widdershins and Shins, why not consider the following third-party projects:
 
 * [api2html](https://github.com/tobilg/api2html)
 * [shinner](https://github.com/jantoniucci/shinner)
