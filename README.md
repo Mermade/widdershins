@@ -99,9 +99,20 @@ The `--environment` option specifies a JSON or YAML-formatted `options` object, 
 ```json
 { 
   "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
-  "verbose": true
+  "verbose": true,
+  "tagGroups": [
+          {
+              "title": "Companies",
+              "tags": ["companies"]
+          },
+          {
+              "title": "Billing",
+              "tags": ["invoice-create", "invoice-close", "invoice-delete"]
+          }
+      ]
 }
 ```
+You can also you use the environment file to group OAS/Swagger tagged paths together to create a more elegant table of contents, and overall page structure.
 
 If you need to support a version of Slate \<v1.5.0 (or a renderer which also doesn't support display-names for language-tabs, such as `node-slate`, `slate-node` or `whiteboard`), you can use the `--environment` option with the included `whiteboard_env.json` file to simply achieve this.
 

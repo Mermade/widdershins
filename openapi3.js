@@ -40,7 +40,7 @@ function convertToToc(source,data) {
                 method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = method.operation.tags[0];
+                    tagName = getTagGroup(method.operation.tags[0], data.options.tagGroups);
                 }
                 if (!resources[tagName]) {
                     resources[tagName] = {};
@@ -59,7 +59,23 @@ function convertToToc(source,data) {
             }
         }
     }
-    return resources;
+    const ordered = {};
+    Object.keys(resources).sort().forEach(function(key) {
+        ordered[key] = resources[key];
+    });
+    return ordered;
+}
+
+function getTagGroup(tag, tagGroups){
+    if (tagGroups) {
+        for (let group of tagGroups) {
+            if (group.tags.indexOf(tag) > -1) {
+                return group.title;
+            }
+        }
+    }
+    return tag;
+
 }
 
 function fakeProdCons(data) {
