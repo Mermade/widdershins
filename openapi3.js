@@ -40,7 +40,7 @@ function convertToToc(source,data) {
                 method.slug = sMethodUniqueName.toLowerCase().split(' ').join('-'); // TODO {, } and : ?
                 var tagName = data.translations.defaultTag;
                 if (method.operation.tags && method.operation.tags.length > 0) {
-                    tagName = getSectionTag(method.operation.tags[0], data.options.sections);
+                    tagName = getTagGroup(method.operation.tags[0], data.options.sections);
                 }
                 if (!resources[tagName]) {
                     resources[tagName] = {};
@@ -66,11 +66,11 @@ function convertToToc(source,data) {
     return ordered;
 }
 
-function getSectionTag(tag, sections){
-    if (sections) {
-        for (let section of sections) {
-            if (section.tags.indexOf(tag) > -1) {
-                return section.title;
+function getTagGroup(tag, tagGroups){
+    if (tagGroups) {
+        for (let group of tagGroups) {
+            if (group.tags.indexOf(tag) > -1) {
+                return group.title;
             }
         }
     }

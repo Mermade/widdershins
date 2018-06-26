@@ -100,7 +100,7 @@ The `--environment` option specifies a JSON or YAML-formatted `options` object, 
 { 
   "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
   "verbose": true,
-  "sections": [
+  "tagGroups": [
           {
               "title": "Companies",
               "tags": ["companies"]
