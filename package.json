@@ -41,7 +41,7 @@
     "js-yaml": "^3.6.1",
     "node-fetch": "^2.0.0",
     "openapi-sampler": "^1.0.0-beta.9",
-    "reftools": "0.0.20",
+    "reftools": "1.0.0",
     "safe-json-stringify": "^1.2.0",
     "swagger2openapi": "^2.11.16",
     "urijs": "^1.19.0",
