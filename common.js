@@ -7,8 +7,8 @@ const recurse = require('reftools/lib/recurse.js').recurse;
 const visit = require('reftools/lib/visit.js').visit;
 const clone = require('reftools/lib/clone.js').clone;
 const circularClone = require('reftools/lib/clone.js').circularClone;
-const walkSchema = require('swagger2openapi/walkSchema').walkSchema;
-const wsGetState = require('swagger2openapi/walkSchema').getDefaultState;
+const walkSchema = require('oas-schema-walker').walkSchema;
+const wsGetState = require('oas-schema-walker').getDefaultState;
 const httpsnippetGenerator = require('./httpsnippetGenerator');
 
 /* originally from https://github.com/for-GET/know-your-http-well/blob/master/json/status-codes.json */

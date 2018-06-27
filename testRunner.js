@@ -16,6 +16,8 @@ var argv = require('yargs')
     .boolean('raw')
     .alias('r','raw')
     .describe('raw','Set widdershins --raw option')
+    .boolean('resolve')
+    .describe('resolve','Set widdershins --resolve option')
     .count('verbose')
     .alias('v','verbose')
     .describe('verbose','Increase verbosity')
@@ -45,6 +47,7 @@ var options = argv;
 var widdershinsOptions = {};
 widdershinsOptions.sample = true;
 if (options.raw) widdershinsOptions.sample = false;
+if (options.resolve) widdershinsOptions.resolve = true;
 if (options.noschema) widdershinsOptions.schema = false;
 widdershinsOptions.experimental = options.experimental;
 widdershinsOptions.headings = 2;

@@ -9,6 +9,7 @@ dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
 
 const common = require('./common.js');
+const resolver = require('oas-resolver');
 const dereference = require('reftools/lib/dereference.js').dereference;
 
 let templates;
@@ -49,6 +50,7 @@ function convertToToc(source) {
 
 function getParameters(params) {
     for (let p of params) {
+        if (p === false) p = {schema:{}}; // for external $refs when resolve not true
         if (!p.in) p.in = 'topic';
         if (typeof p.required === 'undefined') p.required = true;
         p.safeType = p.schema.type;
@@ -57,17 +59,7 @@ function getParameters(params) {
     return params;
 }
 
-function convert(api, options, callback) {
-    api = preProcessor(api);
-
-    let defaults = {};
-    defaults.includes = [];
-    defaults.search = true;
-    defaults.theme = 'darkula';
-    defaults.language_tabs = [{ 'javascript--nodejs': 'Node.JS' },{ 'javascript': 'JavaScript' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go'}];
-
-    options = Object.assign({},defaults,options);
-
+function convertInner(api, options, callback) {
     let data = {};
     if (options.verbose) console.warn('starting deref',api.info.title);
     data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
@@ -124,6 +116,27 @@ function convert(api, options, callback) {
     }
 
     callback(null,content);
+}
+
+function convert(api, options, callback) {
+    api = preProcessor(api);
+
+    let defaults = {};
+    defaults.includes = [];
+    defaults.search = true;
+    defaults.theme = 'darkula';
+    defaults.language_tabs = [{ 'javascript--nodejs': 'Node.JS' },{ 'javascript': 'JavaScript' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go'}];
+
+    options = Object.assign({},defaults,options);
+    options.openapi = api;
+
+    resolver.optionalResolve(options)
+    .then(function(options){
+        convertInner(options.openapi, options, callback);
+    })
+    .catch(function(ex){
+        callback(ex);
+    });
 }
 
 module.exports = {
