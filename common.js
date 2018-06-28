@@ -309,13 +309,13 @@ function schemaToArray(schema,offset,options,data) {
         if (schema["x-widdershins-oldRef"]) {
             entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
             entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
-            if (data.options.shallowSchemas) skipDepth = entry.depth;
+            if (data.options.shallowSchemas && state.property !== 'items') skipDepth = entry.depth;
         }
         if (schema.$ref) { // repeat for un-dereferenced schemas
             entry.$ref = schema.$ref.replace('#/components/schemas/','');
             entry.type = '$ref';
             entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
-            if (data.options.shallowSchemas) skipDepth = entry.depth;
+            if (data.options.shallowSchemas && state.property !== 'items') skipDepth = entry.depth;
         }
 
         if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
