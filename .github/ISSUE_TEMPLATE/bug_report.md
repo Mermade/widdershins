@@ -7,6 +7,8 @@ about: Create a report to help us improve
 **Describe the bug**
 A clear and concise description of what the bug is. Reports containing a full reproduction recipe (command-line and input file gist) will get a **much** faster response.
 
+* [ ] - I have checked that my input document is valid OpenAPI 2.0/3.0.x or AsyncAPI 1.x
+
 **To Reproduce**
 Steps to reproduce the behavior:
 1. Command-line:
