@@ -3,6 +3,8 @@ node_js:
   - "10"
   - "8"
   - "6"
+install:
+  - npm i
 before_script:
   - git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
   - git clone --depth 1 https://github.com/mermade/openapi-definitions.git
