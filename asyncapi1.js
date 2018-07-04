@@ -31,8 +31,7 @@ function convertToToc(source) {
             if (!resources[tagName]) {
                 resources[tagName] = {};
                 if (source.tags) {
-                    for (let t in source.tags) {
-                        let tag = source.tags[t];
+                    for (let tag of source.tags) {
                         if (tag.name === tagName) {
                             resources[tagName].description = tag.description;
                             resources[tagName].externalDocs = tag.externalDocs;
