@@ -24,6 +24,10 @@ let templates;
 
 function convertToToc(source,data) {
     let resources = {};
+    resources[data.translations.defaultTag] = { count: 0, methods: {} };
+    for (let tag of source.tags) {
+        resources[tag.name] = { count: 0, methods: {}, description: tag.description, externalDocs: tag.externalDocs };
+    }
     for (var p in source.paths) {
         for (var m in source.paths[p]) {
             if ((m !== 'parameters') && (m !== 'summary') && (m !== 'description') && (!m.startsWith('x-'))) {
@@ -43,27 +47,17 @@ function convertToToc(source,data) {
                     tagName = getTagGroup(method.operation.tags[0], data.options.tagGroups);
                 }
                 if (!resources[tagName]) {
-                    resources[tagName] = {};
-                    if (source.tags) {
-                        for (var t in source.tags) {
-                            var tag = source.tags[t];
-                            if (tag.name === tagName) {
-                                resources[tagName].description = tag.description;
-                                resources[tagName].externalDocs = tag.externalDocs;
-                            }
-                        }
-                    }
+                    resources[tagName] = { count: 0, methods: {} };
                 }
-                if (!resources[tagName].methods) resources[tagName].methods = {};
+                resources[tagName].count++;
                 resources[tagName].methods[sMethodUniqueName] = method;
             }
         }
     }
-    const ordered = {};
-    Object.keys(resources).sort().forEach(function(key) {
-        ordered[key] = resources[key];
-    });
-    return ordered;
+    for (let r in resources) {
+        if (resources[r].count <= 0) delete resources[r];
+    }
+    return resources;
 }
 
 function getTagGroup(tag, tagGroups){
@@ -75,7 +69,6 @@ function getTagGroup(tag, tagGroups){
         }
     }
     return tag;
-
 }
 
 function fakeProdCons(data) {
