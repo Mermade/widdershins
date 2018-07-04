@@ -25,8 +25,10 @@ let templates;
 function convertToToc(source,data) {
     let resources = {};
     resources[data.translations.defaultTag] = { count: 0, methods: {} };
-    for (let tag of source.tags) {
-        resources[tag.name] = { count: 0, methods: {}, description: tag.description, externalDocs: tag.externalDocs };
+    if (source.tags) {
+        for (let tag of source.tags) {
+            resources[tag.name] = { count: 0, methods: {}, description: tag.description, externalDocs: tag.externalDocs };
+        }
     }
     for (var p in source.paths) {
         for (var m in source.paths[p]) {
