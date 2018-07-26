@@ -449,7 +449,7 @@ function getResponseExamples(data) {
                 }
             }
             else if (contentType.example) {
-                examples.push({description:resp+' '+data.translations.response,value:common.clean(convertExample(contentType.example.value)), cta: cta});
+                examples.push({description:resp+' '+data.translations.response,value:common.clean(convertExample(contentType.example)), cta: cta});
             }
             else if (contentType.schema) {
                 let obj = contentType.schema;
