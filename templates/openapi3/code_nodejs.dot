@@ -1,4 +1,4 @@
-const request = require('node-fetch');
+const fetch = require('node-fetch');
 {{?data.bodyParameter.present}}const inputBody = '{{=data.bodyParameter.exampleValues.json}}';{{?}}
 {{?data.allHeaders.length}}const headers = {
 {{~data.allHeaders :p:index}}  '{{=p.name}}':{{=p.exampleValues.json}}{{?index < data.allHeaders.length-1}},{{?}}
