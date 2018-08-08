@@ -312,17 +312,17 @@ function getBodyParameterExamples(data) {
         content += safejson(obj,null,2) + '\n';
         content += '```\n\n';
     }
-    if (common.doContentType(data.consumes, 'yaml')) {
+    else if (common.doContentType(data.consumes, 'yaml')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
         content += '```\n\n';
     }
-    if (common.doContentType(data.consumes, 'form')) {
+    else if (common.doContentType(data.consumes, 'form')) {
         content += '```yaml\n';
         content += yaml.safeDump(obj) + '\n';
         content += '```\n\n';
     }
-    if (common.doContentType(data.consumes, 'xml') && (typeof obj === 'object')) {
+    else if (common.doContentType(data.consumes, 'xml') && (typeof obj === 'object')) {
         if (xmlWrap) {
             var newObj = {};
             newObj[xmlWrap] = obj;
@@ -330,6 +330,11 @@ function getBodyParameterExamples(data) {
         }
         content += '```xml\n';
         content += xml.getXml(JSON.parse(safejson(obj)), '@', '', true, '  ', false) + '\n';
+        content += '```\n\n';
+    }
+    else {
+        content += '```\n';
+        content += obj.value;
         content += '```\n\n';
     }
     return content;
