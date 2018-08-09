@@ -25,8 +25,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### To install
 
 * Clone the git repository, or
-* `npm install [-g] widdershins`, or
-* `yarn global add widdershins`
+* `npm install [-g] widdershins`
 
 ```
 node widdershins [options] {input-file|url} [[-o] output markdown]
