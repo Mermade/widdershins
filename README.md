@@ -29,6 +29,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ```
 node widdershins [options] {input-file|url} [[-o] output markdown]
+  --customApiKeyValue   Set a custom API key value                      [string]
   --expandBody          Expand requestBody properties in parameters    [boolean]
   --headings            Levels of headings to expand in TOC[number] [default: 2]
   --omitBody            Omit top-level fake body parameter object      [boolean]
