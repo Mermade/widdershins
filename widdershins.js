@@ -17,6 +17,8 @@ var argv = require('yargs')
     .boolean('code')
     .alias('c','code')
     .describe('code','Turn generic code samples off')
+    .string('customApiKeyValue')
+    .describe('customApiKeyValue','Set a custom API key value')
     .string('includes')
     .boolean('discovery')
     .alias('d','discovery')
@@ -143,6 +145,7 @@ options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
 options.shallowSchemas = argv.shallowSchemas;
 options.yaml = argv.yaml;
+options.customApiKeyValue = argv.customApiKeyValue;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 

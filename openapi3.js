@@ -275,6 +275,9 @@ function getParameters(data) {
                     authHeader.isAuth = true;
                     authHeader.exampleValues = {};
                     authHeader.exampleValues.object = 'API_KEY';
+                    if (data.options.customApiKeyValue) {
+                        authHeader.exampleValues.object = data.options.customApiKeyValue;
+                    }
                     authHeader.exampleValues.json = "'" + authHeader.exampleValues.object + "'";
                     data.allHeaders.push(authHeader);
                 }
