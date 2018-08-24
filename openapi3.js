@@ -592,7 +592,7 @@ function convertInner(api, options, callback) {
     data.translations = {};
     templates.translations(data);
 
-    data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
+    data.version = (data.api.info && data.api.info.version && data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
 
     let header = {};
     header.title = api.info.title||'API' + ' ' + data.version;
@@ -610,7 +610,7 @@ function convertInner(api, options, callback) {
 
     data.options = options;
     data.header = header;
-    data.title_prefix = (data.api.info.title.trim()||'API').split(' ').join('-');
+    data.title_prefix = (data.api.info && data.api.info.version ? (data.api.info.title.trim()||'API').split(' ').join('-') : '');
     data.templates = templates;
     data.resources = convertToToc(api,data);
 
