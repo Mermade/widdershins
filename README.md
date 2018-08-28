@@ -70,30 +70,30 @@ converter.convert(apiObj,options,function(err,str){
 | CLI parameter name | JavaScript parameter name | Type | Default value | Description |
 | --- | --- | --- | --- | --- |
 | --customApiKeyValue | options.customApiKeyValue | string | None | Set a custom API key value |
-| --expandBody | options.expandBody | boolean | FALSE | Expand the requestBody parameter to show all properties in the request body |
+| --expandBody | options.expandBody | Boolean | false | Expand the requestBody parameter to show all properties in the request body |
 | --headings | options.headings | integer | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
-| --omitBody | options.omitBody | boolean | FALSE | Omit the top-level fake body parameter object |
-| --resolve | options.resolve | boolean | FALSE | Resolve external $refs |
-| --shallowSchemas | options.shallowSchemas | boolean | FALSE | Don't expand schemas past $refs |
-| --summary | options.tocSummary | boolean | FALSE | Use the operation summary as the TOC entry instead of the ID |
-| --verbose | options.verbose | boolean | FALSE | Increase verbosity |
-| -h, --help | options.help | boolean | FALSE | Show help |
-| --version | options.version | boolean | FALSE | Show version number |
-| -c, --code | options.code | boolean | FALSE | Turn generic code samples off |
-| --httpsnippet | options.httpsnippet | boolean | FALSE | Use httpsnippet to generate code samples |
-| -d, --discovery | options.discovery | boolean | FALSE | Include schema.org WebAPI discovery data |
+| --omitBody | options.omitBody | Boolean | false | Omit the top-level fake body parameter object |
+| --resolve | options.resolve | Boolean | false | Resolve external $refs |
+| --shallowSchemas | options.shallowSchemas | Boolean | false | Don't expand schemas past $refs |
+| --summary | options.tocSummary | Boolean | false | Use the operation summary as the TOC entry instead of the ID |
+| --verbose | options.verbose | Boolean | false | Increase verbosity |
+| -h, --help | options.help | Boolean | false | Show help |
+| --version | options.version | Boolean | false | Show version number |
+| -c, --code | options.code | Boolean | false | Turn generic code samples off |
+| --httpsnippet | options.httpsnippet | Boolean | false | Use httpsnippet to generate code samples |
+| -d, --discovery | options.discovery | Boolean | false | Include schema.org WebAPI discovery data |
 | -e, --environment | options.environment | string | None | Load config/override options from file |
 | -i, --includes | options.includes | string | None | List of files to include, comma separated |
-| -l, --lang | options.lang | boolean | FALSE | Automatically generate list of languages for code samples |
+| -l, --lang | options.lang | Boolean | false | Automatically generate list of languages for code samples |
 | --language_tabs | options.language_tabs | string | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format |
 | -m, --maxDepth | options.maxDepth | integer | 10 | Maximum depth for schema examples |
 | -o, --outfile | options.outfile | string | (If left blank, output to stdout) | File to write output markdown to |
-| -r, --raw | options.raw | boolean | FALSE | Output raw schemas not example values |
-| -s, --search | options.search | boolean | TRUE | Whether to enable search or not |
+| -r, --raw | options.raw | Boolean | false | Output raw schemas not example values |
+| -s, --search | options.search | Boolean | true | Whether to enable search or not |
 | -t, --theme | options.theme | string | darkula | Syntax-highlighter theme to use |
 | -u, --user_templates | options.user_templates | string | None | Directory to load override templates from |
-| -x, --experimental | options.experimental | boolean |  | For backwards compatibility only, ignored |
-| -y, --yaml | options.yaml | boolean | FALSE | Display JSON schemas in YAML format |
+| -x, --experimental | options.experimental | Boolean |  | For backwards compatibility only, ignored |
+| -y, --yaml | options.yaml | Boolean | false | Display JSON schemas in YAML format |
 |  | options.templateCallback | function | None | A function that is called before and after each template (JavaScript code only) |
 
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
