@@ -70,12 +70,12 @@ converter.convert(apiObj,options,function(err,str){
 | CLI parameter name | JavaScript parameter name | Type | Default value | Description |
 | --- | --- | --- | --- | --- |
 | --customApiKeyValue | options.customApiKeyValue | string | None | Set a custom API key value |
-| --expandBody | options.expandBody | boolean | FALSE | Expand requestBody properties in parameters |
-| --headings | options.headings | integer | 2 | Levels of headings to expand in TOC. Currently only supported by Shins, not Slate which lacks this feature. |
-| --omitBody | options.omitBody | boolean | FALSE | Omit top-level fake body parameter object |
+| --expandBody | options.expandBody | boolean | FALSE | Expand the requestBody parameter to show all properties in the request body |
+| --headings | options.headings | integer | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --omitBody | options.omitBody | boolean | FALSE | Omit the top-level fake body parameter object |
 | --resolve | options.resolve | boolean | FALSE | Resolve external $refs |
 | --shallowSchemas | options.shallowSchemas | boolean | FALSE | Don't expand schemas past $refs |
-| --summary | options.tocSummary | boolean | FALSE | Use summary instead of operationId for TOC |
+| --summary | options.tocSummary | boolean | FALSE | Use the operation summary as the TOC entry instead of the ID |
 | --verbose | options.verbose | boolean | FALSE | Increase verbosity |
 | -h, --help | options.help | boolean | FALSE | Show help |
 | --version | options.version | boolean | FALSE | Show version number |
@@ -91,10 +91,10 @@ converter.convert(apiObj,options,function(err,str){
 | -r, --raw | options.raw | boolean | FALSE | Output raw schemas not example values |
 | -s, --search | options.search | boolean | TRUE | Whether to enable search or not |
 | -t, --theme | options.theme | string | darkula | Syntax-highlighter theme to use |
-| -u, --user_templates | options.user_templates | string | None | directory to load override templates from |
+| -u, --user_templates | options.user_templates | string | None | Directory to load override templates from |
 | -x, --experimental | options.experimental | boolean |  | For backwards compatibility only, ignored |
 | -y, --yaml | options.yaml | boolean | FALSE | Display JSON schemas in YAML format |
-| (not available) | options.templateCallback | function | None | A function that is called before and after each template (JavaScript code only) |
+|  | options.templateCallback | function | None | A function that is called before and after each template (JavaScript code only) |
 
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
 
