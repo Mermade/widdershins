@@ -79,7 +79,7 @@ converter.convert(apiObj,options,function(err,str){
 | --verbose | options.verbose | Boolean | false | Increase verbosity |
 | -h, --help | options.help | Boolean | false | Show help |
 | --version | options.version | Boolean | false | Show version number |
-| -c, --code | options.code | Boolean | false | Turn generic code samples off |
+| -c, --code | options.codeSamples | Boolean | false | Turn generic code samples off |
 | --httpsnippet | options.httpsnippet | Boolean | false | Use httpsnippet to generate code samples |
 | -d, --discovery | options.discovery | Boolean | false | Include schema.org WebAPI discovery data |
 | -e, --environment | options.environment | string | None | Load config/override options from file |
