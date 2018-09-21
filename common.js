@@ -1,6 +1,6 @@
 'use strict';
 
-const jptr = require('jgexml/jpath.js');
+const jptr = require('reftools/lib/jptr.js').jptr;
 const sampler = require('openapi-sampler');
 const safejson = require('safe-json-stringify');
 const recurse = require('reftools/lib/recurse.js').recurse;
@@ -220,7 +220,7 @@ function schemaToArray(schema,offset,options,data) {
             let dschema = schema;
             let prefix = '';
             if (schema.$ref) {
-                dschema = jptr.jptr(data.api,schema.$ref);
+                dschema = jptr(data.api,schema.$ref);
                 prefix = schema.$ref.replace('#/components/schemas/','')+'.';
             }
             if (dschema.discriminator) {
@@ -289,6 +289,57 @@ function schemaToArray(schema,offset,options,data) {
         //if (entry.depth<1) entry.depth = 0;
 
         entry.description = schema.description;
+        entry.type = schema.type;
+        entry.format = schema.format;
+
+        entry.safeType = entry.type;
+
+        if (schema["x-widdershins-oldRef"]) {
+            entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
+            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+            if (data.options.shallowSchemas) skipDepth = entry.depth;
+            if (!entry.description) {
+                let target = jptr(data.api,schema["x-widdershins-oldRef"]);
+                if (target.description) entry.description = target.description;
+            }
+        }
+        if (schema.$ref) { // repeat for un-dereferenced schemas
+            entry.$ref = schema.$ref.replace('#/components/schemas/','');
+            entry.type = '$ref';
+            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
+            if (data.options.shallowSchemas) skipDepth = entry.depth;
+            if (!entry.description) {
+                let target = jptr(data.api,schema.$ref);
+                if (target.description) entry.description = target.description;
+            }
+        }
+
+        if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
+        if ((entry.type === 'array') && schema.items) {
+            let itemsType = schema.items.type||'any';
+            if (schema.items["x-widdershins-oldRef"]) {
+                let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
+                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
+                if (!entry.description) {
+                    let target = jptr(data.api,schema.items["x-widdershins-oldRef"]);
+                    if (target.description) entry.description = '['+target.description+']';
+                }
+            }
+            if (schema.items.$ref) { // repeat for un-dereferenced schemas
+                let $ref = schema.items.$ref.replace('#/components/schemas/','');
+                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
+                if (!entry.description) {
+                    let target = jptr(data.api,schema.items.$ref);
+                    if (target.description) entry.description = '['+target.description+']';
+                }
+            }
+            if (schema.items.anyOf) itemsType = 'anyOf';
+            if (schema.items.allOf) itemsType = 'allOf';
+            if (schema.items.oneOf) itemsType = 'oneOf';
+            if (schema.items.not) itemsType = 'not';
+            entry.safeType = '['+itemsType+']';
+        }
+
         if (options.trim && typeof entry.description === 'string') {
             entry.description = entry.description.trim();
         }
@@ -300,40 +351,6 @@ function schemaToArray(schema,offset,options,data) {
         }
         if (entry.description === 'undefined') { // yes, the string
             entry.description = '';
-        }
-        entry.type = schema.type;
-        entry.format = schema.format;
-
-        entry.safeType = entry.type;
-
-        if (schema["x-widdershins-oldRef"]) {
-            entry.$ref = schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
-            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
-            if (data.options.shallowSchemas) skipDepth = entry.depth;
-        }
-        if (schema.$ref) { // repeat for un-dereferenced schemas
-            entry.$ref = schema.$ref.replace('#/components/schemas/','');
-            entry.type = '$ref';
-            entry.safeType = '['+entry.$ref+'](#schema'+entry.$ref.toLowerCase()+')';
-            if (data.options.shallowSchemas) skipDepth = entry.depth;
-        }
-
-        if (entry.format) entry.safeType = entry.safeType+'('+entry.format+')';
-        if ((entry.type === 'array') && schema.items) {
-            let itemsType = schema.items.type||'any';
-            if (schema.items["x-widdershins-oldRef"]) {
-                let $ref = schema.items["x-widdershins-oldRef"].replace('#/components/schemas/','');
-                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
-            }
-            if (schema.items.$ref) { // repeat for un-dereferenced schemas
-                let $ref = schema.items.$ref.replace('#/components/schemas/','');
-                itemsType = '['+$ref+'](#schema'+$ref.toLowerCase()+')';
-            }
-            if (schema.items.anyOf) itemsType = 'anyOf';
-            if (schema.items.allOf) itemsType = 'allOf';
-            if (schema.items.oneOf) itemsType = 'oneOf';
-            if (schema.items.not) itemsType = 'not';
-            entry.safeType = '['+itemsType+']';
         }
 
         if (schema.nullable === true) {
