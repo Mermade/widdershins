@@ -27,40 +27,19 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 * Clone the git repository, or
 * `npm install [-g] widdershins`
 
+### Examples
+
+Command-line use looks like this:
 ```
 node widdershins [options] {input-file|url} [[-o] output markdown]
-  --customApiKeyValue   Set a custom API key value                      [string]
-  --expandBody          Expand requestBody properties in parameters    [boolean]
-  --headings            Levels of headings to expand in TOC[number] [default: 2]
-  --omitBody            Omit top-level fake body parameter object      [boolean]
-  --resolve             Resolve external $refs                         [boolean]
-  --shallowSchemas      Don't expand schemas past $refs                [boolean]
-  --summary             Use summary instead of operationId for TOC     [boolean]
-  --verbose             Increase verbosity                             [boolean]
-  -h, --help            Show help                                      [boolean]
-  --version             Show version number                            [boolean]
-  -c, --code            Turn generic code samples off                  [boolean]
-  --httpsnippet         Use httpsnippet to generate code samples
-                                                      [boolean] [default: false]
-  -d, --discovery       Include schema.org WebAPI discovery data       [boolean]
-  -e, --environment     Load config/override options from file          [string]
-  -i, --includes        List of files to include, comma separated       [string]
-  -l, --lang            Automatically generate list of languages for code
-                        samples                                        [boolean]
-  --language_tabs       List of language tabs for code samples using
-                        "language[:label[:client]]" format              [string]
-  -m, --maxDepth        Maximum depth for schema examples          [default: 10]
-  -o, --outfile         File to write output markdown to                [string]
-  -r, --raw             Output raw schemas not example values          [boolean]
-  -s, --search          Whether to enable search or not, default true
-                                                       [boolean] [default: true]
-  -t, --theme           Syntax-highlighter theme to use                 [string]
-  -u, --user_templates  directory to load override templates from       [string]
-  -x, --experimental    For backwards compatibility only, ignored      [boolean]
-  -y, --yaml            Display JSON schemas in YAML format            [boolean]
 ```
 
-or
+For example:
+```
+node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --summary defs/petstore3.json -o petstore3.md
+```
+
+In Node.JS code, create an options object and pass it to the Widdershins `convert` function, as in this example:
 
 ```javascript
 var converter = require('widdershins');
@@ -78,7 +57,7 @@ options.sample = true; // set false by --raw
 options.discovery = false;
 options.includes = [];
 options.shallowSchemas = false;
-options.summary = false;
+options.tocSummary = false;
 options.headings = 2;
 options.yaml = false;
 converter.convert(apiObj,options,function(err,str){
@@ -86,7 +65,36 @@ converter.convert(apiObj,options,function(err,str){
 });
 ```
 
-The `headings` option is currently only supported by Shins, not Slate which lacks this feature.
+### Options
+
+| CLI parameter name | JavaScript parameter name | Type | Default value | Description |
+| --- | --- | --- | --- | --- |
+| --customApiKeyValue | options.customApiKeyValue | string | None | Set a custom API key value |
+| --expandBody | options.expandBody | Boolean | false | Expand the requestBody parameter to show all properties in the request body |
+| --headings | options.headings | integer | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --omitBody | options.omitBody | Boolean | false | Omit the top-level fake body parameter object |
+| --resolve | options.resolve | Boolean | false | Resolve external $refs |
+| --shallowSchemas | options.shallowSchemas | Boolean | false | Don't expand schemas past $refs |
+| --summary | options.tocSummary | Boolean | false | Use the operation summary as the TOC entry instead of the ID |
+| --verbose | options.verbose | Boolean | false | Increase verbosity |
+| -h, --help | options.help | Boolean | false | Show help |
+| --version | options.version | Boolean | false | Show version number |
+| -c, --code | options.codeSamples | Boolean | false | Turn generic code samples off |
+| --httpsnippet | options.httpsnippet | Boolean | false | Use httpsnippet to generate code samples |
+| -d, --discovery | options.discovery | Boolean | false | Include schema.org WebAPI discovery data |
+| -e, --environment | options.environment | string | None | Load config/override options from file |
+| -i, --includes | options.includes | string | None | List of files to include, comma separated |
+| -l, --lang | options.lang | Boolean | false | Automatically generate list of languages for code samples |
+| --language_tabs | options.language_tabs | string | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format |
+| -m, --maxDepth | options.maxDepth | integer | 10 | Maximum depth for schema examples |
+| -o, --outfile | options.outfile | string | (If left blank, output to stdout) | File to write output markdown to |
+| -r, --raw | options.raw | Boolean | false | Output raw schemas not example values |
+| -s, --search | options.search | Boolean | true | Whether to enable search or not |
+| -t, --theme | options.theme | string | darkula | Syntax-highlighter theme to use |
+| -u, --user_templates | options.user_templates | string | None | Directory to load override templates from |
+| -x, --experimental | options.experimental | Boolean |  | For backwards compatibility only, ignored |
+| -y, --yaml | options.yaml | Boolean | false | Display JSON schemas in YAML format |
+|  | options.templateCallback | function | None | A function that is called before and after each template (JavaScript code only) |
 
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
 
@@ -97,7 +105,7 @@ options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'Ja
 The `--environment` option specifies a JSON or YAML-formatted `options` object, for example:
 
 ```json
-{ 
+{
   "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
   "verbose": true,
   "tagGroups": [
