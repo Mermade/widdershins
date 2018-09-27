@@ -670,7 +670,7 @@ function convertInner(api, options, callback) {
 
 function convert(api, options, callback) {
     if (options.resolve) {
-        swagger2openapi.convertObj(api, {resolve:true,source:options.source}, function(err, sOptions) {
+        swagger2openapi.convertObj(api, {resolve:true,source:options.source,verbose:options.verbose}, function(err, sOptions) {
         if (err) {
             console.error(err.message);
         }
