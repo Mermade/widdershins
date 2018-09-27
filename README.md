@@ -73,13 +73,13 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 In Node.JS code, create an options object and pass it to the Widdershins `convert` function, as in this example:
 
 ```javascript
-var converter = require('widdershins');
-var options = {}; // defaults shown
+const converter = require('widdershins');
+let options = {}; // defaults shown
 options.codeSamples = true;
 options.httpsnippet = false;
 //options.language_tabs = [];
 //options.language_clients = [];
-//options.loadedFrom = sourceUrl;
+//options.loadedFrom = sourceUrl; // only needed if input document is relative
 //options.user_templates = './user_templates';
 options.templateCallback = function(templateName,stage,data) { return data };
 options.theme = 'darkula';
@@ -91,6 +91,8 @@ options.shallowSchemas = false;
 options.tocSummary = false;
 options.headings = 2;
 options.yaml = false;
+//options.resolve = false;
+//options.source = sourceUrl; // if resolve is true, must be set to full path or URL of the input document
 converter.convert(apiObj,options,function(err,str){
   // str contains the converted markdown
 });
