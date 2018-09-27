@@ -405,7 +405,7 @@ function getResponses(data) {
                 entry.type = contentType.schema.type;
                 entry.schema = data.translations.schemaInline;
             }
-            if (contentType.schema && contentType.schema["x-widdershins-oldRef"]) {
+            if (contentType.schema && contentType.schema["x-widdershins-oldRef"] && contentType.schema["x-widdershins-oldRef"].startsWith('#/components/')) {
                 let schemaName = contentType.schema["x-widdershins-oldRef"].replace('#/components/schemas/','');
                 entry.schema = '['+schemaName+'](#schema'+schemaName.toLowerCase()+')';
                 entry.$ref = true;
