@@ -246,7 +246,7 @@ function getParameters(data) {
         return e.name.toLowerCase() === 'authorization';
     });
     if (data.operation.security) {
-        if(data.operation.security.length) {
+        if (data.operation.security.length) {
             effSecurity = Object.keys(data.operation.security[0]);
         }
     }
