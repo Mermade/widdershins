@@ -245,8 +245,10 @@ function getParameters(data) {
     let existingAuth = data.allHeaders.find(function(e,i,a){
         return e.name.toLowerCase() === 'authorization';
     });
-    if (data.operation.security && data.operation.security.length) {
-        effSecurity = Object.keys(data.operation.security[0]);
+    if (data.operation.security) {
+        if (data.operation.security.length) {
+            effSecurity = Object.keys(data.operation.security[0]);
+        }
     }
     else if (data.api.security && data.api.security.length) {
         effSecurity = Object.keys(data.api.security[0]);
