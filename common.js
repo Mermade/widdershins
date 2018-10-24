@@ -205,6 +205,7 @@ function schemaToArray(schema,offset,options,data) {
     container.push(block);
     let wsState = wsGetState();
     wsState.combine = true;
+    wsState.allowRefSiblings = true;
     walkSchema(schema,{},wsState,function(schema,parent,state){
 
         let isBlock = false;
