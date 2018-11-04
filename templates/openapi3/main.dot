@@ -30,7 +30,7 @@ Base URLs:
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
-<h1 id="{{=data.title_prefix+'-'+r.split(' ').join('-').split('(').join('-').split(')').join('-')}}">{{= r}}</h1>
+<h1 id="{{=data.title_prefix+'-'+data.utils.slugify(r)}}">{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 

@@ -612,7 +612,7 @@ function convertInner(api, options, callback) {
 
     data.options = options;
     data.header = header;
-    data.title_prefix = (data.api.info && data.api.info.version ? (data.api.info.title.trim()||'API').split(/[\s\.]/).join('-') : '');
+    data.title_prefix = (data.api.info && data.api.info.version ? common.slugify(data.api.info.title.trim()||'API') : '');
     data.templates = templates;
     data.resources = convertToToc(api,data);
 
