@@ -174,7 +174,7 @@ function inferType(schema) {
 
 function strim(obj,maxDepth) {
     if (maxDepth <= 0) return obj;
-    recurse(obj,{},function(obj,key,state){
+    recurse(obj,{identityDetection:true},function(obj,key,state){
         if (state.depth >= maxDepth) {
             if (Array.isArray(state.parent[state.pkey])) {
                 state.parent[state.pkey] = [];
