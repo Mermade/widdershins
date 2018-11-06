@@ -136,6 +136,7 @@ options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
 options.verbose = argv.verbose;
+if (options.verbose) Error.stackTraceLimit = Infinity;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
 options.experimental = argv.experimental;
