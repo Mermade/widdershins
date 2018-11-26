@@ -630,6 +630,8 @@ function convertInner(api, options, callback) {
     if (data.protocol) data.protocol = data.protocol.replace(':','');
     data.baseUrl = data.servers[0].url;
 
+    data.operationStack = [];
+
     data.utils = {};
     data.utils.yaml = yaml;
     data.utils.inspect = util.inspect;

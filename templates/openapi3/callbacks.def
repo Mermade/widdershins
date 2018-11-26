@@ -1,16 +1,16 @@
-{{? data.operation.callbacks}}
+{{? typeof data.operation.callbacks === 'object'}}
 
 ### Callbacks
 
 <div class="content well">
 
-{{ data.oldOperation = data.operation; }}
+{{ data.operationStack.push(data.operation); }}
 
-{{ for (var c in data.operation.callbacks) { }}
+{{ for (var c of Object.keys(data.operation.callbacks)) { }}
 
 #### {{=c}}
 
-{{ var callback = data.operation.callbacks[c]; }}
+{{ var callback = data.operation.callbacks && data.operation.callbacks[c]; }}
 
 {{ for (var e in callback) { }}
 
@@ -31,7 +31,8 @@
 
 {{ } /* of callbacks */ }}
 
-{{ data.operation = data.oldOperation; }}
+{{ data.operation = data.operationStack.pop(); }}
+{{ data.method.operation = data.operation; }}
 
 </div>
 

@@ -129,6 +129,7 @@ function* check(file) {
                 result = result.split('|undefined|[Empty]').join('x');
                 result = result.split('|undefined|').join('x');
                 result = result.split('efault: undefined').join('x');
+                result = result.split('": "undefined"').join('x');
                 result = result.split('"undefined",').join('x');
                 result = result.split('and undefined,').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
