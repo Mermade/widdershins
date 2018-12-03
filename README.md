@@ -209,6 +209,7 @@ Please feel free to add a link to your API documentation here.
 * [Open EO API](https://open-eo.github.io/openeo-api-poc/apireference/index.html)
 * [Split Payments API](http://docs.split.cash/)
 * [LeApp daemon API](https://leapp-to.github.io/shins/index.html)
+* [Shutterstock API](https://api-reference.shutterstock.com/)
 
 ## Widdershins and Shins
 
