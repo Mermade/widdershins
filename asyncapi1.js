@@ -63,10 +63,10 @@ function convertInner(api, options, callback) {
     if (options.verbose) console.warn('starting deref',api.info.title);
     data.api = dereference(api,api,{verbose:options.verbose,$ref:'x-widdershins-oldRef'});
     if (options.verbose) console.warn('finished deref');
-    data.version = (data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
+    data.version = (data.api.info && data.api.info.version && data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+(data.api.info && data.api.info.version ? data.api.info.version : '1.0.0'));
 
     let header = {};
-    header.title = api.info.title + ' ' + data.version;
+    header.title = api.info && api.info.title ? ' ' + data.version : ' 1.0.0';
 
     header.language_tabs = options.language_tabs;
     header.headingLevel = 3;

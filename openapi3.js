@@ -594,10 +594,10 @@ function convertInner(api, options, callback) {
     data.translations = {};
     templates.translations(data);
 
-    data.version = (data.api.info && data.api.info.version && typeof data.api.info.version === 'string' && data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+data.api.info.version);
+    data.version = (data.api.info && data.api.info.version && typeof data.api.info.version === 'string' && data.api.info.version.toLowerCase().startsWith('v') ? data.api.info.version : 'v'+(data.api.info ? data.api.info.version : 'v1.0.0'));
 
     let header = {};
-    header.title = api.info.title||'API' + ' ' + data.version;
+    header.title = api.info && api.info.title||'API' + ' ' + data.version;
     header.language_tabs = options.language_tabs;
     header.toc_footers = [];
     if (api.externalDocs) {

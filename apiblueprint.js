@@ -11,7 +11,7 @@ function convert(api, options, callback) {
         lines[index] = '';
         index++;
     }
-    while (!lines[index].startsWith('# ') && !lines[index].startsWith('==') && (index<lines.length)) {
+    while (lines[index] && !lines[index].startsWith('# ') && !lines[index].startsWith('==') && (index<lines.length)) {
         index++;
     }
     if (lines[index].startsWith('# ')) {
