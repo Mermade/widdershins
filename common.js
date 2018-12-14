@@ -417,9 +417,9 @@ function getSampleInner(orig,options,samplerOptions,api){
             else {
                 console.error('# sampler ' + ex.message);
                 options.samplerErrors.set(ex.message,true);
-            }
-            if (options.verbose) {
-                console.error(ex);
+                if (options.verbose) {
+                    console.error(ex);
+                }
             }
             obj = JSON.parse(safejson(orig));
             try {
