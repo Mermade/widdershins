@@ -211,9 +211,6 @@ Please feel free to add a link to your API documentation here.
 * [LeApp daemon API](https://leapp-to.github.io/shins/index.html)
 * [Shutterstock API](https://api-reference.shutterstock.com/)
 
-## Widdershins and Shins
+### Widdershins and Shins
 
-If you need a wrapper around both Widdershins and Shins, why not consider the following third-party projects:
-
-* [api2html](https://github.com/tobilg/api2html)
-* [shinner](https://github.com/jantoniucci/shinner)
+* `Widdershins` works well with Slate, but for a solely Node.js-based experience, why not try the [Shins](https://github.com/mermade/shins) port?
