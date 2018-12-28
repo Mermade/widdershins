@@ -132,6 +132,7 @@ function* check(file) {
                 result = result.split('": "undefined"').join('x');
                 result = result.split('"undefined",').join('x');
                 result = result.split('and undefined,').join('x');
+                result = result.split('otherwise undefined').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
