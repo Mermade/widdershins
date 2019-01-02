@@ -324,7 +324,7 @@ function getBodyParameterExamples(data) {
     }
     if (common.doContentType(data.consumes, 'text')) {
         content += '```\n';
-        content += example.value + '\n';
+        content += yaml.safeDump(obj) + '\n';
         content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'form')) {
