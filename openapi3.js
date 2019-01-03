@@ -501,7 +501,7 @@ function getResponseExamples(data) {
         }
         if (common.doContentType(example.cta, 'text')) {
             content += '```\n';
-            content += example.value + '\n';
+            content += JSON.stringify(example.value) + '\n';
             content += '```\n\n';
         }
         let xmlObj = example.value;
