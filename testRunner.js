@@ -118,6 +118,7 @@ function* check(file) {
                 let message = '';
                 if (!result) result = '';
                 result = result.split('is undefined').join('x');
+                result = result.split('f undefined').join('x');
                 result = result.split('are undefined').join('x');
                 result = result.split('be undefined').join('x');
                 result = result.split('undefined to').join('x');
