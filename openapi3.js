@@ -39,7 +39,7 @@ function convertToToc(source,data) {
                 method.verb = m;
                 method.path = p;
                 method.pathParameters = source.paths[p].parameters;
-                var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('/').join('_');
+                var sMethodUniqueName = (method.operation.operationId ? method.operation.operationId : m + '_' + p).split('?')[0].split('/').join('_');
                 if (data.options.tocSummary && method.operation.summary) {
                     sMethodUniqueName = method.operation.summary;
                 }
@@ -129,7 +129,7 @@ function getParameters(data) {
     data.allHeaders = [];
     data.headerParameters = [];
     data.requiredParameters = [];
-    let uriTemplateStr = data.method.path.split('/ /').join('/+/');
+    let uriTemplateStr = data.method.path.split('?')[0].split('/ /').join('/+/');
     let requiredUriTemplateStr = uriTemplateStr;
     var templateVars = {};
 
