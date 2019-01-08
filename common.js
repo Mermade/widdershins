@@ -355,7 +355,7 @@ function schemaToArray(schema,offset,options,data) {
         }
 
         if (schema.nullable === true) {
-            entry.safeType += '\\|null';
+            entry.safeType += '¦null';
         }
 
         if (schema.readOnly) entry.restrictions = data.translations.readOnly;
