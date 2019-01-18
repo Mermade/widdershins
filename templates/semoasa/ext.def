@@ -10,7 +10,7 @@
 {{=JSON.stringify(sample,null,2)}}
 ```
 ```yaml
-{{=data.utils.yaml.safeDump(sample)}}
+{{=data.utils.yaml.stringify(sample)}}
 ```
 
 {{ if (x.provider && x.provider !== data.defaultProvider) { }}
