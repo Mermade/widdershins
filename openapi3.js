@@ -652,6 +652,7 @@ function convertInner(api, options, callback) {
     data.utils.getResponseExamples = getResponseExamples;
     data.utils.getResponseHeaders = getResponseHeaders;
     data.utils.getAuthenticationStr = getAuthenticationStr;
+    data.widdershins = require('./package.json');
     data.utils.join = function(s) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
