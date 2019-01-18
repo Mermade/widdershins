@@ -5,7 +5,7 @@ const fs = require('fs');
 const path = require('path');
 const url = require('url');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const fetch = require('node-fetch');
 
 const converter = require('./index.js');
@@ -88,7 +88,7 @@ var options = {};
 function doit(s) {
     var api = {};
     try {
-        api = yaml.safeLoad(s,{json:true});
+        api = yaml.parse(s);
     }
     catch(ex) {
         console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
@@ -154,7 +154,7 @@ if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');
     var env = {};
     try {
-        env = yaml.safeLoad(e,{json:true});
+        env = yaml.parse(e);
     }
     catch (ex) {
         console.error(ex.message);

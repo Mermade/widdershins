@@ -3,7 +3,7 @@
 const path = require('path');
 const util = require('util');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const dot = require('dot');
 dot.templateSettings.strip = false;
 dot.templateSettings.varname = 'data';
@@ -106,7 +106,7 @@ function convertInner(api, options, callback) {
 
     let content;
     try {
-        content = '---\n'+yaml.safeDump(header)+'\n---\n\n'+
+        content = '---\n'+yaml.stringify(header)+'\n---\n\n'+
             templates.main(data);
         content = common.removeDupeBlankLines(content);
     }

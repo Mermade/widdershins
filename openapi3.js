@@ -4,7 +4,7 @@ const path = require('path');
 const util = require('util');
 const up = require('url');
 
-const yaml = require('js-yaml');
+const yaml = require('yaml');
 const safejson = require('safe-json-stringify');
 const uri = require('urijs');
 const URITemplate = require('urijs/src/URITemplate');
@@ -319,12 +319,12 @@ function getBodyParameterExamples(data) {
     }
     if (common.doContentType(data.consumes, 'yaml')) {
         content += '```yaml\n';
-        content += yaml.safeDump(obj) + '\n';
+        content += yaml.stringify(obj) + '\n';
         content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'form')) {
         content += '```yaml\n';
-        content += yaml.safeDump(obj) + '\n';
+        content += yaml.stringify(obj) + '\n';
         content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'xml') && (typeof obj === 'object')) {
@@ -428,7 +428,7 @@ function getResponses(data) {
 function convertExample(ex) {
     if (typeof ex === 'string') {
         try {
-            return yaml.safeLoad(ex);
+            return yaml.parse(ex);
         }
         catch (e) {
             return ex;
@@ -490,7 +490,7 @@ function getResponseExamples(data) {
         }
         if (common.doContentType(example.cta, 'yaml')) {
             content += '```yaml\n';
-            content += yaml.safeDump(example.value) + '\n';
+            content += yaml.stringify(example.value) + '\n';
             content += '```\n\n';
         }
         let xmlObj = example.value;
@@ -657,7 +657,7 @@ function convertInner(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
-    let content = '---\n'+yaml.dump(header)+'\n---\n\n';
+    let content = '---\n'+yaml.stringify(header)+'\n---\n\n';
         data = options.templateCallback('main', 'pre', data);
         if (data.append) { content += data.append; delete data.append; }
     try {

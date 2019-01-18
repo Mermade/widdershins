@@ -5,7 +5,7 @@ var path = require('path');
 var util = require('util');
 
 var rf = require('node-readfiles');
-var yaml = require('js-yaml');
+var yaml = require('yaml');
 var widdershins = require('./index.js');
 
 var argv = require('yargs')
@@ -91,7 +91,7 @@ function* check(file) {
         var src;
         try {
             if (components[components.length-1].endsWith('.yaml')) {
-                src = yaml.safeLoad(srcStr);
+                src = yaml.parse(srcStr);
             }
             else {
                 src = JSON.parse(srcStr);
