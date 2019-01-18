@@ -70,7 +70,7 @@ function convert(api, options, callback) {
         return s[0].toLowerCase()+s.substr(1);
     };
     data.utils.join = function(s) {
-        return s.split('\r').join('').split('\n').join(' ').trim();
+        return s.split('\r').join('').split('\n').join('<br>').trim();
     };
 
     let content;

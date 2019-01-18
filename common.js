@@ -346,7 +346,7 @@ function schemaToArray(schema,offset,options,data) {
             entry.description = entry.description.trim();
         }
         if (options.join && typeof entry.description === 'string') {
-            entry.description = entry.description.split('\r').join('').split('\n').join(' ');
+            entry.description = entry.description.split('\r').join('').split('\n').join('<br>');
         }
         if (options.truncate && typeof entry.description === 'string') {
             entry.description = entry.description.split('\r').join('').split('\n')[0];
