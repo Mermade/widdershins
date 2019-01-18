@@ -128,7 +128,7 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 
 {{? data.options.yaml }}
 ```yaml
-{{=data.utils.yaml.dump(data.utils.getSample(schema,data.options,{},data.api))}}
+{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{},data.api))}}
 {{??}}
 ```json
 {{=JSON.stringify(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
