@@ -324,7 +324,7 @@ function getBodyParameterExamples(data) {
     }
     if (common.doContentType(data.consumes, 'text')) {
         content += '```\n';
-        content += yaml.safeDump(obj) + '\n';
+        content += yaml.stringify(obj) + '\n';
         content += '```\n\n';
     }
     if (common.doContentType(data.consumes, 'form')) {
@@ -571,7 +571,7 @@ function getAuthenticationStr(data) {
 function convertInner(api, options, callback) {
     let defaults = {};
     defaults.title = 'API';
-    defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'java': 'Java' }, { 'go': 'Go' }];
+    defaults.language_tabs = [{ 'shell': 'Shell' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'ruby': 'Ruby' }, { 'python': 'Python' }, { 'php': 'PHP' }, { 'java': 'Java' }, { 'go': 'Go' }];
     defaults.toc_footers = [];
     defaults.includes = [];
     defaults.search = true;
