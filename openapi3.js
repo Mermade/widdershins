@@ -322,6 +322,11 @@ function getBodyParameterExamples(data) {
         content += yaml.stringify(obj) + '\n';
         content += '```\n\n';
     }
+    if (common.doContentType(data.consumes, 'text')) {
+        content += '```\n';
+        content += yaml.safeDump(obj) + '\n';
+        content += '```\n\n';
+    }
     if (common.doContentType(data.consumes, 'form')) {
         content += '```yaml\n';
         content += yaml.stringify(obj) + '\n';
@@ -462,6 +467,7 @@ function getResponseExamples(data) {
                 if (common.doContentType(cta, 'json')) autoCT = 'json';
                 if (common.doContentType(cta, 'yaml')) autoCT = 'yaml';
                 if (common.doContentType(cta, 'xml'))  autoCT = 'xml';
+                if (common.doContentType(cta, 'text')) autoCT = 'text';
 
                 if (!autoDone[autoCT]) {
                     autoDone[autoCT] = true;
@@ -491,6 +497,11 @@ function getResponseExamples(data) {
         if (common.doContentType(example.cta, 'yaml')) {
             content += '```yaml\n';
             content += yaml.stringify(example.value) + '\n';
+            content += '```\n\n';
+        }
+        if (common.doContentType(example.cta, 'text')) {
+            content += '```\n';
+            content += JSON.stringify(example.value) + '\n';
             content += '```\n\n';
         }
         let xmlObj = example.value;

@@ -119,7 +119,7 @@ describe('array tests',function(){
         assert(!common.doContentType([],'json'));
     });
     it('should not match an unknown format',function(){
-        assert(!common.doContentType(['text/plain'],'text'));
+        assert(!common.doContentType(['application/octet-stream'],'file'));
     });
   });
 });
