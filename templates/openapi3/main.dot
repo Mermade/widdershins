@@ -57,9 +57,9 @@ Base URLs:
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
-<h2 id="tocS{{=s.toLowerCase()}}">{{=s}}</h2>
-
 <a id="schema{{=s.toLowerCase()}}"></a>
+
+<h2 id="tocS{{=s.toLowerCase()}}">{{=s}}</h2>
 
 {{? data.options.yaml }}
 ```yaml
@@ -84,7 +84,7 @@ Base URLs:
 }}
 
 {{~ blocks :block}}
-{{? block.title }}*{{= block.title}}*{{= '\n\n'}}{{?}}
+{{? block.title }}{{= block.title}}{{= '\n\n'}}{{?}}
 {{? block.externalDocs}}
 <a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
 {{?}}
