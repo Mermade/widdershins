@@ -1,5 +1,5 @@
 const assert = require('assert');
-const common = require('../common.js');
+const common = require('../lib/common.js');
 
 describe('contentType tests',function(){
 

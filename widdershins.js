@@ -8,7 +8,7 @@ const url = require('url');
 const yaml = require('yaml');
 const fetch = require('node-fetch');
 
-const converter = require('./index.js');
+const converter = require('./lib/index.js');
 
 var argv = require('yargs')
     .usage('widdershins [options] {input-file|url} [[-o] output markdown]')

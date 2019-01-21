@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const harGenerator = require('../harGenerator');
+const harGenerator = require('../lib/harGenerator');
 
 const sampleData = {
     methodUpper: 'GET',

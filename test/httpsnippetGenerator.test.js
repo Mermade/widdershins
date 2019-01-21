@@ -1,7 +1,7 @@
 'use strict';
 
 const assert = require('assert');
-const httpsnippetGenerator = require('../httpsnippetGenerator');
+const httpsnippetGenerator = require('../lib/httpsnippetGenerator');
 
 const sampleData = {
     methodUpper: 'GET',

@@ -6,7 +6,7 @@ var util = require('util');
 
 var rf = require('node-readfiles');
 var yaml = require('yaml');
-var widdershins = require('./index.js');
+var widdershins = require('./lib/index.js');
 
 var argv = require('yargs')
     .usage('testRunner [options] [{path-to-definitions}]')

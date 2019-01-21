@@ -1,8 +1,8 @@
 'use strict';
 
 const assert = require('assert');
-const common = require('../common');
-const httpsnippetGenerator = require('../httpsnippetGenerator');
+const common = require('../lib/common');
+const httpsnippetGenerator = require('../lib/httpsnippetGenerator');
 const operation = require('./operationFixture');
 
 const sampleData = {

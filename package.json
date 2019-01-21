@@ -1,10 +1,11 @@
 {
   "name": "widdershins",
   "version": "3.6.6",
-  "description": "OpenAPI/ Swagger / AsyncAPI / Semoasa definition to slate / shins compatible markdown",
-  "main": "index.js",
+  "description": "OpenAPI/ Swagger / AsyncAPI / Semoasa definition to Slate / Shins compatible markdown",
+  "main": "lib/index.js",
   "bin": {
-    "widdershins": "./widdershins.js"
+    "widdershins": "./widdershins.js",
+    "testRunner": "./testRunner.js"
   },
   "directories": {
     "doc": "docs"
