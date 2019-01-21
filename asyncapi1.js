@@ -104,10 +104,10 @@ function convertInner(api, options, callback) {
     data.utils.getCodeSamples = common.getCodeSamples;
     data.utils.slugify = common.slugify;
 
-    let content;
+    let content = '';
     try {
-        content = '---\n'+yaml.stringify(header)+'\n---\n\n'+
-            templates.main(data);
+        if (!options.omitHeader) content += '---\n'+yaml.stringify(header)+'\n---\n\n';
+        content += templates.main(data);
         content = common.removeDupeBlankLines(content);
     }
     catch (ex) {

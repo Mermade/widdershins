@@ -47,6 +47,8 @@ var argv = require('yargs')
     .default('maxDepth',10)
     .boolean('omitBody')
     .describe('omitBody','Omit top-level fake body parameter object')
+    .boolean('omitHeader')
+    .describe('omitHeader','Do not emit header/YAML front-matter')
     .string('outfile')
     .alias('o','outfile')
     .describe('outfile','File to write output markdown to')
@@ -144,6 +146,7 @@ options.resolve = argv.resolve;
 options.expandBody = argv.expandBody;
 options.maxDepth = argv.maxDepth;
 options.omitBody = argv.omitBody;
+options.omitHeader = argv.omitHeader;
 options.shallowSchemas = argv.shallowSchemas;
 options.yaml = argv.yaml;
 options.customApiKeyValue = argv.customApiKeyValue;

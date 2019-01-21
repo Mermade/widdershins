@@ -671,9 +671,10 @@ function convertInner(api, options, callback) {
         return s.split('\r').join('').split('\n').join(' ').trim();
     };
 
-    let content = '---\n'+yaml.stringify(header)+'\n---\n\n';
-        data = options.templateCallback('main', 'pre', data);
-        if (data.append) { content += data.append; delete data.append; }
+    let content = '';
+    if (!options.omitHeader) content += '---\n'+yaml.stringify(header)+'\n---\n\n';
+    data = options.templateCallback('main', 'pre', data);
+    if (data.append) { content += data.append; delete data.append; }
     try {
         content += templates.main(data);
     }

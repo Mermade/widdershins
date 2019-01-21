@@ -45,11 +45,12 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | --- | --- | --- | --- | --- |
 | --customApiKeyValue | options.customApiKeyValue | string | ApiKey | Set a custom API key value |
 | --expandBody | options.expandBody | boolean | false | Expand the requestBody parameter to show all properties in the request body |
-| --headings | options.headings | integer | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --headings | options.headings | integer | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature |
 | --omitBody | options.omitBody | boolean | false | Omit the top-level fake body parameter object |
+| --omitHeader | options.omitHeader | boolean | false | Omit the header / YAML front-matter |
 | --resolve | options.resolve | boolean | false | Resolve external $refs, using the `source` parameter or the input file as the base location |
 | --shallowSchemas | options.shallowSchemas | boolean | false | Don't expand schemas past $refs |
-| N/A | options.source | string | | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs. |
+| N/A | options.source | string | | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs |
 | --summary | options.tocSummary | boolean | false | Use the operation summary as the TOC entry instead of the ID |
 | --verbose | options.verbose | boolean | false | Increase verbosity |
 | -h, --help | options.help | boolean | false | Show help |
