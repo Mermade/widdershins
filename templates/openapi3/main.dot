@@ -57,9 +57,13 @@ Base URLs:
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
-<a id="schema{{=s.toLowerCase()}}"></a>
+<!-- backwards compatibility -->
 
-<h2 id="tocS{{=s.toLowerCase()}}">{{=s}}</h2>
+<h2 id="tocS_{{=s}}">{{=s}}</h2>
+<a id="schema{{=s.toLowerCase()}}"></a>
+<a id="schema_{{=s}}"></a>
+<a id="tocS{{=s.toLowerCase()}}"></a>
+<a id="tocs{{=s.toLowerCase()}}"></a>
 
 {{? data.options.yaml }}
 ```yaml
