@@ -37,8 +37,11 @@
   "homepage": "https://github.com/Mermade/widdershins#readme",
   "dependencies": {
     "dot": "^1.0.3",
+    "highlightjs": "^9.12.0",
     "httpsnippet": "1.16.5",
     "jgexml": "latest",
+    "markdown-it": "^8.4.2",
+    "markdown-it-emoji": "^1.4.0",
     "node-fetch": "^2.0.0",
     "oas-resolver": "^2.0.0",
     "oas-schema-walker": "^1.1.2",
