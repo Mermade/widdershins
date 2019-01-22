@@ -161,6 +161,8 @@ options.omitHeader = argv.omitHeader;
 options.shallowSchemas = argv.shallowSchemas;
 options.yaml = argv.yaml;
 options.customApiKeyValue = argv.customApiKeyValue;
+options.html = argv.html;
+options.respec = argv.respec;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
@@ -168,13 +170,12 @@ if (argv.respec) {
     options.sotd = argv.sotd;
     let r = fs.readFileSync(path.resolve(argv.respec),'utf8');
     try {
-        options.respec = yaml.safeLoad(r,{json:true});
+        options.respec = yaml.parse(r);
     }
     catch (ex) {
         console.error(ex.message);
     }
 }
-options.html = argv.html;
 if (options.respec) options.html = true;
 if (options.html) options.omitHeader = true;
 
