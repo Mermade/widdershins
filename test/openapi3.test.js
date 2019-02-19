@@ -73,7 +73,7 @@ describe('openapi3 tests', () => {
 
         it('should append parameters to data.parameters', () => {
             openapi3.fakeBodyParameter(goodData);
-            assert(goodData.parameters.length = 1);
+            assert(goodData.parameters.length === 1);
         });
 
     });
