@@ -64,11 +64,11 @@ const goodData =
 describe('openapi3 tests', () => {
     describe('fakeBodyParameter', () => {
         it('should handle empty options', () => {
-            assert.doesNotThrow(() => openapi3.fakeBodyParameter(noOptions));
+            openapi3.fakeBodyParameter(noOptions);
         });
 
         it('should handle empty operation', () => {
-            assert.doesNotThrow(() => openapi3.fakeBodyParameter(noOperation));
+            openapi3.fakeBodyParameter(noOperation);
         });
 
         it('should append parameters to data.parameters', () => {
