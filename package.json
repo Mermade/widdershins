@@ -11,7 +11,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "test": "node $nflags node_modules/mocha/bin/_mocha -g 'common tests'"
+    "test": "node $nflags node_modules/mocha/bin/_mocha"
   },
   "repository": {
     "type": "git",
