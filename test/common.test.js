@@ -59,9 +59,10 @@ describe('common tests', () => {
             const schema = {};
             const offset = 0;
             const options = {};
-            assert.equal(common.schemaToArray(schema0, offset, options, data)[0].title, '');
-            assert.equal(common.schemaToArray(schema0, offset, options, data)[0].rows[0], undefined);
-            assert.equal(common.schemaToArray(schema0, offset, options, data)[0].description, undefined);
+            const result = common.schemaToArray(schema0, offset, options, data);
+            assert.equal(result[0].title, '');
+            assert.equal(result[0].rows[0], undefined);
+            assert.equal(result[0].description, undefined);
         });
 
         it('should create a row for each property and subproperty', () => {
@@ -75,25 +76,27 @@ describe('common tests', () => {
             const offset = 0;
             const options = {};
             assert.equal(common.schemaToArray(schema1, offset, options, data)[0].rows[0].depth, 1);
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[0].depth, 1);
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[1].depth, 1);
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[2].depth, 2);
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[3].depth, 3);
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[4].depth, 3);
+            const result = common.schemaToArray(schema2, offset, options, data);
+            assert.equal(result[0].rows[0].depth, 1);
+            assert.equal(result[0].rows[1].depth, 1);
+            assert.equal(result[0].rows[2].depth, 2);
+            assert.equal(result[0].rows[3].depth, 3);
+            assert.equal(result[0].rows[4].depth, 3);
             // this is the actual depth calculation test which is failing
-            //assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[5].depth, 1);
+            //assert.equal(result[0].rows[5].depth, 1);
         });
 
         it('should create a name for each row', () => {
             const offset = 0;
             const options = {};
             assert.equal(common.schemaToArray(schema1, offset, options, data)[0].rows[0].name, 'firstName');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[0].name, 'id');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[1].name, 'data');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[2].name, 'name');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[3].name, 'first');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[4].name, 'last');
-            assert.equal(common.schemaToArray(schema2, offset, options, data)[0].rows[5].name, '_links');
+            const result = common.schemaToArray(schema2, offset, options, data);
+            assert.equal(result[0].rows[0].name, 'id');
+            assert.equal(result[0].rows[1].name, 'data');
+            assert.equal(result[0].rows[2].name, 'name');
+            assert.equal(result[0].rows[3].name, 'first');
+            assert.equal(result[0].rows[4].name, 'last');
+            assert.equal(result[0].rows[5].name, '_links');
         });
     });
 });
