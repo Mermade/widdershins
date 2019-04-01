@@ -106,11 +106,11 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 {{?}}
 
 {{? data.api.events }}
-# Evented API
-{{ data.topicName = 'evented'; }}
+# Events API
+{{ data.topicName = 'events'; }}
 
 {{? data.api.events.receive }}
-## Received
+## Receive
 {{~ data.api.events.receive :r }}
 {{ data.messageName = ''; }}
 {{ data.message = r; }}
@@ -119,7 +119,7 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 {{?}}
 
 {{? data.api.events.send }}
-## Sent
+## Send
 {{~ data.api.events.send :s }}
 {{ data.messageName = ''; }}
 {{ data.message = s; }}
