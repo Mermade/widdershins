@@ -42,7 +42,7 @@
     "jgexml": "latest",
     "markdown-it": "^8.4.2",
     "markdown-it-emoji": "^1.4.0",
-    "node-fetch": "^2.0.0",
+    "node-fetch": "^2.6.0",
     "oas-resolver": "^2.2.4",
     "oas-schema-walker": "^1.1.2",
     "openapi-sampler": "^1.0.0-beta.9",
