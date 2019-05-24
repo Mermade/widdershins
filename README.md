@@ -146,25 +146,82 @@ Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/
 
 Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
 
-## Template parameters
+## Templates
+
+By default, Widdershins uses the templates in its `templates/` folder to generate the Markdown output. To customize the templates, copy some or all of them to a folder and pass their location to the `user_templates` parameter.
+
+The templates include `.dot` templates and `.def` partials. To override a `.dot` template, you must copy it and the child `.def` partials that the template references. Similarly, to override a `.def` partial, you must also copy the parent `.dot` template. For OpenAPI 3, the primary template is `main.dot` and its main child partials are `parameters.def`, `responses.def`, and `callbacks.def`.
+
+This means that it is usually easiest to copy all `.dot` and `.def` files to your user templates directory so you don't skip a template or partial. To bring in changes from Widdershins updates, you can use a visual `diff` tool which can run across two directories, such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org).
+
+### Template syntax
 
 Templates are compiled with [doT.js](https://github.com/olado/doT#readme).
 
-Templates have access to a `data` object with a range of properties based on the document context.
-
-If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
+Templates have access to a `data` object with a range of properties based on the document context. For information about the parameters, see the README file for the appropriate templates:
 
 * [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
 * [AsyncAPI 1.x template parameters](/templates/asyncapi1/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
-## User templates
+To print the value of a parameter or variable in a template, use the code `{{=parameterName}}`. For example, to print the title of an OpenAPI 3 spec (from its `info.title` field), use the code `{{=data.api.info.title}}`.
 
-By default, Widdershins uses the templates in the `templates/` folder to generate the Markdown output. To customize the templates, copy some or all of them to a folder and pass their location to the `user_templates` parameter.
+To loop through values in an array, use the code `{{~ arrayName :tempVariable}}` to start the loop and the code `{{~}}` to close the loop. For example, the OpenAPI 3 partial `parameters.def` uses this code to create a table of the parameters in an operation:
+```
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}|{{=p.in}}|{{=p.safeType}}|{{=p.required}}|{{=p.shortDesc || 'none'}}|
+{{~}}
+```
 
-The templates include `.dot` templates and `.def` partials. To override a `.dot` template, you must copy it and the child `.def` partials that the template references. Similarly, to override a `.def` partial, you must also copy the parent `.dot` template. For OpenAPI 3, the primary template is `main.dot` and its main child partials are `parameters.def`, `responses.def`, and `callbacks.def`.
+For if/then logic, use the code `{{? booleanExpression}}` to start the code block and the code `{{?}}` to close the block. For example, the OpenAPI 3 `main.dot` template calls the `security.def` partial to show information about the security schemes if the OpenAPI spec includes a `securitySchemes` section:
+```
+{{? data.api.components && data.api.components.securitySchemes }}
+{{#def.security}}
+{{?}}
+```
 
-This means that it is usually easiest to copy all `.dot` and `.def` files to your user templates directory so you don't skip a template or partial. To bring in changes from Widdershins updates, you can use a visual `diff` tool which can run across two directories, such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org).
+You can run arbitrary JavaScript within a template by inserting a code block within curly braces. For example, this code creates a variable and references it with normal doT.js syntax later in the template:
+```
+{{ {
+var message = "Hello!";
+} }}
+
+{{=message}}
+```
+
+### Template callbacks
+
+The `templateCallback` parameter points to a function that Widdershins calls before and after each template runs. You can use callback functions only if you are calling Widdershins from JavaScript code, not from the command line.
+
+Widdershins passes these variables to the callback function:
+- `templateName`: The name of the template, such as `main`.
+- `stage`: Whether Widdershins is calling the callback function before (`pre`) or after (`post`) the template.
+- `data`: An object that contains the data that Widdershins is processing. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content that you put in the `data.append` property is appended to the current output stream.
+
+For example, this JavaScript code prints the name of the template and the processing stage in the output Markdown:
+```javascript
+'use strict';
+
+const converter = require('widdershins');
+const fs = require('fs');
+
+let options = {};
+options.templateCallback = myCallBackFunction;
+
+function myCallBackFunction(templateName, stage, data) {
+  var statusString = "Template name: " + templateName + "\n";
+  statusString += "Stage: " + stage + "\n";
+  data.append = statusString;
+  return data;
+}
+
+const apiObj = JSON.parse(fs.readFileSync('defs/petstore3.json'));
+
+converter.convert(apiObj, options, function(err, str) {
+  fs.writeFileSync('petstore3Output.md', str, 'utf8');
+});
+```
 
 ## Tests
 
