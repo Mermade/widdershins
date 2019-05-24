@@ -160,14 +160,11 @@ If you specify an `options.templateCallback` function, it will be called before 
 
 ## User templates
 
-To override a `.dot` template, you need to copy over the child `.def` partials as well.
+By default, Widdershins uses the templates in the `templates/` folder to generate the Markdown output. To customize the templates, copy some or all of them to a folder and pass their location to the `user_templates` parameter.
 
-To override a `.def` partial, you need to copy over the parent `.dot` template as well. For OpenAPI 3 this will be `main.dot`
-except for `parameters`, `responses` and `callbacks`, which are children of the `operation.dot` template.
+The templates include `.dot` templates and `.def` partials. To override a `.dot` template, you must copy it and the child `.def` partials that the template references. Similarly, to override a `.def` partial, you must also copy the parent `.dot` template. For OpenAPI 3, the primary template is `main.dot` and its main child partials are `parameters.def`, `responses.def`, and `callbacks.def`.
 
-This means it is usually easiest to copy all `.dot` and `.def` files to your user templates directory. A visual `diff` tool
-which can run across two directories (such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org)) may be useful
-in bringing in changes from Widdershins updates.
+This means that it is usually easiest to copy all `.dot` and `.def` files to your user templates directory so you don't skip a template or partial. To bring in changes from Widdershins updates, you can use a visual `diff` tool which can run across two directories, such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org).
 
 ## Tests
 
