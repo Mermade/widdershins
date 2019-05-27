@@ -197,7 +197,7 @@ The `templateCallback` parameter points to a function that Widdershins calls bef
 Widdershins passes these variables to the callback function:
 - `templateName`: The name of the template, such as `main`.
 - `stage`: Whether Widdershins is calling the callback function before (`pre`) or after (`post`) the template.
-- `data`: An object that contains the data that Widdershins is processing. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content that you put in the `data.append` property is appended to the current output stream.
+- `data`: An object that contains the data that Widdershins is processing. You can mutate the `data` object in any way you see fit, but the function must return it whether it changes it or not. Content that you put in the `data.append` property is appended to the current output stream.
 
 For example, this JavaScript code prints the name of the template and the processing stage in the output Markdown:
 ```javascript
