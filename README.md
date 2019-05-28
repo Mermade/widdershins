@@ -192,7 +192,7 @@ var message = "Hello!";
 
 ### Template callbacks
 
-The `templateCallback` parameter points to a function that Widdershins calls before and after each template runs. You can use callback functions only if you are calling Widdershins from JavaScript code, not from the command line.
+The `templateCallback` parameter points to a function that Widdershins calls before and after each template runs. The callback function receives a `data` object that contains the spec that Widdershins is processing; the function must return this object. You can use callback functions only if you are calling Widdershins from JavaScript code, not from the command line.
 
 Widdershins passes these variables to the callback function:
 - `templateName`: The name of the template, such as `main`.
