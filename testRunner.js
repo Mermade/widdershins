@@ -81,8 +81,10 @@ function* check(file) {
     if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
 
         let skip = false;
-        if ((file.indexOf('bungie')>=0) && (process.env.TRAVIS_NODE_VERSION)) skip = true;
-        if (file.indexOf('docusign')>=0) skip = true;
+        //if (process.env.TRAVIS_NODE_VERSION) {
+        //    if (file.indexOf('bungie')>=0) skip = true;
+        //    if file.indexOf('docusign')>=0) skip = true;
+        //}
 
         if (skip) {
             console.log(yellow+file);
