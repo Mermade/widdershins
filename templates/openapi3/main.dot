@@ -73,10 +73,10 @@ Base URLs:
 
 {{? data.options.yaml }}
 ```yaml
-{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{},data.api))}}
+{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{quiet:true},data.api))}}
 {{??}}
 ```json
-{{=data.utils.safejson(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+{{=data.utils.safejson(data.utils.getSample(schema,data.options,{quiet:true},data.api),null,2)}}
 {{?}}
 ```
 

@@ -145,10 +145,10 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
 
 {{? data.options.yaml }}
 ```yaml
-{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{},data.api))}}
+{{=data.utils.yaml.stringify(data.utils.getSample(schema,data.options,{quiet:true},data.api))}}
 {{??}}
 ```json
-{{=JSON.stringify(data.utils.getSample(schema,data.options,{},data.api),null,2)}}
+{{=JSON.stringify(data.utils.getSample(schema,data.options,{quiet:true},data.api),null,2)}}
 {{?}}
 ```
 

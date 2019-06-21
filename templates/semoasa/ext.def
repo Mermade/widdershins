@@ -1,7 +1,7 @@
 
 {{ for (var ext in data.ns) {
    var x = data.ns[ext];
-   var sample = x.example||data.utils.getSample(x.schema,data.options,{},data.api);
+   var sample = x.example||data.utils.getSample(x.schema,data.options,{quiet:true},data.api);
 }}
 
 <section>

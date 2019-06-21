@@ -12,7 +12,7 @@
 > Example headers
 
 ```json
-{{ data.headers = JSON.stringify(data.utils.getSample(data.message.headers,data.options,{},data.api),null,2); }}
+{{ data.headers = JSON.stringify(data.utils.getSample(data.message.headers,data.options,{quiet:true},data.api),null,2); }}
 {{= data.headers }}
 ```
 {{?}}
@@ -21,7 +21,7 @@
 > Example payload
 
 ```json
-{{ data.payload = JSON.stringify(data.utils.getSample(data.message.payload,data.options,{},data.api),null,2); }}
+{{ data.payload = JSON.stringify(data.utils.getSample(data.message.payload,data.options,{quiet:true},data.api),null,2); }}
 {{= data.payload }}
 ```
 {{?}}
