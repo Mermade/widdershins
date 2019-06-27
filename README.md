@@ -37,34 +37,34 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 
 | CLI parameter name | JavaScript parameter name | Type | Default value | Description |
 | --- | --- | --- | --- | --- |
-| --customApiKeyValue | options.customApiKeyValue | `string` | ApiKey | Set a custom API key value |
-| --expandBody | options.expandBody | `boolean` | `false` | Expand the requestBody parameter to show all properties in the request body |
-| --headings | options.headings | `integer` | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature |
-| --omitBody | options.omitBody | `boolean` | `false` | Omit the top-level fake body parameter object |
-| --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter |
-| --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location |
-| --shallowSchemas | options.shallowSchemas | `boolean` | `false` | Don't expand schemas past $refs |
-| N/A | options.source | `string` | | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs |
-| --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID |
-| --verbose | options.verbose | `boolean` | `false` | Increase verbosity |
-| -h, --help | options.help | `boolean` | `false` | Show help |
-| --version | options.version | `boolean` | `false` | Show version number |
-| -c, --code | options.codeSamples | `boolean` | `false` | Turn generic code samples off |
-| --httpsnippet | options.httpsnippet | `boolean` | `false` | Use httpsnippet to generate code samples |
-| -d, --discovery | options.discovery | `boolean` | `false` | Include schema.org WebAPI discovery data |
-| -e, --environment | options.environment | `string` | None | Load config/override options from file |
-| -i, --includes | options.includes | `string` | None | List of files to include, comma separated |
-| -l, --lang | options.lang | `boolean` | `false` | Automatically generate list of languages for code samples |
-| --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format |
-| -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth for schema examples |
-| -o, --outfile | options.outfile | `string` | (If left blank, output to stdout) | File to write output markdown to |
-| -r, --raw | options.raw | `boolean` | `false` | Output raw schemas not example values |
-| -s, --search | options.search | `boolean` | `true` | Whether to enable search or not |
-| -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use |
-| -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from |
-| -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only, ignored |
-| -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format |
-|  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only) |
+| --customApiKeyValue | options.customApiKeyValue | `string` | `ApiKey` | Set a custom API key value to use as the API key in generated code examples. |
+| --expandBody | options.expandBody | `boolean` | `false` | If a method's requestBody parameter refers to a schema by reference (not with a inline schema), by default, Widdershins shows only a reference to this parameter. Set this option to true to expand the schema and show all properties in the request body. |
+| --headings | options.headings | `integer` | 2 | Set the value of the `headingLevel` parameter in the header so Shins knows how many heading levels to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --omitBody | options.omitBody | `boolean` | `false` | By default, Widdershins includes the body parameter as a row in the parameters table before the rows that represent the fields in the body. Set this parameter to omit that body parameter row. |
+| --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter in the generated Markdown file. |
+| --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location. |
+| --shallowSchemas | options.shallowSchemas | `boolean` | `false` | When referring to a schema with a $ref, don't show the full contents of the schema. |
+| N/A | options.source | `string` | None | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs. |
+| --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID. |
+| --verbose | options.verbose | `boolean` | `false` | Increase verbosity. |
+| -h, --help | options.help | `boolean` | `false` | Show help. |
+| --version | options.version | `boolean` | `false` | Show version number. |
+| -c, --code | options.codeSamples | `boolean` | `false` | Omit generated code samples. |
+| --httpsnippet | options.httpsnippet | `boolean` | `false` | Use httpsnippet to generate code samples. |
+| -d, --discovery | options.discovery | `boolean` | `false` | Include schema.org WebAPI discovery data. |
+| -e, --environment | options.environment | `string` | None | File to load config options from. |
+| -i, --includes | options.includes | `string` | None | List of files to put in the `include` header of the output Markdown. Processors such as Shins can then import the contents of these files. |
+| -l, --lang | options.lang | `boolean` | `false` | Generate the list of languages for code samples based on the languages used in the source file's `x-code-samples` examples. |
+| --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format, such as `javascript:JavaScript:request`. |
+| -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
+| -o, --outfile | options.outfile | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
+| -r, --raw | options.raw | `boolean` | `false` | Output raw schemas instead of example values. |
+| -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
+| -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
+| -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
+| -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only; ignored. |
+| -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format. |
+|  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only). |
 
 In Node.JS code, create an options object and pass it to the Widdershins `convert` function, as in this example:
 
@@ -133,8 +133,6 @@ To see the list of languages and clients supported by httpsnippet, [click here](
 
 The `loadedFrom` option is only needed where the OpenAPI / Swagger definition does not specify a host, and (as per the OpenAPI [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
-
-Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
 
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/).
 
