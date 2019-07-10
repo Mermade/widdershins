@@ -1,4 +1,4 @@
-<section>
+{{= data.tags.section }}
 
 # OpenAPI Extensions Documentation
 
@@ -12,7 +12,7 @@ This documentation was automatically generated from a v{{=data.api.openapiExtens
   {{ if ((ns !== 'openapiExtensionFormat') && (ns !== 'components')) { }}
   {{ data.ns = data.api[ns]; }}
 
-<section>
+{{= data.tags.section }}
 
 # {{=ns}}
 
@@ -26,9 +26,9 @@ Provider: <a href="{{=data.defaultProvider.url}}">{{=data.defaultProvider.name}}
 
 {{#def.ext}}
 
-</section>
+{{= data.tags.endSection }}
 
   {{ } /* of if */ }}
 {{ } /* of for */ }}
 
-</section>
+{{= data.tags.endSection }}

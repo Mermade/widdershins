@@ -1,6 +1,6 @@
 <!-- Generator: Widdershins v{{=data.widdershins.version}} -->
 
-<section>
+{{= data.tags.section }}
 <h1 id="{{=data.title_prefix}}">{{=data.api.info && data.api.info.title}} {{=data.version}}</h1>
 
 > Scroll down for {{? data.header.language_tabs.length}}code samples, {{?}}example requests and responses.{{? data.header.language_tabs.length}} Select a language for code samples from the tabs above or the mobile navigation menu.{{?}}
@@ -25,7 +25,7 @@ Base URLs:
 {{? data.api.info && data.api.info.termsOfService}}<a href="{{=data.api.info.termsOfService}}">Terms of service</a>{{?}}
 {{? data.api.info && data.api.info.contact}}{{? data.api.info.contact.email}}Email: <a href="mailto:{{=data.api.info.contact.email}}">{{=data.api.info.contact.name || 'Support'}}</a> {{?}}{{? data.api.info.contact.url}}Web: <a href="{{=data.api.info.contact.url}}">{{= data.api.info.contact.name || 'Support'}}</a> {{?}}{{?}}
 {{? data.api.info && data.api.info.license}}{{? data.api.info.license.url}}License: <a href="{{=data.api.info.license.url}}">{{=data.api.info.license.name}}</a>{{??}} License: {{=data.api.info.license.name}}{{?}}{{?}}
-</section>
+{{= data.tags.endSection }}
 
 {{? data.api.components && data.api.components.securitySchemes }}
 {{#def.security}}
@@ -34,7 +34,7 @@ Base URLs:
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
-<section>
+{{= data.tags.section }}
 <h1 id="{{=data.title_prefix+'-'+data.utils.slugify(r)}}">{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
@@ -51,11 +51,11 @@ Base URLs:
 {{= data.templates.operation(data) }}
 {{ } /* of methods */ }}
 
-</section>
+{{= data.tags.endSection }}
 {{ } /* of resources */ }}
 
 {{? data.api.components && data.api.components.schemas }}
-<section>
+{{= data.tags.section }}
 
 # Schemas
 
@@ -63,7 +63,7 @@ Base URLs:
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
 
-<section>
+{{= data.tags.section }}
 <h2 id="tocS_{{=s}}">{{=s}}</h2>
 <!-- backwards compatibility -->
 <a id="schema{{=s.toLowerCase()}}"></a>
@@ -100,7 +100,7 @@ Base URLs:
 {{?}}
 
 {{? block===blocks[0] }}
-<section>
+{{= data.tags.section }}
 
 ### Properties
 {{?}}
@@ -115,7 +115,7 @@ Base URLs:
 {{?}}
 
 {{? enums.length > 0 }}
-<section>
+{{= data.tags.section }}
 
 #### Enumerated Values
 
@@ -124,11 +124,11 @@ Base URLs:
 {{~ enums :e}}|{{=e.name}}|{{=data.utils.toPrimitive(e.value)}}|
 {{~}}
 
-</section>
+{{= data.tags.endSection }}
 {{?}}
 
-</section>
-</section>
+{{= data.tags.endSection }}
+{{= data.tags.endSection }}
 
 {{ } /* of schemas */ }}
 
