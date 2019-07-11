@@ -65,6 +65,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only; ignored. |
 | -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format. |
 |  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only). |
+|  | options.toc_footers | `object` | A map of `url`s and `description`s to be added to the ToC footers array (JavaScript code only). |
 
 In Node.JS code, create an options object and pass it to the Widdershins `convert` function, as in this example:
 
