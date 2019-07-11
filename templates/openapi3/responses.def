@@ -10,7 +10,7 @@
 {{= data.utils.getResponseExamples(data) }}
 {{?}}
 
-<section>
+{{= data.tags.section }}
 <h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
 
 |Status|Meaning|Description|Schema|
@@ -82,4 +82,4 @@ Status Code **{{=response.status}}**
 {{~}}
 
 {{?}}
-</section>
+{{= data.tags.endSection }}

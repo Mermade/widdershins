@@ -1,4 +1,4 @@
-<section>
+{{= data.tags.section }}
 
 # Authentication
 
@@ -28,4 +28,4 @@
 {{?}}
 {{ } /* of securitySchemes */ }}
 
-</section>
+{{= data.tags.endSection }}

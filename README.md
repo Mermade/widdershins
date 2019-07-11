@@ -37,34 +37,35 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 
 | CLI parameter name | JavaScript parameter name | Type | Default value | Description |
 | --- | --- | --- | --- | --- |
-| --customApiKeyValue | options.customApiKeyValue | `string` | ApiKey | Set a custom API key value |
-| --expandBody | options.expandBody | `boolean` | `false` | Expand the requestBody parameter to show all properties in the request body |
-| --headings | options.headings | `integer` | 2 | The number of headings to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature |
-| --omitBody | options.omitBody | `boolean` | `false` | Omit the top-level fake body parameter object |
-| --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter |
-| --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location |
-| --shallowSchemas | options.shallowSchemas | `boolean` | `false` | Don't expand schemas past $refs |
-| N/A | options.source | `string` | | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs |
-| --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID |
-| --verbose | options.verbose | `boolean` | `false` | Increase verbosity |
-| -h, --help | options.help | `boolean` | `false` | Show help |
-| --version | options.version | `boolean` | `false` | Show version number |
-| -c, --code | options.codeSamples | `boolean` | `false` | Turn generic code samples off |
-| --httpsnippet | options.httpsnippet | `boolean` | `false` | Use httpsnippet to generate code samples |
-| -d, --discovery | options.discovery | `boolean` | `false` | Include schema.org WebAPI discovery data |
-| -e, --environment | options.environment | `string` | None | Load config/override options from file |
-| -i, --includes | options.includes | `string` | None | List of files to include, comma separated |
-| -l, --lang | options.lang | `boolean` | `false` | Automatically generate list of languages for code samples |
-| --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format |
-| -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth for schema examples |
-| -o, --outfile | options.outfile | `string` | (If left blank, output to stdout) | File to write output markdown to |
-| -r, --raw | options.raw | `boolean` | `false` | Output raw schemas not example values |
-| -s, --search | options.search | `boolean` | `true` | Whether to enable search or not |
-| -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use |
-| -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from |
-| -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only, ignored |
-| -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format |
-|  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only) |
+| --customApiKeyValue | options.customApiKeyValue | `string` | `ApiKey` | Set a custom API key value to use as the API key in generated code examples. |
+| --expandBody | options.expandBody | `boolean` | `false` | If a method's requestBody parameter refers to a schema by reference (not with a inline schema), by default, Widdershins shows only a reference to this parameter. Set this option to true to expand the schema and show all properties in the request body. |
+| --headings | options.headings | `integer` | 2 | Set the value of the `headingLevel` parameter in the header so Shins knows how many heading levels to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --omitBody | options.omitBody | `boolean` | `false` | By default, Widdershins includes the body parameter as a row in the parameters table before the rows that represent the fields in the body. Set this parameter to omit that body parameter row. |
+| --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter in the generated Markdown file. |
+| --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location. |
+| --shallowSchemas | options.shallowSchemas | `boolean` | `false` | When referring to a schema with a $ref, don't show the full contents of the schema. |
+| N/A | options.source | `string` | None | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs. |
+| --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID. |
+| --verbose | options.verbose | `boolean` | `false` | Increase verbosity. |
+| -h, --help | options.help | `boolean` | `false` | Show help. |
+| --version | options.version | `boolean` | `false` | Show version number. |
+| -c, --code | options.codeSamples | `boolean` | `false` | Omit generated code samples. |
+| --httpsnippet | options.httpsnippet | `boolean` | `false` | Use httpsnippet to generate code samples. |
+| -d, --discovery | options.discovery | `boolean` | `false` | Include schema.org WebAPI discovery data. |
+| -e, --environment | options.environment | `string` | None | File to load config options from. |
+| -i, --includes | options.includes | `string` | None | List of files to put in the `include` header of the output Markdown. Processors such as Shins can then import the contents of these files. |
+| -l, --lang | options.lang | `boolean` | `false` | Generate the list of languages for code samples based on the languages used in the source file's `x-code-samples` examples. |
+| --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format, such as `javascript:JavaScript:request`. |
+| -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
+| -o, --outfile | options.outfile | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
+| -r, --raw | options.raw | `boolean` | `false` | Output raw schemas instead of example values. |
+| -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
+| -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
+| -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
+| -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only; ignored. |
+| -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format. |
+|  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only). |
+|  | options.toc_footers | `object` | A map of `url`s and `description`s to be added to the ToC footers array (JavaScript code only). |
 
 In Node.JS code, create an options object and pass it to the Widdershins `convert` function, as in this example:
 
@@ -134,8 +135,6 @@ To see the list of languages and clients supported by httpsnippet, [click here](
 The `loadedFrom` option is only needed where the OpenAPI / Swagger definition does not specify a host, and (as per the OpenAPI [specification](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#fixed-fields)) the API endpoint is deemed to be based on the source URL
 the definition was loaded from.
 
-Note that the list of included files is simply passed into the header of the markdown file, they are actually included by Slate or the alternative you use.
-
 To see the list of highlight-js syntax highlighting themes, [click here](https://highlightjs.org/static/demo/).
 
 Schema.org WebAPI discovery data is included if the `discovery` option above is set `true`. See the W3C [WebAPI Discovery Community Group](https://www.w3.org/community/web-api-discovery/) for more information.
@@ -146,28 +145,82 @@ Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/
 
 Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
 
-## Template parameters
+## Templates
+
+By default, Widdershins uses the templates in its `templates/` folder to generate the Markdown output. To customize the templates, copy some or all of them to a folder and pass their location to the `user_templates` parameter.
+
+The templates include `.dot` templates and `.def` partials. To override a `.dot` template, you must copy it and the child `.def` partials that the template references. Similarly, to override a `.def` partial, you must also copy the parent `.dot` template. For OpenAPI 3, the primary template is `main.dot` and its main child partials are `parameters.def`, `responses.def`, and `callbacks.def`.
+
+This means that it is usually easiest to copy all `.dot` and `.def` files to your user templates directory so you don't skip a template or partial. To bring in changes from Widdershins updates, you can use a visual `diff` tool which can run across two directories, such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org).
+
+### Template syntax
 
 Templates are compiled with [doT.js](https://github.com/olado/doT#readme).
 
-Templates have access to a `data` object with a range of properties based on the document context.
-
-If you specify an `options.templateCallback` function, it will be called before and after each template, with three parameters, the template name, the stage, (`'pre'` or `'post'`) and the current `data` object. You can mutate the `data` object in any way you see fit, as long as you `return` it. Content in the `data.append` property will be appended to the current output stream.
+Templates have access to a `data` object with a range of properties based on the document context. For information about the parameters, see the README file for the appropriate templates:
 
 * [Swagger 2.0 / OpenAPI 3.0.x template parameters](/templates/openapi3/README.md)
 * [AsyncAPI 1.x template parameters](/templates/asyncapi1/README.md)
 * [Semoasa 0.1.0 template parameters](/templates/semoasa/README.md)
 
-## User templates
+To print the value of a parameter or variable in a template, use the code `{{=parameterName}}`. For example, to print the title of an OpenAPI 3 spec (from its `info.title` field), use the code `{{=data.api.info.title}}`.
 
-To override a `.dot` template, you need to copy over the child `.def` partials as well.
+To loop through values in an array, use the code `{{~ arrayName :tempVariable}}` to start the loop and the code `{{~}}` to close the loop. For example, the OpenAPI 3 partial `parameters.def` uses this code to create a table of the parameters in an operation:
+```
+|Name|In|Type|Required|Description|
+|---|---|---|---|---|
+{{~ data.parameters :p}}|{{=p.name}}|{{=p.in}}|{{=p.safeType}}|{{=p.required}}|{{=p.shortDesc || 'none'}}|
+{{~}}
+```
 
-To override a `.def` partial, you need to copy over the parent `.dot` template as well. For OpenAPI 3 this will be `main.dot`
-except for `parameters`, `responses` and `callbacks`, which are children of the `operation.dot` template.
+For if/then logic, use the code `{{? booleanExpression}}` to start the code block and the code `{{?}}` to close the block. For example, the OpenAPI 3 `main.dot` template calls the `security.def` partial to show information about the security schemes if the OpenAPI spec includes a `securitySchemes` section:
+```
+{{? data.api.components && data.api.components.securitySchemes }}
+{{#def.security}}
+{{?}}
+```
 
-This means it is usually easiest to copy all `.dot` and `.def` files to your user templates directory. A visual `diff` tool
-which can run across two directories (such as [Meld](http://meldmerge.org/) or [WinMerge](http://winmerge.org)) may be useful
-in bringing in changes from Widdershins updates.
+You can run arbitrary JavaScript within a template by inserting a code block within curly braces. For example, this code creates a variable and references it with normal doT.js syntax later in the template:
+```
+{{ {
+var message = "Hello!";
+} }}
+
+{{=message}}
+```
+
+### Template callbacks
+
+The `templateCallback` parameter points to a function that Widdershins calls before and after each template runs. The callback function receives a `data` object that contains the spec that Widdershins is processing; the function must return this object. You can use callback functions only if you are calling Widdershins from JavaScript code, not from the command line.
+
+Widdershins passes these variables to the callback function:
+- `templateName`: The name of the template, such as `main`.
+- `stage`: Whether Widdershins is calling the callback function before (`pre`) or after (`post`) the template.
+- `data`: An object that contains the data that Widdershins is processing. You can mutate the `data` object in any way you see fit, but the function must return it whether it changes it or not. Content that you put in the `data.append` property is appended to the current output stream.
+
+For example, this JavaScript code prints the name of the template and the processing stage in the output Markdown:
+```javascript
+'use strict';
+
+const converter = require('widdershins');
+const fs = require('fs');
+
+let options = {};
+options.templateCallback = myCallBackFunction;
+
+function myCallBackFunction(templateName, stage, data) {
+  var statusString = "Template name: " + templateName + "\n";
+  statusString += "Stage: " + stage + "\n";
+  data.append = statusString;
+  return data;
+}
+
+const apiObj = JSON.parse(fs.readFileSync('defs/petstore3.json'));
+
+converter.convert(apiObj, options, function(err, str) {
+  fs.writeFileSync('petstore3Output.md', str, 'utf8');
+});
+```
 
 ## Tests
 

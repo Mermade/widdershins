@@ -40,7 +40,7 @@
     "highlightjs": "^9.12.0",
     "httpsnippet": "^1.16.6",
     "jgexml": "latest",
-    "markdown-it": "^8.4.2",
+    "markdown-it": "^9.0.0",
     "markdown-it-emoji": "^1.4.0",
     "node-fetch": "^2.0.0",
     "oas-resolver": "^2.2.4",
@@ -55,7 +55,7 @@
   },
   "devDependencies": {
     "cz-conventional-changelog": "^2.1.0",
-    "mocha": "^6.0.0",
+    "mocha": "^6.1.4",
     "node-readfiles": "^0.2.0"
   },
   "config": {
