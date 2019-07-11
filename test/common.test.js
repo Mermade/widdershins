@@ -82,8 +82,7 @@ describe('common tests', () => {
             assert.equal(result[0].rows[2].depth, 2);
             assert.equal(result[0].rows[3].depth, 3);
             assert.equal(result[0].rows[4].depth, 3);
-            // this is the actual depth calculation test which is failing
-            //assert.equal(result[0].rows[5].depth, 1);
+            assert.equal(result[0].rows[5].depth, 1);
         });
 
         it('should create a name for each row', () => {
