@@ -11,8 +11,11 @@ before_script:
   - git clone --depth 1 https://github.com/mermade/openapi3-examples.git
 #  - git clone --depth 1 https://github.com/SOM-Research/hapi.git
   - . ./bin/setflags.sh
+  - mkdir -p out
 script:
   - npm test
+  - node widdershins -o out/petstore.md defs/petstore3.json
+  - node node_modules/mdv/mdv out/petstore.md
   - node $nflags testRunner openapi-directory/APIs/
   - node $nflags testRunner openapi-definitions/
   - node $nflags testRunner openapi3-examples/pass/
