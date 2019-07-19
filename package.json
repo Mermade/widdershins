@@ -11,6 +11,8 @@
     "doc": "docs"
   },
   "scripts": {
+    "lint": "npx eslint *.js lib/*.js",
+    "shins": "node widdershins --discovery -o ../shins/source/index.html.md defs/petstore.json",
     "test": "node $nflags node_modules/mocha/bin/_mocha"
   },
   "repository": {
