@@ -46,7 +46,8 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | --shallowSchemas | options.shallowSchemas | `boolean` | `false` | When referring to a schema with a $ref, don't show the full contents of the schema. |
 | N/A | options.source | `string` | None | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs. |
 | --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID. |
-| --verbose | options.verbose | `boolean` | `false` | Increase verbosity. |
+| --useBodyName | options.useBodyName | `boolean` | Use original param name for OpenAPI 2.0 body parameter. |
+| -v, --verbose | options.verbose | `boolean` | `false` | Increase verbosity. |
 | -h, --help | options.help | `boolean` | `false` | Show help. |
 | --version | options.version | `boolean` | `false` | Show version number. |
 | -c, --code | options.codeSamples | `boolean` | `false` | Omit generated code samples. |

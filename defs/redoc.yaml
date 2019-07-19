@@ -75,7 +75,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: petbody
           description: Pet object that needs to be added to the store
           required: true
           schema:
@@ -121,7 +121,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: petbody
           description: Pet object that needs to be added to the store
           required: true
           schema:
@@ -368,7 +368,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: orderbody
           description: order placed for purchasing the pet
           required: true
           schema:
@@ -441,7 +441,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: userbody
           description: Created user object
           required: true
           schema:
@@ -490,7 +490,7 @@ paths:
           required: true
           type: string
         - in: body
-          name: body
+          name: userbody
           description: Updated user object
           required: true
           schema:
@@ -532,7 +532,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: userarraybody
           description: List of user object
           required: true
           schema:
@@ -554,7 +554,7 @@ paths:
         - application/json
       parameters:
         - in: body
-          name: body
+          name: listuserbody
           description: List of user object
           required: true
           schema:

@@ -80,7 +80,7 @@ var argv = require('yargs')
     .alias('t','theme')
     .describe('theme','Syntax-highlighter theme to use.')
     .boolean('useBodyName')
-    .describe('useBodyName','Use original param name for Swagger body parameter')
+    .describe('useBodyName','Use original param name for OpenAPI 2.0 body parameter')
     .string('user_templates')
     .alias('u','user_templates')
     .describe('user_templates','Directory to load override templates from.')
@@ -165,6 +165,7 @@ options.yaml = argv.yaml;
 options.customApiKeyValue = argv.customApiKeyValue;
 options.html = argv.html;
 options.respec = argv.respec;
+options.useBodyName = argv.useBodyName;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
