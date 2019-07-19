@@ -16,6 +16,11 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ### News
 
+* Version 4.0 changes:
+  * Option to output html directly, and to ReSpec format
+  * Unified JavaScript and Node.js code-samples, PHP added
+  * `restrictions` column (`readOnly`/`writeOnly`) added to schema templates
+  * Numerous bug fixes
 * As of v3.0.0 Widdershins no longer expands the definition of OpenAPI body parameters / requestBodies by default, unless they have an inline schema. You can restore the old behaviour by using the `--expandBody` option.
 * You may limit the depth of schema examples using the `--maxDepth` option. The default is 10.
 * To omit schemas entirely, please copy and customise the `main.dot` template.
