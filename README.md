@@ -63,12 +63,12 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | -c, --code | options.codeSamples | `boolean` | `false` | Omit generated code samples. |
 | --httpsnippet | options.httpsnippet | `boolean` | `false` | Use httpsnippet to generate code samples. |
 | -d, --discovery | options.discovery | `boolean` | `false` | Include schema.org WebAPI discovery data. |
-| -e, --environment | options.environment | `string` | None | File to load config options from. |
+| -e, --environment | N/A | `string` | None | File to load config options from. |
 | -i, --includes | options.includes | `string` | None | List of files to put in the `include` header of the output Markdown. Processors such as Shins can then import the contents of these files. |
 | -l, --lang | options.lang | `boolean` | `false` | Generate the list of languages for code samples based on the languages used in the source file's `x-code-samples` examples. |
 | --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format, such as `javascript:JavaScript:request`. |
 | -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
-| -o, --outfile | options.outfile | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
+| -o, --outfile | N/A | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
 | -r, --raw | options.raw | `boolean` | `false` | Output raw schemas instead of example values. |
 | -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
 | -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
