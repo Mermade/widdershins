@@ -1,0 +1,8 @@
+/* asyncapi-java-tools */
+try (JmsServer client = builder.build()) {
+
+  client.{{=data.channelName.split('/').join('.')}}()
+    .publish({{=data.payload}})
+    .toCompletableFuture()
+    .get();
+}

@@ -1,0 +1,25 @@
+{{= data.tags.section }}
+{{ data.channelSlug = data.utils.slugify(data.channelName); }}
+{{ if ((!data.channelSlug) || (data.channelSlug == '-')) { }}
+{{   data.channelSlug = 'root'; }}
+{{ } }}
+<h3 id="{{=data.channelSlug}}-{{=data.channelItemName}}">{{=data.channelItemName}}</h3>
+
+{{? data.channelItem.operationId }}`{{= data.channelItem.operationId}}`:{{?}}
+
+{{? data.channelItem.summary }}*{{= data.channelItem.summary}}*{{?}}
+
+{{? data.channelItem.description }}{{= data.channelItem.description }}{{?}}
+
+{{? data.channelItem.bindings }}
+{{ data.bindings = data.channelItem.bindings; }}
+{{#def.bindings}}
+{{?}}
+
+{{? data.channelItem.message}}
+{{ data.message = data.channelItem.message; }}
+{{ data.messageName = data.channelItem.operationId||'message'; }}
+{{#def.message}}
+{{?}}
+
+{{= data.tags.endSection }}
