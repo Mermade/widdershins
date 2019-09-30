@@ -29,13 +29,15 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### To install
 
 * Clone the git repository, and `npm i` to install dependencies, or
-* `npm install [-g] widdershins`
+* `npm install [-g] widdershins` to install globally
 
 ### Getting started
 
 Widdershins is generally used as a stage in an API documentation pipeline. The pipeline begins with an API definition in OpenAPI 3.x, OpenAPI 2.0 (fka Swagger), API Blueprint, AsyncAPI or Semoasa format. Widdershins converts this description into markdown suitable for use by a **renderer**, such as [Slate](https://github.com/lord/slate), [Shins](https://github.com/mermade/shins) or html suitable for use with [ReSpec](https://github.com/w3c/respec).
 
 If you need to create your input API definition, [this list of available editors](https://apis.guru/awesome-openapi3/category.html#editors) may be useful.
+
+More in-depth documentation is [available here](https://mermade.github.io/widdershins).
 
 ### Examples
 
