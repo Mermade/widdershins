@@ -271,6 +271,7 @@ Please feel free to add a link to your API documentation here.
 * [Split Payments API](http://docs.split.cash/)
 * [LeApp daemon API](https://leapp-to.github.io/shins/index.html)
 * [Shutterstock API](https://api-reference.shutterstock.com/)
+* [Shotstack Video Editing API](https://shotstack.io/docs/api/index.html)
 
 ### Widdershins and Shins
 
