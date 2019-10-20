@@ -51,7 +51,7 @@
     "reftools": "^1.0.8",
     "safe-json-stringify": "^1.2.0",
     "swagger2openapi": "^5.3.1",
-    "urijs": "^1.19.0",
+    "urijs": "1.19.1",
     "yaml": "^1.7.0",
     "yargs": "^14.0.0"
   },
