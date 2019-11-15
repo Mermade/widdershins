@@ -26,6 +26,7 @@
 <h3 id="{{=data.operationUniqueSlug}}-responseschema">Response Schema</h3>
 {{~ data.responses :response}}
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
+{{? Object.keys(response.content).length }}
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
 {{ var enums = []; }}
@@ -62,6 +63,7 @@ Status Code **{{=response.status}}**
 {{~ enums :e}}|{{=e.name}}|{{=data.utils.toPrimitive(e.value)}}|
 {{~}}
 
+{{?}}
 {{?}}
 
 {{ data.response = response; }}
