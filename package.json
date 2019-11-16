@@ -53,7 +53,7 @@
     "swagger2openapi": "^5.3.1",
     "urijs": "^1.19.0",
     "yaml": "^1.7.0",
-    "yargs": "^14.0.0"
+    "yargs": "^15.0.1"
   },
   "devDependencies": {
     "cz-conventional-changelog": "^3.0.2",
