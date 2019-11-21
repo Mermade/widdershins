@@ -9,8 +9,8 @@ func main() {
 
 {{?data.allHeaders.length}}
     headers := map[string][]string{
-        {{~data.allHeaders :p:index}}"{{=p.name}}": []string{"{{=p.exampleValues.object}}"},
-        {{~}}
+        {{~data.allHeaders :p:index}}"{{=p.name}}": []string{"{{=p.exampleValues.object}}"},{{?index < data.allHeaders.length-1}}
+        {{?}}{{~}}
     }{{?}}
 
     data := bytes.NewBuffer([]byte{jsonReq})

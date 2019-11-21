@@ -5,8 +5,7 @@ require 'vendor/autoload.php';
 {{?data.allHeaders.length}}
 $headers = array(
     {{~data.allHeaders :p:index}}'{{=p.name}}' => '{{=p.exampleValues.object}}',
-    {{~}}
-    );{{?}}
+{{?index < data.allHeaders.length-1}}    {{?}}{{~}});{{?}}
 
 $client = new \GuzzleHttp\Client();
 
