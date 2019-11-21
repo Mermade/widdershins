@@ -20,12 +20,12 @@ Now you can use Widdershins in JavaScript programs in the project.
 ## Converting files with JavaScript
 
 1. Create a JavaScript program with the following general steps.
-You can name the file anything you want.
-1. In the JavaScript file, import Widdershins so you can use it in the program:
+You can name the file anything you want. Let's use `convertMarkdown.js` for this example.
+2. In the JavaScript file, import Widdershins so you can use it in the program:
 ```javascript
 const widdershins = require('widdershins');
 ```
-1. Set up your options in an `options` object.
+3. Set up your options in an `options` object.
 Use the JavaScript parameter name from the [README.md](https://github.com/Mermade/widdershins#options) file, not the CLI parameter name.
 For example, these options generate code samples in Python and Ruby:
 ```javascript
@@ -33,28 +33,28 @@ const options = {
   language_tabs: [{ python: "Python" }, { ruby: "Ruby" }]
 };
 ```
-1. Import and parse the OpenAPI or Swagger file.
+4. Import and parse the OpenAPI or Swagger file.
 This example uses the NodeJS FileSystem and JSON packages:
 ```javascript
 const fs = require('fs');
 const fileData = fs.readFileSync('swagger.json', 'utf8');
 const swaggerFile = JSON.parse(fileData);
 ```
-1. Use Widdershins to convert the file.
+5. Use Widdershins to convert the file.
 Widdershins returns the converted Markdown in a callback function:
 ```javascript
 widdershins.convert(swaggerFile, options, function(err, markdownOutput) {
   // markdownOutput contains the converted markdown
 });
 ```
-1. Within the callback function, write the Markdown to a file:
+6. Within the callback function, write the Markdown to a file:
 ```javascript
 widdershins.convert(swaggerFile, options, function(err, markdownOutput) {
   // markdownOutput contains the converted markdown
   fs.writeFileSync('myOutput.md', markdownOutput, 'utf8');
 });
 ```
-1. Run the JavaScript program:
+7. Run the JavaScript program:
 ```shell
 node convertMarkdown.js
 ```
