@@ -40,7 +40,7 @@
   "dependencies": {
     "dot": "^1.0.3",
     "highlightjs": "^9.12.0",
-    "httpsnippet": "^1.16.6",
+    "httpsnippet": "^1.19.0",
     "jgexml": "latest",
     "markdown-it": "^10.0.0",
     "markdown-it-emoji": "^1.4.0",
