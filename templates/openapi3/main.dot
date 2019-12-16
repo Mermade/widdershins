@@ -2,7 +2,7 @@
 {{ data.resource = data.resources[r]; }}
 
 {{= data.tags.section }}
-<h1 id="{{=data.title_prefix+'-'+data.utils.slugify(r)}}">{{= r}}</h1>
+<h1>{{= r}}</h1>
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
@@ -31,7 +31,7 @@
 {{ var schema = data.api.components.schemas[s]; }}
 
 {{= data.tags.section }}
-<h2 id="tocS_{{=s}}">{{=s}}</h2>
+<h2>{{=s}}</h2>
 <!-- backwards compatibility -->
 <a id="schema{{=s.toLowerCase()}}"></a>
 <a id="schema_{{=s}}"></a>
