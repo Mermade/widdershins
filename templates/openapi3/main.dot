@@ -6,10 +6,6 @@
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 
-{{? data.resource.externalDocs}}
-<a href="{{=data.resource.externalDocs.url}}">{{=data.resource.externalDocs.description||'External documentation'}}</a>
-{{?}}
-
 {{ for (var m in data.resource.methods) { }}
 {{ data.operationUniqueName = m; }}
 {{ data.method = data.resource.methods[m]; }}
