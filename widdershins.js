@@ -30,6 +30,9 @@ var argv = require('yargs')
     .string('environment')
     .alias('e','environment')
     .describe('environment','File to load config options from.')
+    .boolean('excludeAuth')
+    .default('excludeAuth',false)
+    .describe('excludeAuth','Excludes the auth requirement snippets at the end of each operation section.')
     .boolean('expandBody')
     .describe('expandBody','Expand the schema and show all properties in the request body.')
     .number('headings')
@@ -166,6 +169,7 @@ options.customApiKeyValue = argv.customApiKeyValue;
 options.html = argv.html;
 options.respec = argv.respec;
 options.useBodyName = argv.useBodyName;
+options.excludeAuth = argv.excludeAuth;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
