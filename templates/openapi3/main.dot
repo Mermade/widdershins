@@ -53,9 +53,6 @@
 
 {{~ blocks :block}}
 {{? block.title }}{{= block.title}}{{= '\n\n'}}{{?}}
-{{? block.externalDocs}}
-<a href="{{=block.externalDocs.url}}">{{=block.externalDocs.description||'External documentation'}}</a>
-{{?}}
 
 {{? block===blocks[0] }}
 {{= data.tags.section }}
