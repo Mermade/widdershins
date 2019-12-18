@@ -29,7 +29,7 @@
 {{= data.tags.section }}
 <h2>{{=s}}</h2>
 <!-- backwards compatibility -->
-<a id="schema{{=s.toLowerCase()}}"></a>
+<a id="{{=s.toLowerCase()}}"></a>
 
 {{? data.options.yaml }}
 ```yaml
