@@ -1,13 +1,26 @@
 URL obj = new URL("{{=data.url}}{{=data.requiredQueryString}}");
 HttpURLConnection con = (HttpURLConnection) obj.openConnection();
-con.setRequestMethod("{{=data.methodUpper}}");
-int responseCode = con.getResponseCode();
-BufferedReader in = new BufferedReader(
-    new InputStreamReader(con.getInputStream()));
-String inputLine;
-StringBuffer response = new StringBuffer();
-while ((inputLine = in.readLine()) != null) {
-    response.append(inputLine);
+
+String userCredentials = "api_example_company:Ke+2jinhe5jM87P95aAVOz7L3ZWrtSiERtyOkkh5tEQ=";
+String basicAuth = "Basic " + new String(Base64.getEncoder().encode(userCredentials.getBytes()));
+con.setRequestProperty ("Authorization", basicAuth);
+
+con.setRequestMethod("{{=data.methodUpper}}");{{?data.bodyParameter.present}}
+con.setRequestProperty("Content-Type", "application/json; utf-8");
+con.setRequestProperty("Accept", "application/json");
+con.setDoOutput(true);
+String jsonInputString = {{=JSON.stringify(data.bodyParameter.exampleValues.json)}};
+try(OutputStream os = con.getOutputStream()) {
+    byte[] input = jsonInputString.getBytes("utf-8");
+    os.write(input, 0, input.length);
 }
-in.close();
-System.out.println(response.toString());
+{{?}}
+try(BufferedReader br = new BufferedReader(
+  new InputStreamReader(con.getInputStream(), "utf-8"))) {
+    StringBuilder response = new StringBuilder();
+    String responseLine = null;
+    while ((responseLine = br.readLine()) != null) {
+        response.append(responseLine.trim());
+    }
+    System.out.println(response.toString());
+}
