@@ -1,6 +1,6 @@
 {{= data.tags.section }}
 
-## {{= data.operationUniqueName}}
+### {{= data.operationUniqueName}}
 
 {{? data.operation.operationId}}
 <a id="opId{{=data.operation.operationId}}"></a>
@@ -27,21 +27,9 @@
 
 {{? data.operation.description}}{{= data.operation.description }}{{?}}
 
-{{? data.operation.requestBody}}
-> Body parameter
-
-{{? data.bodyParameter.exampleValues.description }}
-> {{= data.bodyParameter.exampleValues.description }}
-{{?}}
-
-{{= data.utils.getBodyParameterExamples(data) }}
-{{?}}
-
 {{? data.parameters && data.parameters.length }}
 {{#def.parameters}}
 {{?}}
-
-{{#def.responses}}
 
 {{#def.callbacks}}
 
