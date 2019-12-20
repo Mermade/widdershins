@@ -93,6 +93,9 @@ var argv = require('yargs')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Display JSON schemas in YAML format.')
+    .string('splitOutPath')
+    .alias('split','splitOutPath')
+    .describe('splitOutPath','Will split the output in two parts and creates two files in core-resources/index.html.md and reference/index.html.md in the provided path')
     .help('h')
     .alias('h','Show help.')
     .version()
@@ -116,9 +119,13 @@ function doit(s) {
             console.warn(err);
         }
         else {
-            var outfile = argv.outfile||argv._[1];
+            let outfile = argv.outfile||argv._[1];
             if (outfile) {
                 fs.writeFileSync(path.resolve(outfile),output,'utf8');
+            }
+            else if(options.splitOutPath) {
+                fs.writeFileSync(path.resolve(options.splitOutPath + '/core-resources/index.html.md'),output[0],'utf8');
+                fs.writeFileSync(path.resolve(options.splitOutPath + '/reference/index.html.md'),output[1],'utf8');
             }
             else {
                 console.log(output);
@@ -166,6 +173,7 @@ options.customApiKeyValue = argv.customApiKeyValue;
 options.html = argv.html;
 options.respec = argv.respec;
 options.useBodyName = argv.useBodyName;
+options.splitOutPath = argv.splitOutPath;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
