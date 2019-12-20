@@ -1,8 +1,10 @@
+# Core Resources
+
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
 
 {{= data.tags.section }}
-<h1>{{= r}}</h1>
+## {{= r}}
 
 {{? data.resource.description }}{{= data.resource.description}}{{?}}
 

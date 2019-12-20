@@ -119,10 +119,7 @@ function doit(s) {
             console.warn(err);
         }
         else {
-            if(options.splitOutPath) {
-
-            }
-            var outfile = argv.outfile||argv._[1];
+            let outfile = argv.outfile||argv._[1];
             if (outfile) {
                 fs.writeFileSync(path.resolve(outfile),output,'utf8');
             }
