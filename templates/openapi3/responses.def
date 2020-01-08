@@ -28,7 +28,7 @@
 {{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
 {{? Object.keys(response.content).length }}
 {{ var responseKey = Object.keys(response.content)[0]; }}
-{{ var responseSchema = response.content[responseKey].schema; }}
+{{ var responseSchema = 'content' in response && responseKey in response.content && 'schema' in response.content[responseKey] ? response.content[responseKey].schema : {}; }}
 {{ var enums = []; }}
 {{ var blocks = data.utils.schemaToArray(responseSchema,0,{trim:true,join:true},data); }}
 {{ for (var block of blocks) {
