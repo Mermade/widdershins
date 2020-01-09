@@ -9,8 +9,6 @@
 
 {{= data.tags.section }}
 ## {{=s}}
-<!-- backwards compatibility -->
-<a id="schema{{=s.toLowerCase()}}"></a>
 
 {{? data.options.yaml }}
 ```yaml
@@ -35,7 +33,8 @@
 }}
 
 {{~ blocks :block}}
-{{? block.title }}{{= block.title}}{{= '\n\n'}}{{?}}
+{{? block.title != s}}{{= block.title}}{{= '\n\n'}}{{?}}
+{{? block.title == s && schema.description}}{{= schema.description }}{{?}}
 
 {{? block===blocks[0] }}
 {{= data.tags.section }}
