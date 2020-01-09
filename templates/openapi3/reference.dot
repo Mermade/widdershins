@@ -3,6 +3,19 @@
 
 # Reference
 
+The following section contains a complete reference of all the objects
+that can be returned through the API. Objects that have been explained
+earlier in this documentation are *not* included. The objects
+in this section are never top level resources by themselves and will
+only be returned as sub resources.
+
+All objects are made up of an **id** and a **type** attribute. With those,
+additional **attributes** and **relationships** can be specified.
+An example how the data schema looks like, take a look at the
+<a href="#response-structure">response structure</a> or the
+<a href="#response">response object</a>. Additional reading can be done at
+<a href="http://jsonapi.org/" target="_blank" rel="noopener">jsonapi.org</a>.
+
 {{ for (var s in data.components.schemas) { }}
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
