@@ -43,6 +43,7 @@ for (var s in data.components.schemas) {
 
 {{##def.referenceGroup:
 ## {{=group.name}}
+{{ var s = group.name; }}
 {{#def.referenceItem}}
 
 {{ for (var index in group.members) { }}
