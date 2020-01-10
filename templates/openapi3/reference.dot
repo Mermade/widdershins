@@ -16,12 +16,41 @@ An example how the data schema looks like, take a look at the
 <a href="#response">response object</a>. Additional reading can be done at
 <a href="http://jsonapi.org/" target="_blank" rel="noopener">jsonapi.org</a>.
 
-{{ for (var s in data.components.schemas) { }}
+
+{{
+var activityItems = [];
+var restItems = [];
+
+for (var s in data.components.schemas) {
+  if (s.startsWith("activity")) {
+    activityItems.push(s);
+  } else {
+    restItems.push(s);
+  }
+}
+}}
+
+{{ var group = { name: "activity", members: activityItems }; }}
+{{#def.referenceGroup}}
+
+{{ for (var index in restItems) { }}
+{{ var s = restItems[index]; }}
+## {{=s}}
+{{#def.referenceItem}}
+{{ } }}
+
+{{##def.referenceGroup:
+## {{=group.name}}
+{{ for (var index in group.members) { }}
+{{ var s = group.members[index]; }}
+### {{=s}}
+{{#def.referenceItem}}
+{{ } }}
+#}}
+
+{{##def.referenceItem:
 {{ var origSchema = data.components.schemas[s]; }}
 {{ var schema = data.api.components.schemas[s]; }}
-
-{{= data.tags.section }}
-## {{=s}}
 
 {{? data.options.yaml }}
 ```yaml
@@ -80,7 +109,7 @@ An example how the data schema looks like, take a look at the
 {{= data.tags.endSection }}
 {{= data.tags.endSection }}
 
-{{ } /* of schemas */ }}
+#}}
 
 {{?}}
 
