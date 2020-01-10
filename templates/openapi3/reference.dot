@@ -18,19 +18,21 @@ An example how the data schema looks like, take a look at the
 
 
 {{
-var activityItems = [];
+var activityChildren = [];
 var restItems = [];
 
 for (var s in data.components.schemas) {
-  if (s.startsWith("activity")) {
-    activityItems.push(s);
+  if (s.startsWith("activity-")) {
+    activityChildren.push(s);
+  } else if (s === "activity") {
+    /* the activity parent is skipped as it's added as the parent of the group */
   } else {
     restItems.push(s);
   }
 }
 }}
 
-{{ var group = { name: "activity", members: activityItems }; }}
+{{ var group = { name: "activity", members: activityChildren }; }}
 {{#def.referenceGroup}}
 
 {{ for (var index in restItems) { }}
@@ -41,6 +43,8 @@ for (var s in data.components.schemas) {
 
 {{##def.referenceGroup:
 ## {{=group.name}}
+{{#def.referenceItem}}
+
 {{ for (var index in group.members) { }}
 {{ var s = group.members[index]; }}
 ### {{=s}}
