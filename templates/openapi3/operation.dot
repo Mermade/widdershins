@@ -21,6 +21,8 @@
 {{= data.utils.getCodeSamples(data) }}
 {{?}}
 
+{{= data.utils.getResponseExamples(data) }}
+
 `{{= data.methodUpper}} {{=data.method.path}}`
 
 {{? data.operation.summary && !data.options.tocSummary}}*{{= data.operation.summary }}*{{?}}
