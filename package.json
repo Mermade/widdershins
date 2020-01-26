@@ -58,7 +58,7 @@
   "devDependencies": {
     "cz-conventional-changelog": "^3.0.2",
     "mdv": "^1.2.1",
-    "mocha": "^6.1.4",
+    "mocha": "^7.0.1",
     "node-readfiles": "^0.2.0"
   },
   "config": {
