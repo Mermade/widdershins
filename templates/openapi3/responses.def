@@ -20,12 +20,12 @@
 
 {{ data.responseSchemas = false; }}
 {{~ data.responses :response }}
-{{ if (response.content && !response.$ref && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
+{{ if (response.content && !data.utils.isPrimitive(response.type)) data.responseSchemas = true; }}
 {{~}}
 {{? data.responseSchemas }}
 <h3 id="{{=data.operationUniqueSlug}}-responseschema">Response Schema</h3>
 {{~ data.responses :response}}
-{{? response.content && !response.$ref && !data.utils.isPrimitive(response.type)}}
+{{? response.content && !data.utils.isPrimitive(response.type)}}
 {{? Object.keys(response.content).length }}
 {{ var responseKey = Object.keys(response.content)[0]; }}
 {{ var responseSchema = response.content[responseKey].schema; }}
