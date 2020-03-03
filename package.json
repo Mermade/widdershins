@@ -13,7 +13,7 @@
   "scripts": {
     "lint": "npx eslint *.js lib/*.js",
     "shins": "node widdershins --discovery -o ../shins/source/index.html.md defs/petstore.json",
-    "test": "node $nflags node_modules/mocha/bin/_mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -45,6 +45,7 @@
     "markdown-it": "^10.0.0",
     "markdown-it-emoji": "^1.4.0",
     "node-fetch": "^2.0.0",
+    "nyc": "^15.0.0",
     "oas-resolver": "^2.2.5",
     "oas-schema-walker": "^1.1.2",
     "openapi-sampler": "^1.0.0-beta.15",
