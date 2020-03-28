@@ -99,7 +99,7 @@ function check(file) {
             return true;
         }
 
-        if (!src.swagger && !src.openapi && !src.asyncapi && !src.openapiExtensionFormat) {
+        if (!src || (!src.swagger && !src.openapi && !src.asyncapi && !src.openapiExtensionFormat)) {
             console.log(normal+file);
             console.log('Not a known API definition');
             return true;
