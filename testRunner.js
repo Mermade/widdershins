@@ -42,17 +42,18 @@ var failures = [];
 var pathspec = argv._.length>0 ? argv._[0] : '../openapi-directory/APIs/';
 
 var options = argv;
-var widdershinsOptions = {};
-widdershinsOptions.sample = true;
-if (options.raw) widdershinsOptions.sample = false;
-if (options.resolve) widdershinsOptions.resolve = true;
-if (options.noschema) widdershinsOptions.schema = false;
-widdershinsOptions.experimental = options.experimental;
-widdershinsOptions.headings = 2;
-widdershinsOptions.verbose = options.verbose;
-//if (process.env.TRAVIS_NODE_VERSION) {
-//    widdershinsOptions.maxDepth = 1;
-//}
+
+function setupWiddershinsOptions() {
+    const widdershinsOptions = {};
+    widdershinsOptions.sample = true;
+    if (options.raw) widdershinsOptions.sample = false;
+    if (options.resolve) widdershinsOptions.resolve = true;
+    if (options.noschema) widdershinsOptions.schema = false;
+    widdershinsOptions.experimental = options.experimental;
+    widdershinsOptions.headings = 2;
+    widdershinsOptions.verbose = options.verbose;
+    return widdershinsOptions;
+}
 
 function handleResult(file, result) {
     if (result) {
@@ -64,7 +65,7 @@ function handleResult(file, result) {
     }
 }
 
-function check(file) {
+async function check(file) {
     var result = false;
     var components = file.split(path.sep);
     var filename = components[components.length-1];
@@ -74,7 +75,7 @@ function check(file) {
         let skip = false;
         //if (process.env.TRAVIS_NODE_VERSION) {
         //    if (file.indexOf('bungie')>=0) skip = true;
-        //    if file.indexOf('docusign')>=0) skip = true;
+        //    if (file.indexOf('docusign')>=0) skip = true;
         //}
 
         if (skip) {
@@ -105,9 +106,11 @@ function check(file) {
             return true;
         }
 
+        const widdershinsOptions = setupWiddershinsOptions();
         widdershinsOptions.source = file;
         try {
-            widdershins.convert(src, widdershinsOptions, function(err, result){
+            result = await widdershins.convert(src, widdershinsOptions);
+                let err; //! temp
                 let ok = (!!result && !err);
                 let message = '';
                 if (!result) result = '';
@@ -129,6 +132,8 @@ function check(file) {
                 result = result.split('and undefined,').join('x');
                 result = result.split('otherwise undefined').join('x');
                 result = result.split("it's `undefined`").join('x');
+                result = result.split('or undefined').join('x');
+                result = result.split('undefined, ').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
@@ -161,7 +166,7 @@ function check(file) {
                     result = false;
                 }
                 handleResult(file, result);
-            });
+            //});
         }
         catch (ex) {
             console.log(red+file);

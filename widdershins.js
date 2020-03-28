@@ -100,7 +100,7 @@ var argv = require('yargs')
 
 var options = {};
 
-function doit(s) {
+async function doit(s) {
     var api = {};
     try {
         api = yaml.parse(s);
@@ -111,20 +111,19 @@ function doit(s) {
         api = s;
     }
 
-    converter.convert(api,options,function(err,output){
-        if (err) {
-            console.warn(err);
+    try {
+        let output = await converter.convert(api,options);
+        let outfile = argv.outfile||argv._[1];
+        if (outfile) {
+            fs.writeFileSync(path.resolve(outfile),output,'utf8');
         }
         else {
-            var outfile = argv.outfile||argv._[1];
-            if (outfile) {
-                fs.writeFileSync(path.resolve(outfile),output,'utf8');
-            }
-            else {
-                console.log(output);
-            }
+            console.log(output);
         }
-    });
+    }
+    catch (err) {
+        console.warn(err);
+    }
 }
 
 options.codeSamples = !argv.code;
