@@ -17,6 +17,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### News
 
 * Version 4.0 changes:
+  * Now uses Promises not callbacks
   * Option to output html directly, and to ReSpec format
   * Unified JavaScript and Node.js code-samples, PHP added
   * `restrictions` column (`readOnly`/`writeOnly`) added to schema templates
@@ -198,7 +199,7 @@ For if/then logic, use the code `{{? booleanExpression}}` to start the code bloc
 You can run arbitrary JavaScript within a template by inserting a code block within curly braces. For example, this code creates a variable and references it with normal doT.js syntax later in the template:
 ```
 {{ {
-var message = "Hello!";
+let message = "Hello!";
 } }}
 
 {{=message}}
@@ -224,7 +225,7 @@ let options = {};
 options.templateCallback = myCallBackFunction;
 
 function myCallBackFunction(templateName, stage, data) {
-  var statusString = "Template name: " + templateName + "\n";
+  let statusString = "Template name: " + templateName + "\n";
   statusString += "Stage: " + stage + "\n";
   data.append = statusString;
   return data;
@@ -232,7 +233,8 @@ function myCallBackFunction(templateName, stage, data) {
 
 const apiObj = JSON.parse(fs.readFileSync('defs/petstore3.json'));
 
-converter.convert(apiObj, options, function(err, str) {
+converter.convert(apiObj, options)
+.then(str => {
   fs.writeFileSync('petstore3Output.md', str, 'utf8');
 });
 ```

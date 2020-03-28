@@ -1,7 +1,7 @@
 # Converting an OpenAPI/Swagger file to Markdown with the Widdershins JavaScript interface
 
 Using Widdershins in a JavaScript program gives you control over the full range of options.
-To use Widdershins from the CIU, see [Converting an OpenAPI/Swagger file to Markdown with the Widdershins CLI](ConvertingFilesBasicCLI.md).
+To use Widdershins from the CLI, see [Converting an OpenAPI/Swagger file to Markdown with the Widdershins CLI](ConvertingFilesBasicCLI.md).
 
 ## Prerequisites
 
@@ -41,17 +41,25 @@ const fileData = fs.readFileSync('swagger.json', 'utf8');
 const swaggerFile = JSON.parse(fileData);
 ```
 1. Use Widdershins to convert the file.
-Widdershins returns the converted Markdown in a callback function:
+Widdershins returns the converted Markdown via a Promise:
 ```javascript
-widdershins.convert(swaggerFile, options, function(err, markdownOutput) {
+widdershins.convert(swaggerFile, options)
+.then(markdownOutput => {
   // markdownOutput contains the converted markdown
+})
+.catch(err => {
+  // handle errors
 });
 ```
-1. Within the callback function, write the Markdown to a file:
+1. When the Promise resolves, write the Markdown to a file:
 ```javascript
-widdershins.convert(swaggerFile, options, function(err, markdownOutput) {
+widdershins.convert(swaggerFile, options)
+.then(markdownOutput => {
   // markdownOutput contains the converted markdown
   fs.writeFileSync('myOutput.md', markdownOutput, 'utf8');
+})
+.catch(err => {
+  // handle errors
 });
 ```
 1. Run the JavaScript program:
@@ -72,10 +80,14 @@ const options = {
 const fileData = fs.readFileSync('swagger.json', 'utf8');
 const swaggerFile = JSON.parse(fileData);
 
-widdershins.convert(swaggerFile, options, function(err, markdownOutput) {
+widdershins.convert(swaggerFile, options)
+.then(markdownOutput => {
   // markdownOutput contains the converted markdown
   fs.writeFileSync('myOutput.md', markdownOutput, 'utf8');
+})
+.catch(err => {
+  // handle errors
 });
 ```
 
-Now you can use the Markdown file in your documentation or use a tool such as Shins to convert it to HTML.
+Now you can use the Markdown file in your documentation or use a tool such as [Shins](https://github.com/Mermade/shins) to convert it to HTML.
