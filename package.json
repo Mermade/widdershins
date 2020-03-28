@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "3.6.6",
+  "version": "4.0.0",
   "description": "OpenAPI/ Swagger / AsyncAPI / Semoasa definition to Slate / Shins compatible markdown",
   "main": "lib/index.js",
   "bin": {
