@@ -111,14 +111,14 @@ converter.convert(apiObj,options,function(err,str){
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
 
 ```javascript
-options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
+options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--node': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
 ```
 
 The `--environment` option specifies a JSON or YAML-formatted `options` object, for example:
 
 ```json
 {
-  "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--node": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
   "verbose": true,
   "tagGroups": [
     {
@@ -142,6 +142,8 @@ If you are using the `httpsnippet` option to generate code samples, you can spec
 ```javascript
 options.language_clients = [{ 'shell': 'curl' }, { 'node': 'request' }, { 'java': 'unirest' }];
 ```
+
+If the language name differs between the markdown name required to syntax highlight and the httpsnippet required target, both can be specified in the form `markdown--target`.
 
 To see the list of languages and clients supported by httpsnippet, [click here](https://github.com/Kong/httpsnippet/tree/master/src/targets).
 

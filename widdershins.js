@@ -133,12 +133,13 @@ if (argv.lang) {
     options.language_tabs = [];
 }
 else if (argv.language_tabs) {
+    if (!options.language_clients) options.language_clients = [];
     const languages = argv.language_tabs
         .reduce((languages, item) => {
             const [lang, name, client] = item.split(':', 3);
 
             languages.language_tabs.push({ [lang]: name || lang });
-            languages.language_clients[lang] = client || '';
+            languages.language_clients.push({ [lang]: client || '' });
 
             return languages;
         }, { language_tabs: [], language_clients: []});
