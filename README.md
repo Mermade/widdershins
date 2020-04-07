@@ -104,8 +104,12 @@ options.headings = 2;
 options.yaml = false;
 //options.resolve = false;
 //options.source = sourceUrl; // if resolve is true, must be set to full path or URL of the input document
-converter.convert(apiObj,options,function(err,str){
+converter.convert(apiObj,options)
+.then(str => {
   // str contains the converted markdown
+})
+.catch(err => {
+  console.error(err);
 });
 ```
 
