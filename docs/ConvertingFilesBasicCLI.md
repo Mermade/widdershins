@@ -42,4 +42,4 @@ Include the options in the command or specify the name of the environment file w
 widdershins --environment env.json swagger.json -o myOutput.md
 ```
 
-Now you can use the Markdown file in your documentation or use a tool such as Shins to convert it to HTML.
+Now you can use the Markdown file in your documentation or use a tool such as [Shins](https://github.com/Mermade/shins) to convert it to HTML.
