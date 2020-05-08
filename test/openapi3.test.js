@@ -76,7 +76,7 @@ describe('openapi3 tests', () => {
 
         it('should append parameters to data.parameters', () => {
             openapi3.fakeBodyParameter(goodData);
-            assert(goodData.parameters.length === 1);
+            assert.deepStrictEqual(goodData.parameters.length, 1);
         });
     });
 
@@ -88,13 +88,13 @@ describe('openapi3 tests', () => {
         it('should handle wrong tags ', () => {
             assert.doesNotThrow(() => openapi3.getTagGroup('fake tag', exampleEnv.tagGroups));
             let result = openapi3.getTagGroup('fake tag', exampleEnv.tagGroups);
-            assert(result.name === 'fake tag');
-            assert(result.description === '');
+            assert.deepStrictEqual(result.name,'fake tag');
+            assert.deepStrictEqual(result.description, '');
         });
         it('should get the proper title & description from the tag group', () => {
             let result = openapi3.getTagGroup('invoice-create', exampleEnv.tagGroups);
-            assert(result.name === 'Billing');
-            assert(result.description === 'billing apis');
+            assert.deepStrictEqual(result.name, 'Billing');
+            assert.deepStrictEqual(result.description, 'billing apis');
         });
     });
 
@@ -104,7 +104,7 @@ describe('openapi3 tests', () => {
             assert(resources.pets);
             assert(resources.pets.count);
             assert(resources.pets.methods);
-            assert(resources.pets.description === '');
+            assert.deepStrictEqual(resources.pets.description, '');
         });
         it('methods object should include `listPets`, `createPets`, and `showPetById`', () => {
             assert(resources.pets.methods.listPets);
