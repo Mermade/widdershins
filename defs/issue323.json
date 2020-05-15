@@ -1,0 +1,50 @@
+{
+	"swagger": "2.0",
+	"info": {
+		"version": "1.0",
+		"title": "Redacted Public API"
+	},
+	"host": "redacted-api.us-east-1.amazonaws.com",
+	"basePath": "/prd",
+	"schemes": ["https"],
+	"paths": {
+		"/{version}/{any+}": {
+			"options": {
+				"consumes": ["application/json"],
+				"responses": {
+					"200": {
+						"description": "200 response",
+						"headers": {
+							"Access-Control-Allow-Origin": {
+								"type": "string"
+							},
+							"Access-Control-Allow-Methods": {
+								"type": "string"
+							},
+							"Access-Control-Max-Age": {
+								"type": "string"
+							},
+							"Access-Control-Allow-Headers": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			},
+			"x-amazon-apigateway-any-method": {
+				"consumes": ["application/json"],
+				"produces": ["application/json"],
+				"responses": {
+					"404": {
+						"description": "404 response",
+						"headers": {
+							"Access-Control-Allow-Origin": {
+								"type": "string"
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
