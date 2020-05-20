@@ -73,7 +73,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
 | -o, --outfile | N/A | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
 | -r, --raw | options.raw | `boolean` | `false` | Output raw schemas instead of example values. |
-| | options.example | `boolean` |  | When set to `true` schema's are rendered with the given example value instead of an object describing it's type. |
+| | options.sample | `boolean` |  | When set to `true` schema's are rendered with the given example value instead of an object describing it's type. |
 | -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
 | -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
 | -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
