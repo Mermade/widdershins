@@ -65,7 +65,7 @@ Base URLs:
 
 {{= data.tags.section }}
 <h2 id="tocS_{{=s}}">{{=s}}</h2>
-<!-- backwards compatibility -->
+{{ /* backwards compatibility */ }}
 <a id="schema{{=s.toLowerCase()}}"></a>
 <a id="schema_{{=s}}"></a>
 <a id="tocS{{=s.toLowerCase()}}"></a>
