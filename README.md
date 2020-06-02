@@ -57,6 +57,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter in the generated Markdown file. |
 | --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location. |
 | --shallowSchemas | options.shallowSchemas | `boolean` | `false` | When referring to a schema with a $ref, don't show the full contents of the schema. |
+| --loadMdPrefix | options.loadMdPrefix | `string` | `x-md-`| Prefix of OpenAPI extension that indicates MD files paths to load and can be injected anywhere in the output MD 
 | N/A | options.source | `string` | None | The absolute location or URL of the source file to use as the base to resolve relative references ($refs) from; required if options.resolve is set to true. For CLI commands, Widdershins uses the input file as the base for the $refs. |
 | --summary | options.tocSummary | `boolean` | `false` | Use the operation summary as the TOC entry instead of the ID. |
 | --useBodyName | options.useBodyName | `boolean` | Use original param name for OpenAPI 2.0 body parameter. |
