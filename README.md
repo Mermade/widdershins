@@ -17,6 +17,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### News
 
 * Version 4.0 changes:
+  * Now uses Promises not callbacks
   * Option to output html directly, and to ReSpec format
   * Unified JavaScript and Node.js code-samples, PHP added
   * `restrictions` column (`readOnly`/`writeOnly`) added to schema templates
@@ -29,7 +30,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 ### To install
 
 * Clone the git repository, and `npm i` to install dependencies, or
-* `npm install [-g] widdershins` to install globally
+* `npm install -g widdershins` to install globally
 
 ### Getting started
 
@@ -71,7 +72,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | --language_tabs | options.language_tabs | `string` | (Differs for each input type) | List of language tabs for code samples using language[:label[:client]] format, such as `javascript:JavaScript:request`. |
 | -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
 | -o, --outfile | N/A | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
-| -r, --raw | options.raw | `boolean` | `false` | Output raw schemas instead of example values. |
+| -r, --raw | **inverse** of options.sample | `boolean` | `false` | Output raw schemas instead of example values. |
 | -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
 | -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
 | -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
@@ -103,22 +104,26 @@ options.headings = 2;
 options.yaml = false;
 //options.resolve = false;
 //options.source = sourceUrl; // if resolve is true, must be set to full path or URL of the input document
-converter.convert(apiObj,options,function(err,str){
+converter.convert(apiObj,options)
+.then(str => {
   // str contains the converted markdown
+})
+.catch(err => {
+  console.error(err);
 });
 ```
 
 To only include a subset of the pre-defined language-tabs, or to rename their display-names, you can override the `options.language_tabs`:
 
 ```javascript
-options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--nodejs': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
+options.language_tabs = [{ 'go': 'Go' }, { 'http': 'HTTP' }, { 'javascript': 'JavaScript' }, { 'javascript--node': 'Node.JS' }, { 'python': 'Python' }, { 'ruby': 'Ruby' }];
 ```
 
 The `--environment` option specifies a JSON or YAML-formatted `options` object, for example:
 
 ```json
 {
-  "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--nodejs": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
+  "language_tabs": [{ "go": "Go" }, { "http": "HTTP" }, { "javascript": "JavaScript" }, { "javascript--node": "Node.JS" }, { "python": "Python" }, { "ruby": "Ruby" }],
   "verbose": true,
   "tagGroups": [
     {
@@ -142,6 +147,8 @@ If you are using the `httpsnippet` option to generate code samples, you can spec
 ```javascript
 options.language_clients = [{ 'shell': 'curl' }, { 'node': 'request' }, { 'java': 'unirest' }];
 ```
+
+If the language name differs between the markdown name required to syntax highlight and the httpsnippet required target, both can be specified in the form `markdown--target`.
 
 To see the list of languages and clients supported by httpsnippet, [click here](https://github.com/Kong/httpsnippet/tree/master/src/targets).
 
@@ -196,7 +203,7 @@ For if/then logic, use the code `{{? booleanExpression}}` to start the code bloc
 You can run arbitrary JavaScript within a template by inserting a code block within curly braces. For example, this code creates a variable and references it with normal doT.js syntax later in the template:
 ```
 {{ {
-var message = "Hello!";
+let message = "Hello!";
 } }}
 
 {{=message}}
@@ -222,7 +229,7 @@ let options = {};
 options.templateCallback = myCallBackFunction;
 
 function myCallBackFunction(templateName, stage, data) {
-  var statusString = "Template name: " + templateName + "\n";
+  let statusString = "Template name: " + templateName + "\n";
   statusString += "Stage: " + stage + "\n";
   data.append = statusString;
   return data;
@@ -230,7 +237,8 @@ function myCallBackFunction(templateName, stage, data) {
 
 const apiObj = JSON.parse(fs.readFileSync('defs/petstore3.json'));
 
-converter.convert(apiObj, options, function(err, str) {
+converter.convert(apiObj, options)
+.then(str => {
   fs.writeFileSync('petstore3Output.md', str, 'utf8');
 });
 ```

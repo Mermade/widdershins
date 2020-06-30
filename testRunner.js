@@ -39,28 +39,20 @@ var pass = 0;
 var fail = 0;
 var failures = [];
 
-var genStack = [];
-
 var pathspec = argv._.length>0 ? argv._[0] : '../openapi-directory/APIs/';
 
 var options = argv;
-var widdershinsOptions = {};
-widdershinsOptions.sample = true;
-if (options.raw) widdershinsOptions.sample = false;
-if (options.resolve) widdershinsOptions.resolve = true;
-if (options.noschema) widdershinsOptions.schema = false;
-widdershinsOptions.experimental = options.experimental;
-widdershinsOptions.headings = 2;
-widdershinsOptions.verbose = options.verbose;
-//if (process.env.TRAVIS_NODE_VERSION) {
-//    widdershinsOptions.maxDepth = 1;
-//}
 
-function genStackNext() {
-    if (!genStack.length) return false;
-    var gen = genStack.shift();
-    setImmediate(() => gen.next());
-    return true;
+function setupWiddershinsOptions() {
+    const widdershinsOptions = {};
+    widdershinsOptions.sample = true;
+    if (options.raw) widdershinsOptions.sample = false;
+    if (options.resolve) widdershinsOptions.resolve = true;
+    if (options.noschema) widdershinsOptions.schema = false;
+    widdershinsOptions.experimental = options.experimental;
+    widdershinsOptions.headings = 2;
+    widdershinsOptions.verbose = options.verbose;
+    return widdershinsOptions;
 }
 
 function handleResult(file, result) {
@@ -73,7 +65,7 @@ function handleResult(file, result) {
     }
 }
 
-function* check(file) {
+async function check(file) {
     var result = false;
     var components = file.split(path.sep);
     var filename = components[components.length-1];
@@ -83,13 +75,12 @@ function* check(file) {
         let skip = false;
         //if (process.env.TRAVIS_NODE_VERSION) {
         //    if (file.indexOf('bungie')>=0) skip = true;
-        //    if file.indexOf('docusign')>=0) skip = true;
+        //    if (file.indexOf('docusign')>=0) skip = true;
         //}
 
         if (skip) {
             console.log(yellow+file);
             console.log('Skipping due to size');
-            genStackNext();
             return true;
         }
 
@@ -106,20 +97,20 @@ function* check(file) {
         catch (ex) {
             console.log(normal+file);
             console.log('Could not parse file');
-            genStackNext();
             return true;
         }
 
-        if (!src.swagger && !src.openapi && !src.asyncapi && !src.openapiExtensionFormat) {
+        if (!src || (!src.swagger && !src.openapi && !src.asyncapi && !src.openapiExtensionFormat)) {
             console.log(normal+file);
             console.log('Not a known API definition');
-            genStackNext();
             return true;
         }
 
+        const widdershinsOptions = setupWiddershinsOptions();
         widdershinsOptions.source = file;
         try {
-            widdershins.convert(src, widdershinsOptions, function(err, result){
+            result = await widdershins.convert(src, widdershinsOptions);
+                let err; //! temp
                 let ok = (!!result && !err);
                 let message = '';
                 if (!result) result = '';
@@ -141,6 +132,8 @@ function* check(file) {
                 result = result.split('and undefined,').join('x');
                 result = result.split('otherwise undefined').join('x');
                 result = result.split("it's `undefined`").join('x');
+                result = result.split('or undefined').join('x');
+                result = result.split('undefined, ').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
@@ -173,7 +166,7 @@ function* check(file) {
                     result = false;
                 }
                 handleResult(file, result);
-            });
+            //});
         }
         catch (ex) {
             console.log(red+file);
@@ -185,7 +178,6 @@ function* check(file) {
     else {
         result = true;
     }
-    genStackNext();
 }
 
 process.exitCode = 1;
@@ -193,23 +185,21 @@ pathspec = path.resolve(pathspec);
 
 let stat = fs.statSync(pathspec);
 if (stat && stat.isFile()) {
-    genStack.push(check(pathspec));
-    genStackNext();
+    check(pathspec);
 }
 else {
-rf(pathspec, { readContents: false, filenameFormat: rf.FULL_PATH }, function (err) {
-    if (err) console.log(util.inspect(err));
-})
-.then(files => {
-    files = files.sort();
-    for (var file of files) {
-        genStack.push(check(file));
-    }
-    genStackNext();
-})
-.catch(err => {
-    console.log(util.inspect(err));
-});
+    rf(pathspec, { readContents: false, filenameFormat: rf.FULL_PATH }, function (err) {
+        if (err) console.log(util.inspect(err));
+    })
+    .then(async (files) => {
+        files = files.sort();
+        for (var file of files) {
+            await check(file);
+        }
+    })
+    .catch(err => {
+        console.log(util.inspect(err));
+    });
 }
 
 process.on('exit', function(code) {

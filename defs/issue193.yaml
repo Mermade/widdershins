@@ -1,0 +1,27 @@
+openapi: 3.0.1
+info:
+  title: API
+  version: 1.0.0
+paths:
+  /:
+    post:
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        description: A JSON object containing pet information
+        content:
+          application/json:
+            schema:
+              oneOf:
+                - $ref: '#/components/schemas/Cat'
+                - $ref: '#/components/schemas/Dog'
+                - $ref: '#/components/schemas/Hamster'
+components:
+  schemas:
+    Cat:
+      type: object
+    Dog:
+      type: object
+    Hamster:
+      type: object

@@ -61,3 +61,4 @@ Swagger / OpenAPI 2.0 definitions are converted automatically.
 * `host` - the (computed) host of the API
 * `protocol` - the default/first protocol of the API
 * `baseUrl` - the (computed) baseUrl of the API (including protocol and host)
+* `widdershins` - the contents of widdershins `package.json`

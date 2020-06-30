@@ -100,7 +100,7 @@ var argv = require('yargs')
 
 var options = {};
 
-function doit(s) {
+async function doit(s) {
     var api = {};
     try {
         api = yaml.parse(s);
@@ -111,20 +111,19 @@ function doit(s) {
         api = s;
     }
 
-    converter.convert(api,options,function(err,output){
-        if (err) {
-            console.warn(err);
+    try {
+        let output = await converter.convert(api,options);
+        let outfile = argv.outfile||argv._[1];
+        if (outfile) {
+            fs.writeFileSync(path.resolve(outfile),output,'utf8');
         }
         else {
-            var outfile = argv.outfile||argv._[1];
-            if (outfile) {
-                fs.writeFileSync(path.resolve(outfile),output,'utf8');
-            }
-            else {
-                console.log(output);
-            }
+            console.log(output);
         }
-    });
+    }
+    catch (err) {
+        console.warn(err);
+    }
 }
 
 options.codeSamples = !argv.code;
@@ -133,12 +132,13 @@ if (argv.lang) {
     options.language_tabs = [];
 }
 else if (argv.language_tabs) {
+    if (!options.language_clients) options.language_clients = [];
     const languages = argv.language_tabs
         .reduce((languages, item) => {
             const [lang, name, client] = item.split(':', 3);
 
             languages.language_tabs.push({ [lang]: name || lang });
-            languages.language_clients[lang] = client || '';
+            languages.language_clients.push({ [lang]: client || '' });
 
             return languages;
         }, { language_tabs: [], language_clients: []});
@@ -151,7 +151,7 @@ options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
 options.verbose = argv.verbose;
-if (options.verbose) Error.stackTraceLimit = Infinity;
+if (options.verbose > 2) Error.stackTraceLimit = Infinity;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
 options.experimental = argv.experimental;
