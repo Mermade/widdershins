@@ -134,6 +134,7 @@ async function check(file) {
                 result = result.split("it's `undefined`").join('x');
                 result = result.split('or undefined').join('x');
                 result = result.split('undefined, ').join('x');
+                result = result.split('undefined.').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
