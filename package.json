@@ -11,7 +11,7 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "npx eslint *.js lib/*.js",
+    "lint": "npx eslint *.js lib/*.js test/*.js",
     "shins": "node widdershins --discovery -o ../shins/source/index.html.md defs/petstore.json",
     "test": "nyc mocha"
   },

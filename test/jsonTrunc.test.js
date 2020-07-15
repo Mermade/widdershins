@@ -2,9 +2,9 @@
 
 const jsonTrunc = require('../lib/jsonTrunc.js')
 
-const stringifyTrunc = function(o,options) {
+function stringifyTrunc(o,options) {
   return jsonTrunc(o,null,0,options);
-};
+}
 
 let o={get getter(){return 42}}
 o.p=o.q=o.r=o
@@ -38,7 +38,7 @@ console.assert(stringifyTrunc(o)==='["[Circular]",null,null,null,null,null,1]')
 o.prop=1
 console.assert(stringifyTrunc(o)==='["[Circular]",null,null,null,null,null,1]')
 
-Object.defineProperty(o,'getter',{get:()=>42,enumerable:true})
+Object.defineProperty(o,'getter',{get:() => 42,enumerable:true})
 console.assert(stringifyTrunc(o)==='["[Circular]",null,null,null,null,null,1]')
 
 console.assert(stringifyTrunc([1,2,3,4,5])==='[1,2,3,4,5]')
@@ -47,7 +47,7 @@ console.assert(stringifyTrunc([1,[2],[[3]],[[[4]]],[[[[5]]]]],{depth:3})==='[1,[
 console.assert(stringifyTrunc([1,[2],[[3]],[[[4]]],[[[[5]]]]],{depth:4})==='[1,[2],[[3]],[[[4]]],[[["[Object]"]]]]')
 console.assert(stringifyTrunc([1,[2],[[3]],[[[4]]],[[[[5]]]]],{depth:5})==='[1,[2],[[3]],[[[4]]],[[[[5]]]]]')
 
-let inner=Symbol()
+let inner=Symbol('Inner')
 o={get val(){return this[inner]}, set val(v){if(v<0) throw new Error("Illegal argument"); this[inner]=v}}
 o[inner]=42
 
