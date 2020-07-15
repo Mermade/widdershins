@@ -1,9 +1,11 @@
 *.html.md
+foo.md
 user_templates/
 *.tgz
 *.old
 in/
 out/
+dev/
 scripts/
 utils/
 

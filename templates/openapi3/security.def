@@ -18,7 +18,7 @@
     - Flow: {{=f}}
 {{? flow.authorizationUrl}}    - Authorization URL = [{{=flow.authorizationUrl}}]({{=flow.authorizationUrl}}){{?}}
 {{? flow.tokenUrl}}    - Token URL = [{{=flow.tokenUrl}}]({{=flow.tokenUrl}}){{?}}
-{{? flow.scopes}}
+{{? flow.scopes && Object.keys(flow.scopes).length}}
 |Scope|Scope Description|
 |---|---|
 {{ for (var sc in flow.scopes) { }}|{{=sc}}|{{=data.utils.join(flow.scopes[sc])}}|

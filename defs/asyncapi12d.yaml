@@ -114,7 +114,7 @@ components:
 
   parameters:
     streetlightId:
-      $ref: 'includes/streetlightId.yaml#/components/parameters/streetlightId'
+      #$ref: 'includes/streetlightId.yaml#/components/parameters/streetlightId'
       name: streetlightId
       description: The ID of the streetlight.
       schema:

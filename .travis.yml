@@ -2,7 +2,7 @@ language: node_js
 node_js:
   - "node"
   - "lts/*"
-  - "8"
+  - "10"
 install:
   - npm i
 before_script:
@@ -13,6 +13,7 @@ before_script:
   - . ./bin/setflags.sh
   - mkdir -p out
 script:
+  - npm run lint
   - npm test
   - node widdershins -o out/petstore.md defs/petstore3.json
   - node node_modules/mdv/mdv out/petstore.md
