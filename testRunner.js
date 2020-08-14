@@ -132,6 +132,7 @@ async function check(file) {
                 result = result.split('and undefined,').join('x');
                 result = result.split('otherwise undefined').join('x');
                 result = result.split("it's `undefined`").join('x');
+                result = result.split("to `undefined`").join('x');
                 result = result.split('or undefined').join('x');
                 result = result.split('undefined, ').join('x');
                 result = result.split('undefined.').join('x');

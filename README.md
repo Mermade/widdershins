@@ -76,7 +76,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
 | -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
 | -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
-| -x, --experimental | options.experimental | `boolean` |  | For backwards compatibility only; ignored. |
+| -x, --experimental | options.experimental | `boolean` |  | Use httpSnippet for multipart mediatypes. |
 | -y, --yaml | options.yaml | `boolean` | `false` | Display JSON schemas in YAML format. |
 |  | options.templateCallback | `function` | None | A `function` that is called before and after each template (JavaScript code only). |
 |  | options.toc_footers | `object` | A map of `url`s and `description`s to be added to the ToC footers array (JavaScript code only). |

@@ -11,6 +11,7 @@
 {{ var callback = data.operation.callbacks && data.operation.callbacks[c]; }}
 
 {{ for (var e in callback) { }}
+{{ if (!e.startsWith('x-widdershins-')) { }}
 
 **{{=e}}**
 
@@ -26,6 +27,8 @@
 {{ } /* of methods */ }}
 
 {{ } /* of expressions */ }}
+
+{{ } /* of if */ }}
 
 {{ } /* of callbacks */ }}
 
