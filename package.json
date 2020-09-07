@@ -49,7 +49,7 @@
     "oas-schema-walker": "^1.1.5",
     "openapi-sampler": "^1.0.0-beta.16",
     "reftools": "^1.1.4",
-    "swagger2openapi": "^6.2.2",
+    "swagger2openapi": "^7.0.0",
     "urijs": "^1.19.2",
     "yaml": "^1.10.0",
     "yargs": "^12.0.5"
