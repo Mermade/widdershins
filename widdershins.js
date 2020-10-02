@@ -47,6 +47,9 @@ var argv = require('yargs')
     .describe('lang','Generate the list of languages for code samples based on the languages used in the source file\'s `x-code-samples` examples.')
     .array('language_tabs')
     .describe('language_tabs', 'List of language tabs for code samples using "language[:label[:client]]" format, such as `javascript:JavaScript:request`.')
+    .string('loadMdPrefix')
+    .describe('loadMdPrefix', 'Prefix of OpenAPI extension that indicates MD files paths to load and can be injected anywhere in the output MD')
+    .default('loadMdPrefix', 'x-md')
     .number('maxLevel')
     .alias('m','maxDepth')
     .describe('maxDepth','Maximum depth to show for schema examples.')
@@ -166,6 +169,7 @@ options.customApiKeyValue = argv.customApiKeyValue;
 options.html = argv.html;
 options.respec = argv.respec;
 options.useBodyName = argv.useBodyName;
+options.loadMdPrefix = argv.loadMdPrefix;
 if (argv.search === false) options.search = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
