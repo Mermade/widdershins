@@ -1,3 +1,6 @@
+# Customizations on top of main Widdershins branch
+- Allow multiple tags to create multiple links in the documentation by implementing [this pull request](https://github.com/Mermade/widdershins/pull/295). This allows us to have a separate "Simple Endpoints" section that can include endpoints also included in the documentation for the separate entities.
+
 # widdershins
 OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/lord/slate) /
 [Shins](https://github.com/mermade/shins) compatible markdown
