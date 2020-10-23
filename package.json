@@ -42,7 +42,7 @@
     "highlightjs": "^9.16.2",
     "httpsnippet": "^1.22.0",
     "jgexml": "^0.4.4",
-    "markdown-it": "^11.0.0",
+    "markdown-it": "^12.0.2",
     "markdown-it-emoji": "^1.4.0",
     "node-fetch": "^2.6.1",
     "oas-resolver": "^2.4.4",
