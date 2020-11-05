@@ -72,6 +72,9 @@ describe('common tests', () => {
         it('should replace remaining non-word characters and dashes with a single dash (-)', () => {
             assert.equal(common.slugify('id: one, two & three'), 'id-one-two-and-three');
         });
+        it('should replace chinese characters with pinyin', () => {
+            assert.equal(common.slugify('id: one, 二 & 三'), 'id-one-er4-and-san1');
+        });
     });
     describe('schemaToArray tests', () => {
         it('should return a blank container if all inputs are blank', () => {

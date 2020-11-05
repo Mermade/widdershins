@@ -48,6 +48,7 @@
     "oas-resolver": "^2.4.4",
     "oas-schema-walker": "^1.1.5",
     "openapi-sampler": "^1.0.0-beta.17",
+    "pinyin": "^2.9.1",
     "reftools": "^1.1.6",
     "swagger2openapi": "^7.0.0",
     "urijs": "^1.19.2",
