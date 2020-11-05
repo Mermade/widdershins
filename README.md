@@ -32,6 +32,8 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 * Clone the git repository, and `npm i` to install dependencies, or
 * `npm install -g widdershins` to install globally
 
+or run via docker image (TODO dockerhub image link).
+
 ### Getting started
 
 Widdershins is generally used as a stage in an API documentation pipeline. The pipeline begins with an API definition in OpenAPI 3.x, OpenAPI 2.0 (fka Swagger), API Blueprint, AsyncAPI or Semoasa format. Widdershins converts this description into markdown suitable for use by a **renderer**, such as [Slate](https://github.com/lord/slate), [Shins](https://github.com/mermade/shins) or html suitable for use with [ReSpec](https://github.com/w3c/respec).
@@ -44,6 +46,11 @@ More in-depth documentation is [available here](https://mermade.github.io/widder
 
 ```
 node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --summary defs/petstore3.json -o petstore3.md
+```
+
+or to run in docker:
+```
+docker run -it --rm -v ${PWD}/petstore3.json:/usr/src/app/petstore3.json:ro -v ${PWD}/md/:/usr/src/app/md/ (TODO dockerhub org)/widdershins:latest /bin/sh -c "node widdershins /usr/src/app/petstore3.json --search false --language_tabs 'ruby:Ruby' 'python:Python' --summary -o /usr/src/app/md/petstore3.html.md"
 ```
 
 ### Options
