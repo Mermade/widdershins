@@ -48,7 +48,7 @@ console.assert(stringifyTrunc([1,[2],[[3]],[[[4]]],[[[[5]]]]],{depth:4})==='[1,[
 console.assert(stringifyTrunc([1,[2],[[3]],[[[4]]],[[[[5]]]]],{depth:5})==='[1,[2],[[3]],[[[4]]],[[[[5]]]]]')
 
 let inner=Symbol('Inner')
-o={get val(){return this[inner]}, set val(v){if(v<0) throw new Error("Illegal argument"); this[inner]=v}}
+o={get val(){return this[inner]}, set val(v){if (v<0) throw new Error("Illegal argument"); this[inner]=v}}
 o[inner]=42
 
 console.assert(stringifyTrunc(o)==='{"val":"[Getter]"}')

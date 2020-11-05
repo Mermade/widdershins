@@ -105,7 +105,7 @@ async function doit(s) {
     try {
         api = yaml.parse(s);
     }
-    catch(ex) {
+    catch (ex) {
         console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
         console.error(ex.message);
         api = s;
