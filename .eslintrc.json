@@ -80,7 +80,7 @@
         "init-declarations": "off",
         "jsx-quotes": "error",
         "key-spacing": "off",
-        "keyword-spacing": "off",
+        "keyword-spacing": "error",
         "line-comment-position": "off",
         "linebreak-style": [
             "error",
@@ -183,7 +183,7 @@
         "no-throw-literal": "error",
         "no-trailing-spaces": "error",
         "no-undef-init": "error",
-        "no-undefined": "warn",
+        "no-undefined": "off",
         "no-underscore-dangle": "off",
         "no-unmodified-loop-condition": "error",
         "no-unneeded-ternary": [

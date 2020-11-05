@@ -1,6 +1,6 @@
 # widdershins
-OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/lord/slate) /
-[Shins](https://github.com/mermade/shins) compatible markdown
+OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/slatedocs/slate) /
+[ReSlate](https://github.com/mermade/reslate) compatible markdown
 
 ![Build](https://img.shields.io/travis/Mermade/widdershins/master.svg) [![Tested on APIs.guru](https://api.apis.guru/badges/tested_on.svg)](https://APIs.guru) [![Tested on Mermade OpenAPIs](https://img.shields.io/badge/Additional%20Specs-419-brightgreen.svg)](https://github.com/mermade/OpenAPI_specifications)
 [![Known Vulnerabilities](https://snyk.io/test/npm/widdershins/badge.svg)](https://snyk.io/test/npm/widdershins)
@@ -34,7 +34,7 @@ OpenAPI / Swagger / AsyncAPI / Semoasa definition to [Slate](https://github.com/
 
 ### Getting started
 
-Widdershins is generally used as a stage in an API documentation pipeline. The pipeline begins with an API definition in OpenAPI 3.x, OpenAPI 2.0 (fka Swagger), API Blueprint, AsyncAPI or Semoasa format. Widdershins converts this description into markdown suitable for use by a **renderer**, such as [Slate](https://github.com/lord/slate), [Shins](https://github.com/mermade/shins) or html suitable for use with [ReSpec](https://github.com/w3c/respec).
+Widdershins is generally used as a stage in an API documentation pipeline. The pipeline begins with an API definition in OpenAPI 3.x, OpenAPI 2.0 (fka Swagger), API Blueprint, AsyncAPI or Semoasa format. Widdershins converts this description into markdown suitable for use by a **renderer**, such as [Slate](https://github.com/slatedocs/slate), [ReSlate](https://github.com/mermade/reslate), [Shins](https://github.com/mermade/shins)  (*deprecated*) or html suitable for use with [ReSpec](https://github.com/w3c/respec).
 
 If you need to create your input API definition, [this list of available editors](https://apis.guru/awesome-openapi3/category.html#editors) may be useful.
 
@@ -73,7 +73,7 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 | -m, --maxDepth | options.maxDepth | `integer` | 10 | Maximum depth to show for schema examples. |
 | -o, --outfile | N/A | `string` | None | File to write the output markdown to. If left blank, Widdershins sends the output to stdout. |
 | -r, --raw | **inverse** of options.sample | `boolean` | `false` | Output raw schemas instead of example values. |
-| -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output. |
+| -s, --search | options.search | `boolean` | `true` | Set the value of the `search` parameter in the header so Markdown processors like Slate include search or not in their output. |
 | -t, --theme | options.theme | `string` | darkula | Syntax-highlighter theme to use. |
 | -u, --user_templates | options.user_templates | `string` | None | Directory to load override templates from. |
 | -x, --experimental | options.experimental | `boolean` |  | Use httpSnippet for multipart mediatypes. |
@@ -163,7 +163,7 @@ Schema.org WebAPI discovery data is included if the `discovery` option above is 
 
 Widdershins supports the `x-code-samples` [vendor-extension](https://github.com/Rebilly/ReDoc/blob/master/docs/redoc-vendor-extensions.md#operation-object-vendor-extensions) to completely customise your documentation. Alternatively, you can edit the default code-samples in the `templates` sub-directory, or override them using the `user_templates` option to specify a directory containing your templates.
 
-Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher. [Shins](https://github.com/mermade/shins) versions track Slate version numbers.
+Widdershins supports the use of multiple language tabs with the same language (i.e. plain Javascript and Node.Js). To use this support you must be using Slate (or one of its ports compatible with) version 1.5.0 or higher.
 
 ## Templates
 
@@ -281,6 +281,6 @@ Please feel free to add a link to your API documentation here.
 * [Shutterstock API](https://api-reference.shutterstock.com/)
 * [Shotstack Video Editing API](https://shotstack.io/docs/api/index.html)
 
-### Widdershins and Shins
+### Widdershins and ReSlate
 
-* `Widdershins` works well with Slate, but for a solely Node.js-based experience, why not try the [Shins](https://github.com/mermade/shins) port?
+* `Widdershins` works well with Slate, but for a solely Node.js-based experience, why not try the [ReSlate](https://github.com/mermade/reslate) port?

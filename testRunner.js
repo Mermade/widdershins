@@ -117,6 +117,7 @@ async function check(file) {
                 result = result.split('is undefined').join('x');
                 result = result.split('f undefined').join('x');
                 result = result.split('are undefined').join('x');
+                result = result.split('then undefined').join('x');
                 result = result.split('be undefined').join('x');
                 result = result.split('undefined to').join('x');
                 result = result.split('undefined in').join('x');
@@ -137,6 +138,8 @@ async function check(file) {
                 result = result.split('undefined, ').join('x');
                 result = result.split('undefined.').join('x');
                 result = result.split(' - undefined').join('x');
+                result = result.split(' `undefined`').join('x');
+                result = result.split('_undefined').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;

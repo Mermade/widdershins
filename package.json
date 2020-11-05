@@ -40,31 +40,25 @@
   "dependencies": {
     "dot": "^1.1.3",
     "highlightjs": "^9.16.2",
-    "httpsnippet": "^1.21.0",
-    "jgexml": "^0.4.3",
-    "markdown-it": "^11.0.0",
-    "markdown-it-emoji": "^1.4.0",
-    "node-fetch": "^2.6.0",
-    "oas-resolver": "^2.4.2",
+    "httpsnippet": "^1.22.0",
+    "jgexml": "^0.4.4",
+    "markdown-it": "^12.0.2",
+    "markdown-it-emoji": "^2.0.0",
+    "node-fetch": "^2.6.1",
+    "oas-resolver": "^2.4.4",
     "oas-schema-walker": "^1.1.5",
-    "openapi-sampler": "^1.0.0-beta.16",
+    "openapi-sampler": "^1.0.0-beta.17",
     "pinyin": "^2.9.1",
-    "reftools": "^1.1.4",
-    "swagger2openapi": "^6.2.2",
+    "reftools": "^1.1.6",
+    "swagger2openapi": "^7.0.0",
     "urijs": "^1.19.2",
     "yaml": "^1.10.0",
     "yargs": "^12.0.5"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "^3.2.0",
     "mdv": "^1.3.0",
-    "mocha": "^8.1.0",
+    "mocha": "^8.1.3",
     "node-readfiles": "^0.2.0",
     "nyc": "^15.0.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
   }
 }
