@@ -43,7 +43,7 @@
     "httpsnippet": "^1.22.0",
     "jgexml": "^0.4.4",
     "markdown-it": "^12.0.2",
-    "markdown-it-emoji": "^1.4.0",
+    "markdown-it-emoji": "^2.0.0",
     "node-fetch": "^2.6.1",
     "oas-resolver": "^2.4.4",
     "oas-schema-walker": "^1.1.5",
