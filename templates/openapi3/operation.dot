@@ -31,7 +31,7 @@
 > Body parameter
 
 {{? data.bodyParameter.exampleValues.description }}
-> {{= data.bodyParameter.exampleValues.description }}
+> {{= data.operation.requestBody.description }}
 {{?}}
 
 {{= data.utils.getBodyParameterExamples(data) }}
