@@ -50,9 +50,10 @@ node widdershins --search false --language_tabs 'ruby:Ruby' 'python:Python' --su
 
 | CLI parameter name | JavaScript parameter name | Type | Default value | Description |
 | --- | --- | --- | --- | --- |
+| --clipboard | options.clipboard | `boolean` | `true` | Sets the value of the `code_clipboard` property in the heading, so that markdown processors can include clipboard support. |
 | --customApiKeyValue | options.customApiKeyValue | `string` | `ApiKey` | Set a custom API key value to use as the API key in generated code examples. |
 | --expandBody | options.expandBody | `boolean` | `false` | If a method's requestBody parameter refers to a schema by reference (not with a inline schema), by default, Widdershins shows only a reference to this parameter. Set this option to true to expand the schema and show all properties in the request body. |
-| --headings | options.headings | `integer` | 2 | Set the value of the `headingLevel` parameter in the header so Shins knows how many heading levels to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
+| --headings | options.headings | `integer` | 2 | Set the value of the `headingLevel` parameter in the header so markdown processors know how many heading levels to show in the table of contents. Currently supported only by Shins, not by Slate, which lacks this feature. |
 | --omitBody | options.omitBody | `boolean` | `false` | By default, Widdershins includes the body parameter as a row in the parameters table before the rows that represent the fields in the body. Set this parameter to omit that body parameter row. |
 | --omitHeader | options.omitHeader | `boolean` | `false` | Omit the header / YAML front-matter in the generated Markdown file. |
 | --resolve | options.resolve | `boolean` | `false` | Resolve external $refs, using the `source` parameter or the input file as the base location. |

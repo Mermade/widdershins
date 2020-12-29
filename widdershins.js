@@ -18,6 +18,9 @@ var argv = require('yargs')
     .alias('a','abstract')
     .describe('abstract','The filename of the Markdown include file to use for the ReSpec abstract section.')
     .default('abstract','./include/abstract.md')
+    .boolean('clipboard')
+    .default('clipboard',true)
+    .describe('clipboard','Set the value of the `code_clipboard` parameter in the header so Markdown processors like Slate include clipboard support in their output.')
     .boolean('code')
     .alias('c','code')
     .describe('code','Omit generated code samples.')
@@ -33,7 +36,7 @@ var argv = require('yargs')
     .boolean('expandBody')
     .describe('expandBody','Expand the schema and show all properties in the request body.')
     .number('headings')
-    .describe('headings','Set the value of the `headingLevel` parameter in the header so Shins knows how many heading levels to show in the table of contents.')
+    .describe('headings','Set the value of the `headingLevel` parameter in the header so markdown processors know how many heading levels to show in the table of contents.')
     .default('headings',2)
     .boolean('httpsnippet')
     .default('httpsnippet',false)
@@ -68,7 +71,7 @@ var argv = require('yargs')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
-    .describe('search','Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output.')
+    .describe('search','Set the value of the `search` parameter in the header so Markdown processors like Slate include search support in their output.')
     .boolean('shallowSchemas')
     .describe('shallowSchemas',"When referring to a schema with a $ref, don't show the full contents of the schema.")
     .string('sotd')
@@ -167,6 +170,7 @@ options.html = argv.html;
 options.respec = argv.respec;
 options.useBodyName = argv.useBodyName;
 if (argv.search === false) options.search = false;
+if (argv.clipboard === false) options.clipboard = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
     options.abstract = argv.abstract;
