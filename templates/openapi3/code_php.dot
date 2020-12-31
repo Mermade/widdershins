@@ -8,7 +8,7 @@ $headers = [
 $client = new \GuzzleHttp\Client();
 
 // Define array of request body.
-$request_body = []];
+$request_body = [];
 
 try {
     $response = $client->request('{{=data.methodUpper}}','{{=data.url}}', [
