@@ -33,3 +33,4 @@ As above for code templates
 * `servers` - the (computed) servers of the API
 * `baseTopic` - the baseTopic of the API
 * `contactName` - the (possibly default) contact name for the API
+* `widdershins` - the contents of widdershins `package.json`

@@ -1,6 +1,6 @@
 {
   "name": "widdershins",
-  "version": "3.6.6",
+  "version": "4.0.1",
   "description": "OpenAPI/ Swagger / AsyncAPI / Semoasa definition to Slate / Shins compatible markdown",
   "main": "lib/index.js",
   "bin": {
@@ -11,9 +11,9 @@
     "doc": "docs"
   },
   "scripts": {
-    "lint": "npx eslint *.js lib/*.js",
+    "lint": "npx eslint *.js lib/*.js test/*.js",
     "shins": "node widdershins --discovery -o ../shins/source/index.html.md defs/petstore.json",
-    "test": "node $nflags node_modules/mocha/bin/_mocha"
+    "test": "nyc mocha"
   },
   "repository": {
     "type": "git",
@@ -38,32 +38,27 @@
   },
   "homepage": "https://github.com/Mermade/widdershins#readme",
   "dependencies": {
-    "dot": "^1.0.3",
-    "highlightjs": "^9.12.0",
-    "httpsnippet": "^1.16.6",
-    "jgexml": "latest",
-    "markdown-it": "^10.0.0",
-    "markdown-it-emoji": "^1.4.0",
-    "node-fetch": "^2.0.0",
-    "oas-resolver": "^2.2.5",
-    "oas-schema-walker": "^1.1.2",
-    "openapi-sampler": "^1.0.0-beta.15",
-    "reftools": "^1.0.8",
-    "safe-json-stringify": "^1.2.0",
-    "swagger2openapi": "^5.3.1",
-    "urijs": "^1.19.0",
-    "yaml": "^1.7.0",
-    "yargs": "^14.0.0"
+    "dot": "^1.1.3",
+    "highlightjs": "^9.16.2",
+    "httpsnippet": "^1.22.0",
+    "jgexml": "^0.4.4",
+    "markdown-it": "^12.0.2",
+    "markdown-it-emoji": "^2.0.0",
+    "node-fetch": "^2.6.1",
+    "oas-resolver": "^2.4.4",
+    "oas-schema-walker": "^1.1.5",
+    "openapi-sampler": "^1.0.0-beta.17",
+    "pinyin": "^2.9.1",
+    "reftools": "^1.1.6",
+    "swagger2openapi": "^7.0.0",
+    "urijs": "^1.19.2",
+    "yaml": "^1.10.0",
+    "yargs": "^12.0.5"
   },
   "devDependencies": {
-    "cz-conventional-changelog": "^3.0.2",
-    "mdv": "^1.2.1",
-    "mocha": "^6.1.4",
-    "node-readfiles": "^0.2.0"
-  },
-  "config": {
-    "commitizen": {
-      "path": "./node_modules/cz-conventional-changelog"
-    }
+    "mdv": "^1.3.0",
+    "mocha": "^8.1.3",
+    "node-readfiles": "^0.2.0",
+    "nyc": "^15.0.0"
   }
 }

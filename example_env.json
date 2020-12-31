@@ -5,10 +5,12 @@
   "tagGroups": [
     {
       "title": "Companies",
+      "description": "all the companies",
       "tags": ["companies"]
     },
     {
       "title": "Billing",
+      "description": "billing apis",
       "tags": ["invoice-create", "invoice-close", "invoice-delete"]
     }
   ]

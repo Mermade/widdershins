@@ -54,6 +54,28 @@ const data = {
 };
 
 describe('common tests', () => {
+    describe('slugify tests', () => {
+        it('should replace all & symbols', () => {
+            assert.equal(common.slugify('this & this'), 'this-and-this');
+        });
+        it('should remove all parentheses', () => {
+            assert.equal(common.slugify('title (plus more)'), 'title-plus-more');
+        });
+        it('should remove colons, commas and aposrophes', () => {
+            assert.equal(common.slugify('id: one'), 'id-one');
+            assert.equal(common.slugify('another, id'), 'another-id');
+            assert.equal(common.slugify('id\'s title'), 'ids-title');
+        });
+        it('should remove code tags', () => {
+            assert.equal(common.slugify('<code>id here</code>'), 'id-here');
+        });
+        it('should replace remaining non-word characters and dashes with a single dash (-)', () => {
+            assert.equal(common.slugify('id: one, two & three'), 'id-one-two-and-three');
+        });
+        it('should replace chinese characters with pinyin', () => {
+            assert.equal(common.slugify('id: one, 二 & 三'), 'id-one-er4-and-san1');
+        });
+    });
     describe('schemaToArray tests', () => {
         it('should return a blank container if all inputs are blank', () => {
             const schema = {};

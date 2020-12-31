@@ -18,6 +18,9 @@ var argv = require('yargs')
     .alias('a','abstract')
     .describe('abstract','The filename of the Markdown include file to use for the ReSpec abstract section.')
     .default('abstract','./include/abstract.md')
+    .boolean('clipboard')
+    .default('clipboard',true)
+    .describe('clipboard','Set the value of the `code_clipboard` parameter in the header so Markdown processors like Slate include clipboard support in their output.')
     .boolean('code')
     .alias('c','code')
     .describe('code','Omit generated code samples.')
@@ -33,7 +36,7 @@ var argv = require('yargs')
     .boolean('expandBody')
     .describe('expandBody','Expand the schema and show all properties in the request body.')
     .number('headings')
-    .describe('headings','Set the value of the `headingLevel` parameter in the header so Shins knows how many heading levels to show in the table of contents.')
+    .describe('headings','Set the value of the `headingLevel` parameter in the header so markdown processors know how many heading levels to show in the table of contents.')
     .default('headings',2)
     .boolean('httpsnippet')
     .default('httpsnippet',false)
@@ -68,7 +71,7 @@ var argv = require('yargs')
     .boolean('search')
     .alias('s','search')
     .default('search',true)
-    .describe('search','Set the value of the `search` parameter in the header so Markdown processors like Shins include search or not in their output.')
+    .describe('search','Set the value of the `search` parameter in the header so Markdown processors like Slate include search support in their output.')
     .boolean('shallowSchemas')
     .describe('shallowSchemas',"When referring to a schema with a $ref, don't show the full contents of the schema.")
     .string('sotd')
@@ -89,7 +92,7 @@ var argv = require('yargs')
     .describe('verbose','Increase verbosity.')
     .boolean('experimental')
     .alias('x','experimental')
-    .describe('experimental','For backwards compatibility only; ignored.')
+    .describe('experimental','Use httpsnippet for multipart mediatypes.')
     .boolean('yaml')
     .alias('y','yaml')
     .describe('yaml','Display JSON schemas in YAML format.')
@@ -100,31 +103,30 @@ var argv = require('yargs')
 
 var options = {};
 
-function doit(s) {
+async function doit(s) {
     var api = {};
     try {
         api = yaml.parse(s);
     }
-    catch(ex) {
+    catch (ex) {
         console.error('Failed to parse YAML/JSON, falling back to API Blueprint');
         console.error(ex.message);
         api = s;
     }
 
-    converter.convert(api,options,function(err,output){
-        if (err) {
-            console.warn(err);
+    try {
+        let output = await converter.convert(api,options);
+        let outfile = argv.outfile||argv._[1];
+        if (outfile) {
+            fs.writeFileSync(path.resolve(outfile),output,'utf8');
         }
         else {
-            var outfile = argv.outfile||argv._[1];
-            if (outfile) {
-                fs.writeFileSync(path.resolve(outfile),output,'utf8');
-            }
-            else {
-                console.log(output);
-            }
+            console.log(output);
         }
-    });
+    }
+    catch (err) {
+        console.warn(err);
+    }
 }
 
 options.codeSamples = !argv.code;
@@ -133,12 +135,13 @@ if (argv.lang) {
     options.language_tabs = [];
 }
 else if (argv.language_tabs) {
+    if (!options.language_clients) options.language_clients = [];
     const languages = argv.language_tabs
         .reduce((languages, item) => {
             const [lang, name, client] = item.split(':', 3);
 
             languages.language_tabs.push({ [lang]: name || lang });
-            languages.language_clients[lang] = client || '';
+            languages.language_clients.push({ [lang]: client || '' });
 
             return languages;
         }, { language_tabs: [], language_clients: []});
@@ -151,7 +154,7 @@ options.inline = argv.inline;
 options.sample = !argv.raw;
 options.discovery = argv.discovery;
 options.verbose = argv.verbose;
-if (options.verbose) Error.stackTraceLimit = Infinity;
+if (options.verbose > 2) Error.stackTraceLimit = Infinity;
 options.tocSummary = argv.summary;
 options.headings = argv.headings;
 options.experimental = argv.experimental;
@@ -167,6 +170,7 @@ options.html = argv.html;
 options.respec = argv.respec;
 options.useBodyName = argv.useBodyName;
 if (argv.search === false) options.search = false;
+if (argv.clipboard === false) options.clipboard = false;
 if (argv.includes) options.includes = argv.includes.split(',');
 if (argv.respec) {
     options.abstract = argv.abstract;

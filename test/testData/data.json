@@ -1,0 +1,76 @@
+{
+  "components": {
+    "securitySchemes": {
+      "Basic Authentication": {},
+      "One-time-use Token": {}
+    },
+    "schemas": {},
+    "examples": {}
+  },
+  "api": {},
+  "options": {
+    "title": "API",
+    "language_tabs": [
+      "shell"
+    ],
+    "toc_footers": [],
+    "includes": [],
+    "search": true,
+    "theme": "tomorrow-night",
+    "headings": 3,
+    "templateCallback": null,
+    "env": "dev",
+    "expandBody": false,
+    "omitBody": true,
+    "user_templates": "./source/templates",
+    "codeSamples": true,
+    "sample": true,
+    "shallowSchemas": false,
+    "tagGroups": [],
+    "samplerErrors": ""
+  },
+  "translations": {
+    "defaultTag": "Default",
+    "response": "Response",
+    "responseDefault": "Default",
+    "responseUnknown": "Unknown",
+    "schemaInline": "Inline",
+    "schemaNone": "None",
+    "externalDocs": "External documentation",
+    "secDefNone": "None",
+    "secDefScopes": "Scopes",
+    "anonymous": "anonymous",
+    "continued": "continued",
+    "indent": "",
+    "readOnly": "read-only",
+    "writeOnly": "write-only"
+  },
+  "version": "v3.0.0",
+  "header": {
+    "title": "Nexio API Reference v3.0.0",
+    "language_tabs": [
+      "shell"
+    ],
+    "toc_footers": [],
+    "includes": [],
+    "search": true,
+    "highlight_theme": "tomorrow-night",
+    "headingLevel": 3
+  },
+  "title_prefix": "nexio-api-reference",
+  "templates": {
+    "code_go": [],
+    "code_http": [],
+    "code_java": [],
+    "code_javascript": [],
+    "code_jquery": [],
+    "code_nodejs": [],
+    "code_php": [],
+    "code_python": [],
+    "code_ruby": [],
+    "code_shell": [],
+    "main": [],
+    "operation": [],
+    "translations": []
+  }
+}
