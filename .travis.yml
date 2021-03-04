@@ -19,6 +19,6 @@ script:
   - node node_modules/mdv/mdv out/petstore.md
   - node $nflags testRunner openapi-directory/APIs/
   - node $nflags testRunner openapi-definitions/
-  - node $nflags testRunner openapi3-examples/pass/
+  - node $nflags testRunner openapi3-examples/3.0/pass/
   - node $nflags testRunner --resolve defs/
 #  - node testRunner hapi/APIs/
