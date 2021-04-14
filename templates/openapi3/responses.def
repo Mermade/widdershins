@@ -15,7 +15,7 @@
 
 |Content-Type|Status|Meaning|Description|Schema|
 |---|---|---|---|---|
-{{~ data.responses :r}}|{{=r.contentType}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.schema}}|
+{{~ data.responses :r}}|{{=r.contentType}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.safeType}}|
 {{~}}
 
 {{ data.responseSchemas = false; }}
