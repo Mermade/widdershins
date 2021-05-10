@@ -28,3 +28,14 @@ jobs:
     - run: npm ci
     - run: npm run lint
     - run: npm run test
+    - run: git clone --depth 1 https://github.com/APIs-guru/openapi-directory.git
+    - run: git clone --depth 1 https://github.com/mermade/openapi-definitions.git
+    - run: git clone --depth 1 https://github.com/mermade/openapi3-examples.git
+    - run: . ./bin/setflags.sh
+    - run: mkdir -p out
+    - run: node widdershins -o out/petstore.md defs/petstore3.json
+    - run: node node_modules/mdv/mdv out/petstore.md
+    - run: node $nflags testRunner openapi-directory/APIs/
+    - run: node $nflags testRunner openapi-definitions/
+    - run: node $nflags testRunner openapi3-examples/3.0/pass/
+    - run: node $nflags testRunner --resolve defs/
