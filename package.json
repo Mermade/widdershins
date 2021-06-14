@@ -57,7 +57,7 @@
   },
   "devDependencies": {
     "mdv": "^1.3.0",
-    "mocha": "^8.1.3",
+    "mocha": "^9.0.0",
     "node-readfiles": "^0.2.0",
     "nyc": "^15.0.0"
   }
