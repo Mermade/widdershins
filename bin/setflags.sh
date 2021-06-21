@@ -1,5 +1,3 @@
 #!/bin/sh
-#if [ "$TRAVIS_NODE_VERSION" -eq "6" ] ; then
-#  export nflags="--harmony"
-#fi
+export nflags="--predictable-gc-schedule"
 echo flags: $nflags
