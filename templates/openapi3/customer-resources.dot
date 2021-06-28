@@ -1,4 +1,4 @@
-# Core Resources
+# Customer Resources
 
 {{ for (var r in data.resources) { }}
 {{ data.resource = data.resources[r]; }}
