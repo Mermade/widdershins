@@ -114,7 +114,7 @@ function doit(s) {
         api = s;
     }
 
-    converter.convert(api,options,function(err,output){
+    converter.convert(api,options,function(err,output) {
         if (err) {
             console.warn(err);
         }
@@ -124,8 +124,31 @@ function doit(s) {
                 fs.writeFileSync(path.resolve(outfile),output,'utf8');
             }
             else if(options.splitOutPath) {
-                fs.writeFileSync(path.resolve(options.splitOutPath + '/core-resources/index.html.md'),output[0],'utf8');
-                fs.writeFileSync(path.resolve(options.splitOutPath + '/reference/index.html.md'),output[1],'utf8');
+                const sectionName = options.source.split('/')[4];
+
+                switch(sectionName) {
+                    case "customers":
+                        fs.writeFileSync(
+                            path.resolve(`${options.splitOutPath}/customer-resources/index.html.md`),output[0],
+                            'utf8'
+                        );
+                        fs.writeFileSync(
+                            path.resolve(`${options.splitOutPath}/customer-reference/index.html.md`),output[1],
+                            'utf8'
+                        );
+                        break;
+                    case "hackers":
+                        fs.writeFileSync(
+                            path.resolve(`${options.splitOutPath}/hacker-resources/index.html.md`),output[0],
+                            'utf8'
+                        );
+                        fs.writeFileSync(
+                            path.resolve(`${options.splitOutPath}/hacker-reference/index.html.md`),output[1],
+                            'utf8'
+                        );
+                        break;
+                    default:
+                }
             }
             else {
                 console.log(output);

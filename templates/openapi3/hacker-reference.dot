@@ -1,7 +1,7 @@
 {{? data.api.components && data.api.components.schemas }}
 {{= data.tags.section }}
 
-# Reference
+# Hacker Reference
 
 The following section contains a complete reference of all the objects
 that can be returned through the API. Objects that have been explained
