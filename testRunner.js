@@ -73,8 +73,8 @@ async function check(file) {
     if ((filename.endsWith('yaml')) || (filename.endsWith('json'))) {
 
         let skip = false;
-        if (process.env.TRAVIS_NODE_VERSION) {
-            if (file.indexOf('clever-cloud')>=0) skip = true;
+        if (process.env.CI) {
+            if (file.indexOf('/graph/')>=0) skip = true;
         }
 
         if (skip) {
@@ -123,6 +123,7 @@ async function check(file) {
                 result = result.split('undefined how').join('x');
                 result = result.split('undefined behavio').join('x');
                 result = result.split('"undefined":').join('x');
+                result = result.split('"undefined"}').join('x');
                 result = result.split('undefinedfault').join('x');
                 result = result.split('|undefined|[Empty]').join('x');
                 result = result.split('|undefined|').join('x');
@@ -136,10 +137,13 @@ async function check(file) {
                 result = result.split('or undefined').join('x');
                 result = result.split('undefined, ').join('x');
                 result = result.split('undefined.').join('x');
+                result = result.split('`undefined` to').join('x');
                 result = result.split(' - undefined').join('x');
                 result = result.split(' `undefined`').join('x');
                 result = result.split('_undefined').join('x');
                 result = result.split('undefined error').join('x');
+                result = result.split('any undefined').join('x');
+                result = result.split('undefined_func').join('x');
                 if (ok && result.indexOf('undefined')>=0) {
                     message = 'Ok except for undefined references';
                     ok = false;
