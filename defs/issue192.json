@@ -1,0 +1,52 @@
+{
+    "openapi": "3.0.1",
+    "info": {
+        "title": "API",
+        "version": "1.0.0"
+    },
+    "paths": {
+        "/test": {
+            "post": {
+                "responses": {
+                    "200": {
+                        "description": "OK"
+                    }
+                },
+                "requestBody": {
+                    "description": "Overall description",
+                    "content": {
+                        "application/json": {
+                            "examples": {
+                                "MyFirstExample": {
+                                    "value": {
+                                        "test": 123
+                                    },
+                                    "description": "Test description one"
+                                },
+                                "MySecondExample": {
+                                    "value": {
+                                        "test": 456
+                                    },
+                                    "description": "second test description"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "Cat": {
+                "type": "object"
+            },
+            "Dog": {
+                "type": "object"
+            },
+            "Hamster": {
+                "type": "object"
+            }
+        }
+    }
+}
