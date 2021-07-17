@@ -45,10 +45,12 @@
 
 {{#def.callbacks}}
 
+{{? !data.options.excludeAuth}}
 {{ data.security = data.operation.security ? data.operation.security : data.api.security; }}
-{{? data.security && data.security.length }}
+{{? data.security && data.security.length}}
 {{#def.authentication}}
 {{??}}
 {{#def.authentication_none}}
+{{?}}
 {{?}}
 {{= data.tags.endSection }}
