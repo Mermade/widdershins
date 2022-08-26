@@ -282,6 +282,7 @@ Please feel free to add a link to your API documentation here.
 * [Shutterstock API](https://api-reference.shutterstock.com/)
 * [Shotstack Video Editing API](https://shotstack.io/docs/api/index.html)
 * [Admetricks API](http://dev.admetricks.com/)
+* [Eqivo API](https://eqivo.org/)
 
 ### Widdershins and ReSlate
 
