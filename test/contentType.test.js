@@ -101,6 +101,15 @@ describe('contentType tests',function(){
     });
   });
 
+  describe('unknown tests', function(){
+    it('should match application/x-custom-type',function(){
+        assert(common.hasUnknownContentType(['application/x-custom-type']));
+    });
+    it('should not match text/plain',function(){
+        assert(!common.hasUnknownContentType(['text/plain']));
+    });
+  });
+
 });
 
 describe('array tests',function(){
@@ -111,6 +120,9 @@ describe('array tests',function(){
     });
     it('should match another type and application/json',function(){
         assert(common.doContentType(['text/plain','application/json'],'json'));
+    });
+    it('should match another type and application/x-custom-type',function(){
+        assert(common.hasUnknownContentType(['text/plain','application/x-custom-type']));
     });
   });
   describe('negative tests',function(){
@@ -123,6 +135,8 @@ describe('array tests',function(){
     it('should not match an unknown format',function(){
         assert(!common.doContentType(['application/octet-stream'],'file'));
     });
+    it('should not match known types',function(){
+        assert(!common.hasUnknownContentType(['text/plain']));
+    });
   });
 });
-
