@@ -13,9 +13,9 @@
 {{= data.tags.section }}
 <h3 id="{{=data.operationUniqueSlug}}-responses">Responses</h3>
 
-|Status|Meaning|Description|Schema|
-|---|---|---|---|
-{{~ data.responses :r}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.schema}}|
+|Content-Type|Status|Meaning|Description|Schema|
+|---|---|---|---|---|
+{{~ data.responses :r}}|{{=r.contentType}}|{{=r.status}}|{{=r.meaning}}|{{=r.description || 'none'}}|{{=r.safeType}}|
 {{~}}
 
 {{ data.responseSchemas = false; }}
