@@ -49,7 +49,7 @@ Base URLs:
 ## {{=t}}
 
 {{? data.topic.parameters }}
-<h3 id="{{=data.utils.slugify(data.topicName)}}-parameters">Parameters</h3>
+### Parameters
 
 {{ data.parameters = data.utils.getParameters(data.topic.parameters); }}
 
@@ -165,7 +165,7 @@ Delimiter: {{= data.api.stream.framing.delimiter||'\r\n'}}
    }
 }}
 
-<h3 id="{{=data.utils.slugify(s)}}-properties">Properties</h3>
+### Properties
 
 {{~ blocks :block }}
 {{? block.title }}
