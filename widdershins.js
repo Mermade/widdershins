@@ -8,6 +8,8 @@ const url = require('url');
 const yaml = require('yaml');
 const fetch = require('node-fetch');
 
+const doT = require('dot');
+
 const converter = require('./lib/index.js');
 
 var argv = require('yargs')
@@ -185,6 +187,10 @@ if (argv.respec) {
 }
 if (options.respec) options.html = true;
 if (options.html) options.omitHeader = true;
+
+// doT.log is defaultly true.
+// if options.verbose undefined or false, then, doT.log = false
+if (options.verbose !== true) doT.log = false;
 
 if (argv.environment) {
     var e = fs.readFileSync(path.resolve(argv.environment),'utf8');
